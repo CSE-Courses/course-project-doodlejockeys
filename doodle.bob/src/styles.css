@@ -1,0 +1,354 @@
+:root {
+	/* --bg-color: #FFD600; */
+	--bg-color: rgb(255, 214, 2);
+	--dk-maroon:  rgb(151, 0, 50);
+	--lt-maroon: rgb(200, 94, 129);
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	background: var(--bg-color);
+}
+
+#root {
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.App {
+    font-family: sans-serif;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+    align-items: center;
+    /* display: inline; */
+    width: 100%;
+  }
+  
+  .conversation {
+    background-color: white;
+    width: 400px;
+    /* height: 600px; */
+    border: solid 3px;
+    border-color: lightgray;
+    border-radius: 5%;
+    float: right;
+  }
+  
+  .chatHistory {
+    height: 400px;
+    overflow: scroll;
+    position : relative; 
+    bottom:0;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  
+  .messageBoxSenderWrong {
+    background-color: rgb(151, 0, 50);
+    border-radius: 10px;
+    margin-left: 30%;
+    margin-right: 15px;
+    height: font-family;
+    /* width: 50%; */
+  }
+  
+
+  .messageBoxSenderRight {
+    background-color: rgb(0, 151, 8);
+    border-radius: 10px;
+    margin-left: 30%;
+    margin-right: 15px;
+    height: font-family;
+    /* width: 50%; */
+  }
+
+  .messageTextSender {
+    text-align: left;
+    padding-right: 10px;
+    color: white;
+    padding: 10px;
+  }
+  
+  .messageBoxReceiverWrong {
+    background-color: lightgray;
+    border-radius: 10px;
+    margin-right: 30%;
+    margin-left: 15px;
+    height: font-family;
+    /* width: 50%; */
+  }
+
+  .messageBoxReceiverRight {
+    background-color: rgb(0, 151, 8);
+    border-radius: 10px;
+    margin-right: 30%;
+    margin-left: 15px;
+    height: font-family;
+    /* width: 50%; */
+  }
+  
+  .messageTextReceiver {
+    text-align: left;
+    padding-right: 10px;
+    color: white;
+    padding: 10px;
+  }
+  
+  .messageArea {
+    width: 77%;
+    margin-bottom: -10px;
+    margin-left: -3px;
+    float: left;
+    resize: none;
+  }
+  
+  .sendMessage {
+    width: 22%;
+    float: right;
+    height: 50px;
+    margin-bottom: -10px;
+    border-radius: 10px;
+    background-color: rgb(41, 41, 41);
+    color: white;
+    box-shadow: 100px 100px 100px 2000px rgba (0, 0, 0, 0.3);
+    cursor: pointer;
+    text-align: 30%;
+    font-size: 20px;
+  }
+  
+  .sendMessage:hover {
+    background-color: white;
+    color: black;
+    border: solid 3px;
+    border-color: black;
+  }
+  
+  .sending {
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .chatHeader {
+    background-color: rgb(41, 41, 41);
+    border-radius: 10px;
+    height: 30px;
+    /* margin-top: -15px; */
+    color: white;
+    font-size: 20px;
+    padding: 7px;
+    text-align: center;
+  }
+  
+
+.userNameChatReceiver {
+    text-align: left;
+    font-size: 14px;
+    margin-left: 10px;
+    margin-bottom: -20px;
+}
+
+
+.userNameChatSender {
+    text-align: right;
+    font-size: 14px;
+    margin-right: 10px;
+    margin-bottom: -20px;
+}
+
+
+.myProPic {
+    width: 50px;
+    border-radius: 50%;
+    float: right;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.otherProPic {
+    width: 50px;
+    border-radius: 50%;
+    float: left;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.toolbar {
+  padding: 0.5rem;
+  background-color:lightgray;
+  font-size: 20px;
+  text-align: center;
+}
+
+.toolbar-button {
+  height: 35px;
+  width: 35px;
+}
+
+.container {
+	display: flex;
+}
+
+.left-col {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+}
+
+#clock {
+	text-align: center;
+	font-weight: bold;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+}
+
+#clock p {
+	border-radius: 50%;
+	padding: 1rem;
+	width: 10%;
+	background: var(--dk-maroon);
+	border: 3px solid var(--lt-maroon);
+}
+
+#scoreboard {
+	display: flex;
+	flex-direction: column;
+}
+
+.user-score {
+	display: flex;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+}
+
+.user-score:nth-child(odd) > .user-info {
+	background: var(--dk-maroon);
+	padding: 0.5rem 1rem;
+	flex: 1;
+}
+
+.user-score:nth-child(even) > .user-info {
+	background: var(--lt-maroon);
+	padding: 0.5rem 1rem;
+	flex: 1;
+}
+
+.roundName {
+    text-align: center;
+    
+}
+
+.center-col {
+	display: flex;
+	flex-direction: column;
+	flex: 3;
+}
+
+.right-col {
+	display: flex;
+	flex: 2;
+}
+
+.signupPage {
+  background-color: var(--dk-maroon);
+  width: 100%;
+  height: 100%;
+}
+
+
+.SignUp {
+  background-color: lightgrey;
+  /* opacity: 0.6; */
+  border: solid;
+  border-color: rgba(0, 0, 0, 0.5);
+  border-width: 1px;
+  border-radius: 25px;
+  height: 520px;
+  width: 500px;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+.current {
+  margin-left: 15%;
+  float: left;
+  width: 50%;
+}
+
+.currentPic {
+  border-radius: 50%;
+  width: 80%;
+  float: left;
+  margin-top: -40px;
+  /* margin-bottom: 50px; */
+}
+
+.currentLabel {
+  margin-top: 165px;
+  margin-left: -45px;
+  float: center;
+}
+
+.optionPics {
+  float: right;
+  margin-right: 25%;
+
+  width: 10%;
+  height: 200px;
+  overflow: scroll;
+}
+
+.optionPic {
+  border-radius: 50%;
+  width: 100%;
+}
+
+.signUpInputLineWidth input {
+  float: center;
+  width: 350px;
+}
+
+.signUp_avatar {
+  border-radius: 4px;
+  background-color: rgb(46, 46, 46);
+  border: none;
+  color: white;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 200px;
+  transition: 0.4s;
+  cursor: pointer;
+  margin: 20px;
+  border: 3px solid white;
+  /* margin-top: 10%; */
+}
+
+.signUp_avatar:hover{
+  background-color: var(--bg-color);
+  color: black;
+  border: 3px solid black;
+}
+
+.signUpHeading {
+  font-family: 'Fredoka One', cursive;
+  color: rgba(0,0,0,0.65);
+  text-align: center;
+  letter-spacing: 3px;
+  text-decoration: none;
+}
