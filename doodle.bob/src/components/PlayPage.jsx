@@ -12,11 +12,11 @@ class Back extends Component {
 			<div>
 				<img src={require("../images/back.png")}
 					alt="backbutton"
-					class="backbutton" />
+					class="backbutton" /> 
 			</div>
 		)
 	}
-}
+} 
 
 function PlayPage() {
 	const gameInfo = {
