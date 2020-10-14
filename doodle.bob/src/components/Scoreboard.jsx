@@ -26,10 +26,7 @@ class Scoreboard extends Component {
 		console.log(this.state.profilePictures);
 
 		for (let user of Object.keys(userList)) {
-<<<<<<< HEAD
 
-=======
->>>>>>> c3022d63be67bc8566ecd77373f7bf9e6f51a09a
 			tags.push(
 				<div className="user-score">
 
