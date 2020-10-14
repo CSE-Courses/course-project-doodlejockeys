@@ -69,7 +69,7 @@ class Avatar extends Component {
                         <div className="signUpInputLineWidth">
                             <center>
 
-                                <Link to="/PlayPage">
+                                <Link to="/WordBank">
                                     <input type='submit' className="signUp_avatar" value="Submit Avatar" />
                                 </Link>
 

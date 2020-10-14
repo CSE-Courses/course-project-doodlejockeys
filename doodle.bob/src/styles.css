@@ -352,3 +352,195 @@ body {
   letter-spacing: 3px;
   text-decoration: none;
 }
+
+/* WORD BANK CSS */
+.title{
+  text-align: center;
+}
+.heading{
+  color:black;
+  text-align: center;
+  font-family: 'Fredoka One', cursive;
+}
+
+.catbuttons{
+  display:block;
+  margin-right:5px;
+  position:relative;
+  margin: 0 auto;
+  width:100%;
+  padding-left: 20px;
+  
+}
+  .cat_animals{
+  background-color:dodgerblue;
+  height: 5%;
+  width: 35%;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  top: 50%;
+  left:50%;
+  font-size: 2.6vmin;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 3px 20px;
+  border-width: initial;
+  color: white;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  outline: none;
+}
+
+.cat_celebs{
+  background-color: green;
+  height: 5%;
+  width: 35%;
+  top: 50%;
+  left:50%;
+  font-size: 2.6vmin;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 3px 20px;
+  border-width: initial;
+  color: white;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  outline: none;
+}
+.cat_count{
+  background-color: mediumturquoise;
+  height: 5%;
+  width: 35%;
+  top: 50%;
+  left:50%;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  font-size: 2.6vmin;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 3px 20px;
+  border-width: initial;
+  color: white;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  outline: none;
+}
+.cat_pl{
+  background-color: orange;
+  
+  height: 5%;
+  width:35%;
+  top: 50%;
+  left:50%;
+  font-size: 2.6vmin;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 3px 20px;
+  border-width: initial;
+  color: white;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  outline: none;
+}
+.cat_objs{
+  background-color:#F3752B;
+  height: 5%;
+  width: 35%;
+  top: 50%;
+  left:50%;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  font-size: 2.6vmin;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 3px 20px;
+  border-width: initial;
+  color: white;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  outline: none;
+}
+
+.cat_movie{
+  background-color:#2F52E0;
+  height: 5%;
+  width: 35%;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  top: 50%;
+  left:50%;
+  font-size: 2.6vmin;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 3px 20px;
+  border-width: initial;
+  color: white;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  outline: none;
+}
+.cat_act{
+  background-color:#A347FF;
+  height: 5%;
+  width: 35%;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  top: 50%;
+  left:50%;
+  font-size: 2.6vmin;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 3px 20px;
+  border-width: initial;
+  color: white;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  outline: none;
+}
+.cat_sport{
+  background-color:#264653;
+  height: 5%;
+  width: 35%;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  top: 50%;
+  left:50%;
+  font-size: 2.6vmin;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 3px 20px;
+  border-width: initial;
+  color: white;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  outline: none;
+}
+.cat_food{
+  background-color:#2a9d8f;
+  height: 5%;
+  width: 35%;
+  margin-right: 10px;
+  margin-bottom: 5px;
+  top: 50%;
+  left:50%;
+  font-size: 2.6vmin;
+  cursor: pointer;
+  box-shadow: rgba(255, 255, 255, 0.05) 0px 3px 20px;
+  border-width: initial;
+  color: white;
+  border-style: none;
+  border-color: initial;
+  border-image: initial;
+  outline: none;
+}
+
+.startgame{
+    float: center;
+    width: 300px;
+    font-family: 'Fredoka One', cursive;
+    color: rgba(0,0,0,0.65);
+    text-align: center;
+    letter-spacing: 3px;
+    text-decoration: none;
+    margin:15px;
+}
