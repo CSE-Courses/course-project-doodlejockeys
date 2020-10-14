@@ -7,11 +7,12 @@ class Stroke {
 	constructor(_init) {
 		this.init = _init;
 		this.points = [];
-		this.stroke = 0;
+		this.stroke = "black";
 	}
-
-	add(p5, point) {
+//stroke
+	add(p5, point, stroke) {
 		this.points.push(point);
+		this.stroke = stroke;
 		p5.stroke(this.stroke);
 		p5.line(this.init.x, this.init.y, point.x, point.y);
 		this.init.x = point.x;
@@ -29,7 +30,8 @@ class Canvas extends Component {
 		this.state = {
 			lastStrokeIdx: -1,
 			erasing: false,
-			drawing: false
+			drawing: false,
+			strokes: "black",
 		}
 	}
 
@@ -38,8 +40,54 @@ class Canvas extends Component {
 		p5.background(255);
 
 		var eraserbtn = p5.createButton("Erase All");
+		eraserbtn.parent(parent);
 		eraserbtn.mousePressed(this.resetSketch);
-		// eraserbtn.position();
+
+		var drawBlack = p5.createButton("Black Pen");
+		drawBlack.parent(parent);
+		drawBlack.mousePressed(this.changeBlackColor);
+
+		var drawRed = p5.createButton("Red Pen");
+		drawRed.parent(parent);
+		drawRed.mousePressed(this.changeRedColor);
+
+
+		var drawYellow = p5.createButton("Yellow Pen");
+		drawYellow.parent(parent);
+		drawYellow.mousePressed(this.changeYellowColor);
+
+		var drawBlue = p5.createButton("Blue Pen");
+		drawBlue.parent(parent);
+		drawBlue.mousePressed(this.changeBlueColor);
+	}
+
+	// changePenColor = () => {
+	// 	var drawGreen = p5.createButton("Green Pen");
+	// 	drawGreen.parent(parent);
+	// }
+
+	changeRedColor = () => {
+		this.setState({
+			strokes: "red"
+		})
+	}
+	
+	changeBlackColor = () => {
+		this.setState({
+			strokes: "black"
+		})
+	}
+
+	changeBlueColor = () => {
+		this.setState({
+			strokes: "blue"
+		})
+	}
+
+	changeYellowColor = () => {
+		this.setState({
+			strokes: "yellow"
+		})
 	}
 
 	resetSketch = () => {
@@ -71,7 +119,7 @@ class Canvas extends Component {
 	mouseDragged =  (p5) => {
 
 		if(this.state.drawing) {
-			ALL_STROKES[this.state.lastStrokeIdx].add(p5, p5.createVector(p5.mouseX, p5.mouseY));
+			ALL_STROKES[this.state.lastStrokeIdx].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes);
 		}
 	}
 
