@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
-const TIMER_VALUE = 5;
+const TIMER_VALUE = 10;
+const ROUND_VALUE = 1;
 
 
 class Clock extends Component {
@@ -12,7 +13,8 @@ class Clock extends Component {
       this.state = {
         seconds: TIMER_VALUE,
         paused: false,
-        status: "Pause"
+        status: "Pause",
+	round : ROUND_VALUE
       };
       this.clockToggle = this.clockToggle.bind(this);
     }
@@ -34,7 +36,7 @@ class Clock extends Component {
         status: this.state.paused?"Pause":"Resume"
       });
 
-      if(this.state.status == "Reset") {
+      if(this.state.status == "Start Next Round") {
         this.setState({
           seconds: TIMER_VALUE,
           paused: false,
@@ -49,9 +51,10 @@ class Clock extends Component {
 
     tick() {
       if(this.state.seconds <= 1) {
-        clearInterval(this.timerId);
+	clearInterval(this.timerId);
         this.setState({
-          status: "Reset"
+        status: "Start Next Round",
+	round : this.state.round + 1
         })
       }
 
@@ -68,6 +71,7 @@ class Clock extends Component {
         <div id="clock">
             <p>{this.state.seconds + "s"}</p>
             <button onClick={this.clockToggle}>{this.state.status}</button>
+	    <p>{"Round " + this.state.round}</p>
         </div>
     );
     }

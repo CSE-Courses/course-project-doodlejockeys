@@ -4,6 +4,7 @@ import Scoreboard from './Scoreboard';
 import Chat from './Chat';
 import Canvas from './Canvas';
 import Toolbar from './Toolbar';
+import RoundsUI from './RoundsUI';
 
 
 class Back extends Component {
@@ -12,17 +13,17 @@ class Back extends Component {
 			<div>
 				<img src={require("../images/back.png")}
 					alt="backbutton"
-					class="backbutton" />
+					class="backbutton" /> 
 			</div>
 		)
 	}
-}
+} 
 
 function PlayPage() {
 	const gameInfo = {
 		currentGames: [
-			{ gameid: 0, joincode: "0000", currentRound: 1, totalRounds: 5, currentArtistId: 2, currentWord: "ball" },
-			{ gameid: 1, joincode: "1111", currentRound: 1, totalRounds: 5, currentArtistId: 2, currentWord: "ball" }
+			{ gameid: 0, joincode: "0000", currentRound: 1, totalRounds: 5, currentArtistId: 2, currentWord: "ball", currentSubRound: 1 },
+			{ gameid: 1, joincode: "1111", currentRound: 1, totalRounds: 5, currentArtistId: 2, currentWord: "ball", currentSubRound: 1 }
 		],
 		users: {
 			1: { userid: 1, username: "iguanaoverlord", profilePic: "duck", role: "guesser", preRoundScore: 0, thisRoundScore: 0 },
@@ -40,6 +41,12 @@ function PlayPage() {
 					<Clock />
 				</div>
 				<div className="center-col">
+					<RoundsUI
+						game={gameInfo.currentGames[0]}
+						userList={gameInfo.users}
+						round={gameInfo.currentGames[0].currentRound}
+						word={gameInfo.currentGames[0].currentWord}
+					/>
 					<Canvas />
 					<Toolbar />
 				</div>
