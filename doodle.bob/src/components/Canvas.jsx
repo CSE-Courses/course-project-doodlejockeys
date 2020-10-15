@@ -6,13 +6,18 @@ import { faPencilAlt, faEraser, faFillDrip, faCircle, faTrashAlt, faUndoAlt, faP
 
 
 class Stroke {
+	// Default stroke settings
 	constructor(_init) {
 		this.init = _init;
 		this.points = [];
 		this.stroke = "black";
+		this.strokeWidth = 2;
 	}
-//stroke
-	add(p5, point, stroke) {
+	// Adds stroke
+	add(p5, point, stroke, strokeWidth) {
+		p5.smooth();
+		this.strokeWidth = strokeWidth;
+		p5.strokeWeight(this.strokeWidth);
 		this.points.push(point);
 		this.stroke = stroke;
 		p5.stroke(this.stroke);
@@ -24,7 +29,6 @@ class Stroke {
 
 let ALL_STROKES = [];
 
-
 class Canvas extends Component {
 
     constructor(props) {
@@ -34,6 +38,7 @@ class Canvas extends Component {
 			erasing: false,
 			drawing: false,
 			strokes: "black",
+			strokeWidth: 2,
 		}
 	}
 
@@ -44,29 +49,8 @@ class Canvas extends Component {
 		// var eraserbtn = p5.createButton("Erase All");
 		// eraserbtn.parent(parent);
 		// eraserbtn.mousePressed(this.resetSketch);
-
-		// var drawBlack = p5.createButton("Black Pen");
-		// drawBlack.parent(parent);
-		// drawBlack.mousePressed(this.changeBlackColor);
-
-		// var drawRed = p5.createButton("Red Pen");
-		// drawRed.parent(parent);
-		// drawRed.mousePressed(this.changeRedColor);
-
-
-		// var drawYellow = p5.createButton("Yellow Pen");
-		// drawYellow.parent(parent);
-		// drawYellow.mousePressed(this.changeYellowColor);
-
-		// var drawBlue = p5.createButton("Blue Pen");
-		// drawBlue.parent(parent);
-		// drawBlue.mousePressed(this.changeBlueColor);
 	}
-
-	// changePenColor = () => {
-	// 	var drawGreen = p5.createButton("Green Pen");
-	// 	drawGreen.parent(parent);
-	// }
+//maybe refactor into  switch statements
 	changeWhiteColor = () => {
 		this.setState({
 			strokes: "white"
@@ -127,6 +111,19 @@ class Canvas extends Component {
 		})
 	}
 
+	changeWidth = () => {
+		if(this.state.strokeWidth === 2){
+		this.setState({
+			strokeWidth: 5,
+			})
+		}
+		else{
+			this.setState({
+				strokeWidth:2
+			})
+		}
+	}
+
 	draw = (p5) => {
 		p5.background(255);
 		p5.noLoop();
@@ -149,7 +146,7 @@ class Canvas extends Component {
 
 	mouseDragged =  (p5) => {
 		if(this.state.drawing) {
-			ALL_STROKES[this.state.lastStrokeIdx].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes);
+			ALL_STROKES[this.state.lastStrokeIdx].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes, this.state.strokeWidth);
 		}
 	}
 
