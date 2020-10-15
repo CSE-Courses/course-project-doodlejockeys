@@ -13,13 +13,14 @@ class Back extends Component {
 			<div>
 				<img src={require("../images/back.png")}
 					alt="backbutton"
-					class="backbutton" /> 
+					class="backbutton" />
 			</div>
 		)
 	}
-} 
+}
 
 function PlayPage() {
+	const preRoundState = false;
 	const gameInfo = {
 		currentGames: [
 			{ gameid: 0, joincode: "0000", currentRound: 1, totalRounds: 5, currentArtistId: 2, currentWord: "ball", currentSubRound: 1 },
@@ -35,7 +36,7 @@ function PlayPage() {
 	return (
 
 		<React.Fragment>
-			<div className="container">
+			{!preRoundState && <div className="container">
 				<div className="left-col">
 					<Scoreboard userList={gameInfo.users} />
 					<Clock />
@@ -59,7 +60,7 @@ function PlayPage() {
 						word={gameInfo.currentGames[0].currentWord}
 					/>
 				</div>
-			</div>
+			</div>}
 		</React.Fragment>
 	);
 }
