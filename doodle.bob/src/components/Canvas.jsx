@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import Sketch from 'react-p5';
 import "../styles.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPencilAlt, faEraser, faFillDrip, faCircle, faTrashAlt, faUndoAlt, faPaintBrush } from "@fortawesome/free-solid-svg-icons";
 
 
 class Stroke {
 	constructor(_init) {
 		this.init = _init;
 		this.points = [];
-		this.stroke = 0;
+		this.stroke = "black";
 	}
-
-	add(p5, point) {
+//stroke
+	add(p5, point, stroke) {
 		this.points.push(point);
+		this.stroke = stroke;
 		p5.stroke(this.stroke);
 		p5.line(this.init.x, this.init.y, point.x, point.y);
 		this.init.x = point.x;
@@ -29,7 +32,8 @@ class Canvas extends Component {
 		this.state = {
 			lastStrokeIdx: -1,
 			erasing: false,
-			drawing: false
+			drawing: false,
+			strokes: "black",
 		}
 	}
 
@@ -37,9 +41,84 @@ class Canvas extends Component {
 		p5.createCanvas(700,500).parent(parent)
 		p5.background(255);
 
-		var eraserbtn = p5.createButton("Erase All");
-		eraserbtn.mousePressed(this.resetSketch);
-		// eraserbtn.position();
+		// var eraserbtn = p5.createButton("Erase All");
+		// eraserbtn.parent(parent);
+		// eraserbtn.mousePressed(this.resetSketch);
+
+		// var drawBlack = p5.createButton("Black Pen");
+		// drawBlack.parent(parent);
+		// drawBlack.mousePressed(this.changeBlackColor);
+
+		// var drawRed = p5.createButton("Red Pen");
+		// drawRed.parent(parent);
+		// drawRed.mousePressed(this.changeRedColor);
+
+
+		// var drawYellow = p5.createButton("Yellow Pen");
+		// drawYellow.parent(parent);
+		// drawYellow.mousePressed(this.changeYellowColor);
+
+		// var drawBlue = p5.createButton("Blue Pen");
+		// drawBlue.parent(parent);
+		// drawBlue.mousePressed(this.changeBlueColor);
+	}
+
+	// changePenColor = () => {
+	// 	var drawGreen = p5.createButton("Green Pen");
+	// 	drawGreen.parent(parent);
+	// }
+	changeWhiteColor = () => {
+		this.setState({
+			strokes: "white"
+		})
+	}
+
+	changeBlackColor = () => {
+		this.setState({
+			strokes: "black"
+		})
+	}
+
+	changeRedColor = () => {
+		this.setState({
+			strokes: "red"
+		})
+	}	
+
+	changeOrangeColor = () => {
+		this.setState({
+			strokes: "orange"
+		})
+	}	
+
+	changeYellowColor = () => {
+		this.setState({
+			strokes: "yellow"
+		})
+	}
+
+	changeGreenColor = () => {
+		this.setState({
+			strokes: "green"
+		})
+	}	
+
+	changeBlueColor = () => {
+		this.setState({
+			strokes: "blue"
+		})
+	}
+
+	changeIndigoColor = () => {
+		this.setState({
+			strokes: "indigo"
+		})
+	}
+
+	changeVioletColor = () => {
+		this.setState({
+			strokes: "violet"
+		})
 	}
 
 	resetSketch = () => {
@@ -69,9 +148,8 @@ class Canvas extends Component {
 	}
 
 	mouseDragged =  (p5) => {
-
 		if(this.state.drawing) {
-			ALL_STROKES[this.state.lastStrokeIdx].add(p5, p5.createVector(p5.mouseX, p5.mouseY));
+			ALL_STROKES[this.state.lastStrokeIdx].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes);
 		}
 	}
 
@@ -92,6 +170,75 @@ class Canvas extends Component {
 				mouseDragged = {this.mouseDragged}
 				mouseReleased = {this.mouseReleased}
 				/>
+			<button className="toolbar-button"
+                    onClick={this.changeBrush}> {this.state.diffBrush ? <FontAwesomeIcon icon={faPencilAlt}/> : <FontAwesomeIcon icon={faPaintBrush}/> }
+            </button>
+			<button className="toolbar-button"
+					onClick = {this.changeWhiteColor}>
+					<FontAwesomeIcon icon={faEraser}/>
+			</button>
+			<button className="toolbar-button">
+					<FontAwesomeIcon icon={faFillDrip}/>
+			</button>
+			<button className="toolbar-button"
+					onClick={this.changeWidth}> {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm"/> : <FontAwesomeIcon icon={faCircle} size="md"/>   }
+			</button>
+			<button classname="toolbar-button"
+					style = {{height:"35px", width: "35px"}}>
+					<FontAwesomeIcon icon={faUndoAlt}/>
+			</button>
+			<button className="toolbar-button" 
+					style = {{backgroundColor:"white"}}
+					onClick={this.changeWhiteColor}>
+					1
+			</button>
+			<button className="toolbar-button" 
+					style = {{backgroundColor:"black",color:"white"}}
+					onClick={this.changeBlackColor}>
+					2
+			</button>
+			<button className="toolbar-button"
+					style = {{backgroundColor:"red"}}
+					onClick={this.changeRedColor}>
+					3
+			</button>
+			<button className="toolbar-button"
+					style = {{backgroundColor:"orange"}}
+					onClick={this.changeOrangeColor}>
+					
+					4
+			</button>
+			<button className="toolbar-button"
+					style = {{backgroundColor:"yellow"}}
+					onClick={this.changeYellowColor}>
+					5
+			</button>
+			<button className="toolbar-button"
+					style = {{backgroundColor:"green"}}
+					onClick={this.changeGreenColor}>
+					6
+			</button>
+			<button className="toolbar-button"
+					style = {{backgroundColor:"blue", color: "white"}}
+					onClick={this.changeBlueColor}>
+					7
+			</button>
+			<button className="toolbar-button"
+					style = {{backgroundColor:"indigo", color: "white"}}
+					onClick={this.changeIndigoColor}>
+					8
+			</button>
+			<button className="toolbar-button"
+					style = {{backgroundColor:"violet"}}
+					onClick={this.changeVioletColor}>
+					9
+			</button> 
+			|
+			<button classname="toolbar-button"
+					style ={{height:"35px", width: "35px"}}
+					onClick={this.resetSketch}>
+					<FontAwesomeIcon icon={faTrashAlt}/>
+			</button>
 		</div>
 	);
     }

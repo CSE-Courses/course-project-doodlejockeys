@@ -40,7 +40,6 @@ function PlayPage() {
 					<Clock />
 				</div>
 				<div className="center-col">
-					<Canvas />
 					<Toolbar />
 				</div>
 
