@@ -23,7 +23,6 @@ class Scoreboard extends Component {
 		const userList = this.props.userList;
 		const tags = [];
 
-		console.log(this.state.profilePictures);
 
 		for (let user of Object.keys(userList)) {
 			tags.push(

@@ -61,6 +61,18 @@ class PlayPage extends Component {
 	}
 
 	componentDidMount() {
+		if (sessionStorage.getItem("preRound")) {
+			console.log("bob")
+			this.setState({
+				preRoundState: true
+			})
+		}
+		if (!sessionStorage.getItem("preRound")) {
+			console.log("yo")
+			this.setState({
+				preRoundState: false
+			})
+		}
 		this.setState({
 			perRoundChoices: [this.state.wordOptions[Math.floor(Math.random() * this.state.wordOptions.length)], this.state.wordOptions[Math.floor(Math.random() * this.state.wordOptions.length)], this.state.wordOptions[Math.floor(Math.random() * this.state.wordOptions.length)]]
 		})
@@ -88,22 +100,27 @@ class PlayPage extends Component {
 		else {
 			this.state.gameInfo.currentGames[0].currentWord = this.state.newKeyWord
 		}
-		console.log(this.state.gameInfo.currentGames[0].currentWord)
 		this.setState({
 			preRoundState: false
 		})
+		sessionStorage.setItem("preRound", false)
+		console.log("new", this.state.preRoundState, sessionStorage.getItem("preRound"))
 		this.componentDidMount()
+		this.setState({
+			preRoundState: false
+		})
 	}
 
 
 	render() {
+		console.log("rendering", this.state.preRoundState)
 		return (
-
 			<React.Fragment>
 				{!this.state.preRoundState && <div className="container">
 					<div className="left-col">
 						<Scoreboard userList={this.state.gameInfo.users} />
-						<Clock />
+						<Clock
+						/>
 					</div>
 					<div className="center-col">
 						<RoundsUI
