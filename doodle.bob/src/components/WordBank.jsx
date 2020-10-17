@@ -9,51 +9,46 @@ import {
   Redirect
 } from "react-router-dom";
 
-const animal = ['Cat', 'Dog', 'Goldfish', 'Hamster', 'Mouse', 'Parrot', 'Rabbit', 'Fish', 'Turtle', 'Pigeon']
-const celebrities = ['Kim Kardashian', 'Beyoncé', 'Tom Hanks', 'Taylor Swift', 'Johnny Depp', 'Jim Carrey', 'Emma Watson', 'Leonardo DiCapro', 'Morgan Freeman', 'Robert Downey Jr.' ]
-const countries = ['USA', 'France', 'Spain', 'Russia', 'Canada', 'India', 'China', 'New Zealand', 'Portugal', 'Nigeria']
-const objects = ['Spoon', 'Mug', 'Shoe', 'Phone', 'Scissors', 'Pen', 'Pencil', 'Quarter', 'Laptop', 'Bottle']
-const actions = ['Swimming', 'Running', 'Cooking', 'Laughing', 'Surfing', 'Talking', 'Sleeping', 'Singing', 'Eating', 'Writing']
-const food = ['Burger', 'Bagel', 'Bacon', 'Apple', 'Spaghetti', 'Coffee', 'Lobster', 'Corn', 'Chocolate', 'Cake']
-const places = ['Church', 'Bank', 'Post Office', 'Restaurant', 'Hospital', 'School', 'Park', 'Stadium', 'House', 'Museum']
-const movies = ['Toy Story', 'Monsters Inc.', 'Finding Nemo', 'Cars', 'Ratatouille', 'WALL-E', 'UP', 'Brave', 'Finding Dory', 'Coco']
-const sports = ['Baseball', 'Rowing', 'Softball', 'Volleyball', 'Basketball', 'Archery', 'Climbing', 'Fishing', 'Hockey', 'Diving']
 
 class WordBank extends React.Component {
     constructor(props) {
         super(props);
+        this.addCategory = this.addCategory.bind(this);
         this.state = {
             results : [],
+            animal: ['Cat', 'Dog', 'Goldfish', 'Hamster', 'Mouse', 'Parrot', 'Rabbit', 'Fish', 'Turtle', 'Pigeon'],
+            celebrities: ['Kim Kardashian', 'Beyoncé', 'Tom Hanks', 'Taylor Swift', 'Johnny Depp', 'Jim Carrey', 'Emma Watson', 'Leonardo DiCapro', 'Morgan Freeman', 'Robert Downey Jr.' ],
+            countries: ['USA', 'France', 'Spain', 'Russia', 'Canada', 'India', 'China', 'New Zealand', 'Portugal', 'Nigeria'],
+            objects: ['Spoon', 'Mug', 'Shoe', 'Phone', 'Scissors', 'Pen', 'Pencil', 'Quarter', 'Laptop', 'Bottle'],
+            actions: ['Swimming', 'Running', 'Cooking', 'Laughing', 'Surfing', 'Talking', 'Sleeping', 'Singing', 'Eating', 'Writing'],
+            food: ['Burger', 'Bagel', 'Bacon', 'Apple', 'Spaghetti', 'Coffee', 'Lobster', 'Corn', 'Chocolate', 'Cake'],
+            places: ['Church', 'Bank', 'Post Office', 'Restaurant', 'Hospital', 'School', 'Park', 'Stadium', 'House', 'Museum'],
+            movies: ['Toy Story', 'Monsters Inc.', 'Finding Nemo', 'Cars', 'Ratatouille', 'WALL-E', 'UP', 'Brave', 'Finding Dory', 'Coco'],
+            sports: ['Baseball', 'Rowing', 'Softball', 'Volleyball', 'Basketball', 'Archery', 'Climbing', 'Fishing', 'Hockey', 'Diving'],
         }
     }
 
-    addCategory(x) {
-        this.setState.results.push(x)
-    }
-    
-    updateContent(){
-        this.setState({message: "Added!"});
-    }
-    
+    addCategory = (array) => {
+        const current = this.state.results
+        current.push(array);
+        this.setState({
+            results: current
+        })
+    };
+
     handleClick = () => {
-        console.log('added!')
-        console.log(this.setState.results)
+        console.log('added!');
+        
     }
+
     render() {
+        console.log(this.state.results);
         return (
             <div>
                 <h1 className="title">DOODLE.BOB</h1>
                 <p className="heading"> Choose a category </p>
                 <div className="catbuttons">
-                    <button onClick={this.state.results.push(animal), this.handleClick} className="cat_animals"> Animals<span role="img" aria-label="dog">🐶</span></button>
-                    <button onClick={this.state.results.push(celebrities)} className="cat_celebs"> Celebrities<span role="img" aria-label="star">⭐</span></button>
-                    <button onClick={this.state.results.push(countries),this.updateContent} className="cat_count"> Countries <span role="img" aria-label="flag">🎌</span></button>
-                    <button onClick={this.state.results.push(places)} className="cat_pl"> Places<span role="img" aria-label="sheep">🏢</span></button>
-                    <button onClick={this.state.results.push(objects)} className="cat_objs"> Objects<span role="img" aria-label="spaceship">🛸</span></button>
-                    <button onClick={this.state.results.push(movies)} className="cat_movie"> Movies<span role="img" aria-label="movies">🎥</span></button>
-                    <button onClick={this.state.results.push(actions),this.updateContent} className="cat_act"> Actions<span role="img" aria-label="action">🏃‍♀️</span></button>
-                    <button onClick={this.state.results.push(sports)} className="cat_sport"> Sports<span role="img" aria-label="sports">⚾</span></button>
-                    <button onClick={this.state.results.push(food)} className="cat_food"> Food<span role="img" aria-label="food">🥐</span></button>
+                    <button onClick={() => this.addCategory(this.animal), this.handleClick} className="cat_animals"> Animals<span role="img" aria-label="dog">🐶</span></button>
                  </div>
               <div className="submit">
                             <center>
@@ -63,8 +58,7 @@ class WordBank extends React.Component {
                             </center>
                </div> 
             </div>
-        );
+        )
     }
 }
-
 export default WordBank;
