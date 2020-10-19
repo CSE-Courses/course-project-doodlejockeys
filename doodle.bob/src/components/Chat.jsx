@@ -52,7 +52,7 @@ class Chat extends Component {
                 orderedMessages: this.state.orderedMessages.reverse()
             })
             let copyMessages = this.state.messages;
-            if (this.state.newMessage == this.props.word) {
+            if (this.state.newMessage.toLowerCase() == this.props.word.toLowerCase()) {
                 copyMessages.push({
                     userid: 1,
                     messageid: this.state.messageidLast + 1,
@@ -60,7 +60,6 @@ class Chat extends Component {
                     correctFound: true
                 });
                 this.props.userList[1].thisRoundScore = 1
-                console.log(this.props.userList[1].thisRoundScore)
                 this.setState({
                     messages: copyMessages,
                     newMessage: "",

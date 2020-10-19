@@ -34,6 +34,7 @@ class Stroke {
         this.init.x = point.x;
         this.init.y = point.y;
     }
+
 }
 //holds all strokes made
 let ALL_STROKES = [];
@@ -212,7 +213,7 @@ class Canvas extends Component {
             ALL_STROKES[this.state.lastStrokeIdx].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes, this.state.strokeWidth);
         }
     }
-
+    
     mouseReleased = () => {
         this.setState({drawing: false, erasing: false});
     }
