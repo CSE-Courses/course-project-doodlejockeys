@@ -78,7 +78,7 @@ class PlayPage extends Component {
 		})
 
 	};
-
+  
 	changeWordChoice(index) {
 		this.setState({
 			choice: index
@@ -129,7 +129,6 @@ class PlayPage extends Component {
 							round={this.state.gameInfo.currentGames[0].currentRound}
 							word={this.state.gameInfo.currentGames[0].currentWord}
 						/>
-						<Canvas />
 						<Toolbar />
 					</div>
 
