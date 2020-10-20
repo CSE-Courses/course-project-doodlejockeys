@@ -36,14 +36,14 @@ class Clock extends Component {
         clearInterval(this.timerId);
     }
 
-/*	setRounds(obj) {
+	setRounds(obj) {
 		var newMaxRound = parseInt(obj.target.value);
 
 		this.setState({
 			maxrounds : newMaxRound
 		});
 	}
-*/
+
 	setTimer(obj) {
 		var newTimer = parseInt(obj.target.value);
 
