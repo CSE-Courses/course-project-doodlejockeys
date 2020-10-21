@@ -251,7 +251,8 @@ body {
 .center-col {
 	display: flex;
 	flex-direction: column;
-	flex: 3;
+  flex: 3;
+  position: relative;
 }
 
 .right-col {
@@ -535,12 +536,34 @@ body {
 }
 
 .startgame{
-    float: center;
-    width: 300px;
-    font-family: 'Fredoka One', cursive;
-    color: rgba(0,0,0,0.65);
-    text-align: center;
-    letter-spacing: 3px;
-    text-decoration: none;
-    margin:15px;
+  float: center;
+  width: 300px;
+  font-family: 'Fredoka One', cursive;
+  color: rgba(0,0,0,0.65);
+  text-align: center;
+  letter-spacing: 3px;
+  text-decoration: none;
+  margin:15px;
 }
+
+/* ScoreboardEnd */
+.scoreboard-end {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.95);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 2rem;
+}
+
+.hidden {
+  display: none;
+}
+
+/* ScoreboardEnd -- end */

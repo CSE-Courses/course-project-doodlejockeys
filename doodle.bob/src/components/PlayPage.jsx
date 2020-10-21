@@ -6,6 +6,7 @@ import Canvas from './Canvas';
 import Toolbar from './Toolbar';
 import RoundsUI from './RoundsUI';
 import WordChoice from './WordChoice';
+import ScoreboardEnd from './ScoreboardEnd';
 import {
 	BrowserRouter as Router,
 	Route,
@@ -32,6 +33,7 @@ class PlayPage extends Component {
 		super(props);
 		this.state = {
 			preRoundState: true,
+			score_end_visible: false,
 			wordOptions: ['Cat', 'Dog', 'Goldfish', 'Hamster', 'Mouse', 'Parrot', 'Rabbit', 'Fish', 'Turtle', 'Pigeon'
 				, 'Kim Kardashian', 'Beyoncé', 'Tom Hanks', 'Taylor Swift', 'Johnny Depp', 'Jim Carrey', 'Emma Watson', 'Leonardo DiCapro', 'Morgan Freeman', 'Robert Downey Jr.'
 				, 'USA', 'France', 'Spain', 'Russia', 'Canada', 'India', 'China', 'New Zealand', 'Portugal', 'Nigeria'
@@ -58,6 +60,8 @@ class PlayPage extends Component {
 			}
 		}
 		this.handleNewKeyWord = this.handleNewKeyWord.bind(this);
+		this.toggleVisibility = this.toggleVisibility.bind(this);
+		this.updateScore = this.updateScore.bind(this);
 	}
 
 	componentDidMount() {
@@ -111,8 +115,54 @@ class PlayPage extends Component {
 		})
 	}
 
+	/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */
+	toggleVisibility(e) {
+		this.setState({
+			score_end_visible: !this.state.score_end_visible
+		});
+
+		if(!this.state.score_end_visible) {
+			e.target.textContent = "Hide end scoreboard"
+		
+		} else {
+			e.target.textContent = "Show end scoreboard"
+		}
+	}
+
+	updateScore() {
+		const select = document.querySelector("#players");
+		const input = document.querySelector("#updateScore");
+
+		const selectedOption = select.options[select.selectedIndex];
+		const uid = selectedOption.dataset.uid;
+		const updateValue = input.value;
+
+		if(updateValue < 0) {
+			return;
+		}
+
+		this.state.gameInfo.users[uid].preRoundScore = updateValue;
+
+		this.setState({
+			score_end_visible: this.state.score_end_visible
+		})
+		
+	}
+			
+	/* DEMONSTRATION END */
+
 
 	render() {
+		/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */
+		const players = [];
+		for(let key of Object.keys(this.state.gameInfo.users)) {
+			players.push(
+				<option data-uid={key} value={this.state.gameInfo.users[key].username}>{this.state.gameInfo.users[key].username}</option>
+			);
+		}
+		const select = <select name="players" id="players">${players}</select>
+		const input = <input type="number" id="updateScore"></input>
+		/* DEMONSTRATION END */
 		console.log("rendering", this.state.preRoundState)
 		return (
 			<React.Fragment>
@@ -121,8 +171,21 @@ class PlayPage extends Component {
 						<Scoreboard userList={this.state.gameInfo.users} />
 						<Clock
 						/>
+						{/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */}
+						<button onClick={this.toggleVisibility}>Show end scoreboard</button>
+						<div className="debug">
+							<label htmlFor="players">Update score:</label>
+							{select}
+							{input}
+							<button onClick={this.updateScore}>Update</button>
+						</div>
+						{/* DEMONSTRATION END */}
 					</div>
 					<div className="center-col">
+						<ScoreboardEnd 
+							userList={this.state.gameInfo.users}
+							isVisible={this.state.score_end_visible}
+						/>
 						<RoundsUI
 							game={this.state.gameInfo.currentGames[0]}
 							userList={this.state.gameInfo.users}
