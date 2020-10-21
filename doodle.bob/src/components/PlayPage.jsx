@@ -44,7 +44,8 @@ class PlayPage extends Component {
 				food: ['Burger', 'Bagel', 'Bacon', 'Apple', 'Spaghetti', 'Coffee', 'Lobster', 'Corn', 'Chocolate', 'Cake'],
 				places: ['Church', 'Bank', 'Post Office', 'Restaurant', 'Hospital', 'School', 'Park', 'Stadium', 'House', 'Museum'],
 				movies: ['Toy Story', 'Monsters Inc.', 'Finding Nemo', 'Cars', 'Ratatouille', 'WALL-E', 'UP', 'Brave', 'Finding Dory', 'Coco'],
-				sports: ['Baseball', 'Rowing', 'Softball', 'Volleyball', 'Basketball', 'Archery', 'Climbing', 'Fishing', 'Hockey', 'Diving']
+				sports: ['Baseball', 'Rowing', 'Softball', 'Volleyball', 'Basketball', 'Archery', 'Climbing', 'Fishing', 'Hockey', 'Diving'],
+				pokemon: ['Pikachu', 'Bulbasaur', 'Squirtle', 'Charmander', 'Mew', 'Suicune', 'Celebi', 'Shuckle', 'Wooper', 'Wooloo'],
 			},
 			perRoundChoices: [0, 0, 0],
 			choice: 0,

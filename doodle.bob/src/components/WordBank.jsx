@@ -22,6 +22,7 @@ class WordBank extends React.Component {
             places: ['Church', 'Bank', 'Post Office', 'Restaurant', 'Hospital', 'School', 'Park', 'Stadium', 'House', 'Museum'],
             movies: ['Toy Story', 'Monsters Inc.', 'Finding Nemo', 'Cars', 'Ratatouille', 'WALL-E', 'UP', 'Brave', 'Finding Dory', 'Coco'],
             sports: ['Baseball', 'Rowing', 'Softball', 'Volleyball', 'Basketball', 'Archery', 'Climbing', 'Fishing', 'Hockey', 'Diving'],
+            pokemon: ['Pikachu', 'Bulbasaur', 'Squirtle', 'Charmander', 'Mew', 'Suicune', 'Celebi', 'Shuckle', 'Wooper', 'Wooloo'],
         }
         this.submitWordBank = this.submitWordBank.bind(this);
     }
@@ -61,8 +62,24 @@ class WordBank extends React.Component {
                     <div className="catbuttons">
                         {this.state.results.includes("animal") && <button onClick={() => this.removeCategory("animal")} className="cat_animals" style={{ border: "3px solid green" }}> Animals<span role="img" aria-label="dog">🐶</span></button>}
                         {!this.state.results.includes("animal") && <button onClick={() => this.addCategory("animal")} className="cat_animals"> Animals<span role="img" aria-label="dog">🐶</span></button>}
-                        {this.state.results.includes("celebrities") && <button onClick={() => this.removeCategory("celebrities")} className="cat_animals" style={{ border: "3px solid green" }}> Celebrities<span role="img" aria-label="dog">🐶</span></button>}
-                        {!this.state.results.includes("celebrities") && <button onClick={() => this.addCategory("celebrities")} className="cat_animals"> Celebrities<span role="img" aria-label="dog">🐶</span></button>}
+                        {this.state.results.includes("celebrities") && <button onClick={() => this.removeCategory("celebrities")} className="cat_celebs" style={{ border: "3px solid green" }}> Celebrities<span role="img" aria-label="star">⭐</span></button>}
+                        {!this.state.results.includes("celebrities") && <button onClick={() => this.addCategory("celebrities")} className="cat_celebs"> Celebrities<span role="img" aria-label="star">⭐</span></button>}
+                        {this.state.results.includes("countries") && <button onClick={() => this.removeCategory("countries")} className="cat_count" style={{ border: "3px solid green" }}> Countries<span role="img" aria-label="flag">🎌</span></button>}
+                        {!this.state.results.includes("countries") && <button onClick={() => this.addCategory("countries")} className="cat_count"> Countries<span role="img" aria-label="flag">🎌</span></button>}
+                        {this.state.results.includes("objects") && <button onClick={() => this.removeCategory("objects")} className="cat_objs" style={{ border: "3px solid green" }}> Objects<span role="img" aria-label="spaceship">🛸</span></button>}
+                        {!this.state.results.includes("objects") && <button onClick={() => this.addCategory("objects")} className="cat_objs"> Objects<span role="img" aria-label="spaceship">🛸</span></button>}
+                        {this.state.results.includes("actions") && <button onClick={() => this.removeCategory("actions")} className="cat_act" style={{ border: "3px solid green" }}> Actions<span role="img" aria-label="action">🏃‍♀️</span></button>}
+                        {!this.state.results.includes("actions") && <button onClick={() => this.addCategory("actions")} className="cat_act"> Actions<span role="img" aria-label="action">🏃‍♀️</span></button>}
+                        {this.state.results.includes("food") && <button onClick={() => this.removeCategory("food")} className="cat_food" style={{ border: "3px solid green" }}> Food<span role="img" aria-label="food">🥐</span></button>}
+                        {!this.state.results.includes("food") && <button onClick={() => this.addCategory("food")} className="cat_food"> Food<span role="img" aria-label="food">🥐</span></button>}
+                        {this.state.results.includes("places") && <button onClick={() => this.removeCategory("places")} className="cat_pl" style={{ border: "3px solid green" }}> Places<span role="img" aria-label="sheep">🏢</span></button>}
+                        {!this.state.results.includes("places") && <button onClick={() => this.addCategory("places")} className="cat_pl"> Places<span role="img" aria-label="sheep">🏢</span></button>}
+                        {this.state.results.includes("movies") && <button onClick={() => this.removeCategory("movies")} className="cat_movie" style={{ border: "3px solid green" }}> Movies<span role="img" aria-label="movies">🎥</span></button>}
+                        {!this.state.results.includes("movies") && <button onClick={() => this.addCategory("movies")} className="cat_movie"> Movies<span role="img" aria-label="movies">🎥</span></button>}
+                        {this.state.results.includes("sports") && <button onClick={() => this.removeCategory("sports")} className="cat_sport" style={{ border: "3px solid green" }}> Sports<span role="img" aria-label="sports">⚾</span></button>}
+                        {!this.state.results.includes("sports") && <button onClick={() => this.addCategory("sports")} className="cat_sport"> Sports<span role="img" aria-label="sports">⚾</span></button>}
+                        {this.state.results.includes("pokemon") && <button onClick={() => this.removeCategory("pokemon")} className="cat_animals" style={{ border: "3px solid green" }}> Pokemon<span role="img" aria-label="pokemon">🎮</span></button>}
+                        {!this.state.results.includes("pokemon") && <button onClick={() => this.addCategory("pokemon")} className="cat_animals"> Pokemon<span role="img" aria-label="sports">🎮</span></button>}
                     </div>
 
                     <center>
