@@ -27,7 +27,6 @@ class RoundsUI extends Component {
         for (let user in this.props.userList) {
             users.push(user)
         }
-        console.log(rounds)
         return (
             <div style={{ backgroundColor: "rgb(41, 41, 41)", width: "100%", margin: "0px", display: "flex" }}>
                 {this.state.roundArtist.map((round) => (
