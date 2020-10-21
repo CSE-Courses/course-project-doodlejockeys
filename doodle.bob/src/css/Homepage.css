@@ -204,6 +204,11 @@ body {
   border-radius: 10px;
 }
 
+.tabOpen:focus {
+  outline: none;
+}
+
+
 .tabClosed {
   float: right;
   color: black;
@@ -220,6 +225,10 @@ body {
   border-bottom: 0cm;
   cursor: pointer;
   margin-top: 20px;
+}
+
+.tabClosed:focus {
+  outline: none;
 }
 
 .gameCode {

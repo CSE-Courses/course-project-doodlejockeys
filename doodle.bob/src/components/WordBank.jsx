@@ -61,6 +61,8 @@ class WordBank extends React.Component {
                     <div className="catbuttons">
                         {this.state.results.includes("animal") && <button onClick={() => this.removeCategory("animal")} className="cat_animals" style={{ border: "3px solid green" }}> Animals<span role="img" aria-label="dog">🐶</span></button>}
                         {!this.state.results.includes("animal") && <button onClick={() => this.addCategory("animal")} className="cat_animals"> Animals<span role="img" aria-label="dog">🐶</span></button>}
+                        {this.state.results.includes("celebrities") && <button onClick={() => this.removeCategory("celebrities")} className="cat_animals" style={{ border: "3px solid green" }}> Celebrities<span role="img" aria-label="dog">🐶</span></button>}
+                        {!this.state.results.includes("celebrities") && <button onClick={() => this.addCategory("celebrities")} className="cat_animals"> Celebrities<span role="img" aria-label="dog">🐶</span></button>}
                     </div>
 
                     <center>

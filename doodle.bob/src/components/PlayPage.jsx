@@ -34,15 +34,18 @@ class PlayPage extends Component {
 		this.state = {
 			preRoundState: true,
 			score_end_visible: false,
-			wordOptions: ['Cat', 'Dog', 'Goldfish', 'Hamster', 'Mouse', 'Parrot', 'Rabbit', 'Fish', 'Turtle', 'Pigeon'
-				, 'Kim Kardashian', 'Beyoncé', 'Tom Hanks', 'Taylor Swift', 'Johnny Depp', 'Jim Carrey', 'Emma Watson', 'Leonardo DiCapro', 'Morgan Freeman', 'Robert Downey Jr.'
-				, 'USA', 'France', 'Spain', 'Russia', 'Canada', 'India', 'China', 'New Zealand', 'Portugal', 'Nigeria'
-				, 'Spoon', 'Mug', 'Shoe', 'Phone', 'Scissors', 'Pen', 'Pencil', 'Quarter', 'Laptop', 'Bottle'
-				, 'Swimming', 'Running', 'Cooking', 'Laughing', 'Surfing', 'Talking', 'Sleeping', 'Singing', 'Eating', 'Writing'
-				, 'Burger', 'Bagel', 'Bacon', 'Apple', 'Spaghetti', 'Coffee', 'Lobster', 'Corn', 'Chocolate', 'Cake'
-				, 'Church', 'Bank', 'Post Office', 'Restaurant', 'Hospital', 'School', 'Park', 'Stadium', 'House', 'Museum'
-				, 'Toy Story', 'Monsters Inc.', 'Finding Nemo', 'Cars', 'Ratatouille', 'WALL-E', 'UP', 'Brave', 'Finding Dory', 'Coco'
-				, 'Baseball', 'Rowing', 'Softball', 'Volleyball', 'Basketball', 'Archery', 'Climbing', 'Fishing', 'Hockey', 'Diving'],
+			wordOptions: [],
+			allWords: {
+				animal: ['Cat', 'Dog', 'Goldfish', 'Hamster', 'Mouse', 'Parrot', 'Rabbit', 'Fish', 'Turtle', 'Pigeon'],
+				celebrities: ['Kim Kardashian', 'Beyoncé', 'Tom Hanks', 'Taylor Swift', 'Johnny Depp', 'Jim Carrey', 'Emma Watson', 'Leonardo DiCapro', 'Morgan Freeman', 'Robert Downey Jr.'],
+				countries: ['USA', 'France', 'Spain', 'Russia', 'Canada', 'India', 'China', 'New Zealand', 'Portugal', 'Nigeria'],
+				objects: ['Spoon', 'Mug', 'Shoe', 'Phone', 'Scissors', 'Pen', 'Pencil', 'Quarter', 'Laptop', 'Bottle'],
+				actions: ['Swimming', 'Running', 'Cooking', 'Laughing', 'Surfing', 'Talking', 'Sleeping', 'Singing', 'Eating', 'Writing'],
+				food: ['Burger', 'Bagel', 'Bacon', 'Apple', 'Spaghetti', 'Coffee', 'Lobster', 'Corn', 'Chocolate', 'Cake'],
+				places: ['Church', 'Bank', 'Post Office', 'Restaurant', 'Hospital', 'School', 'Park', 'Stadium', 'House', 'Museum'],
+				movies: ['Toy Story', 'Monsters Inc.', 'Finding Nemo', 'Cars', 'Ratatouille', 'WALL-E', 'UP', 'Brave', 'Finding Dory', 'Coco'],
+				sports: ['Baseball', 'Rowing', 'Softball', 'Volleyball', 'Basketball', 'Archery', 'Climbing', 'Fishing', 'Hockey', 'Diving']
+			},
 			perRoundChoices: [0, 0, 0],
 			choice: 0,
 			newKeyWord: "",
@@ -66,23 +69,31 @@ class PlayPage extends Component {
 
 	componentDidMount() {
 		if (sessionStorage.getItem("preRound")) {
-			console.log("bob")
 			this.setState({
 				preRoundState: true
 			})
 		}
 		if (!sessionStorage.getItem("preRound")) {
-			console.log("yo")
 			this.setState({
 				preRoundState: false
 			})
 		}
+		let categoriesChosen = sessionStorage.getItem("wordCategories").split(',');
+		let current = []
+		for (let category of categoriesChosen) {
+			if (Object.keys(this.state.allWords).includes(category)) {
+				for (let word of this.state.allWords[category]) {
+					current.push(word)
+				}
+			}
+		}
 		this.setState({
-			perRoundChoices: [this.state.wordOptions[Math.floor(Math.random() * this.state.wordOptions.length)], this.state.wordOptions[Math.floor(Math.random() * this.state.wordOptions.length)], this.state.wordOptions[Math.floor(Math.random() * this.state.wordOptions.length)]]
+			wordOptions: current,
+			perRoundChoices: [current[Math.floor(Math.random() * current.length)], current[Math.floor(Math.random() * current.length)], current[Math.floor(Math.random() * current.length)]]
 		})
 
 	};
-  
+
 	changeWordChoice(index) {
 		this.setState({
 			choice: index
@@ -121,9 +132,9 @@ class PlayPage extends Component {
 			score_end_visible: !this.state.score_end_visible
 		});
 
-		if(!this.state.score_end_visible) {
+		if (!this.state.score_end_visible) {
 			e.target.textContent = "Hide end scoreboard"
-		
+
 		} else {
 			e.target.textContent = "Show end scoreboard"
 		}
@@ -137,7 +148,7 @@ class PlayPage extends Component {
 		const uid = selectedOption.dataset.uid;
 		const updateValue = input.value;
 
-		if(updateValue < 0) {
+		if (updateValue < 0) {
 			return;
 		}
 
@@ -146,16 +157,16 @@ class PlayPage extends Component {
 		this.setState({
 			score_end_visible: this.state.score_end_visible
 		})
-		
+
 	}
-			
+
 	/* DEMONSTRATION END */
 
 
 	render() {
 		/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */
 		const players = [];
-		for(let key of Object.keys(this.state.gameInfo.users)) {
+		for (let key of Object.keys(this.state.gameInfo.users)) {
 			players.push(
 				<option data-uid={key} value={this.state.gameInfo.users[key].username}>{this.state.gameInfo.users[key].username}</option>
 			);
@@ -182,7 +193,7 @@ class PlayPage extends Component {
 						{/* DEMONSTRATION END */}
 					</div>
 					<div className="center-col">
-						<ScoreboardEnd 
+						<ScoreboardEnd
 							userList={this.state.gameInfo.users}
 							isVisible={this.state.score_end_visible}
 						/>
