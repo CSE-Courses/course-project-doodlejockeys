@@ -89,7 +89,7 @@ class Chat extends Component {
             <div className="chat">
                 <div className="conversation">
                     <header className="chatHeader">Chat and Guess!</header>
-                    <p className="roundName">Round {this.props.round}</p>
+                    <p className="roundName"> Round {this.props.round}</p>
                     <hr></hr>
                     <div className="chatHistory">
                         {this.state.orderedMessages.map((message) => (
