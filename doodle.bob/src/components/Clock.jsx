@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 
 const ROUND_VALUE = 1;
-const DEFAULT_TIMER = 2;
 
 
 class Clock extends Component {
@@ -12,17 +11,16 @@ class Clock extends Component {
 
         
       this.state = {
-        seconds: DEFAULT_TIMER,
+        seconds: sessionStorage.getItem("time"),
         paused: false,
         status: "Pause",
 		round : ROUND_VALUE,
-		timervalue : DEFAULT_TIMER,
-		maxrounds : 3
+		timervalue : sessionStorage.getItem("time"),
+		maxrounds : sessionStorage.getItem("rounds")
 		
       };
       this.clockToggle = this.clockToggle.bind(this);
-	  this.setTimer = this.setTimer.bind(this);
-	  this.setRounds = this.setRounds.bind(this);
+	
     }
     
     
@@ -35,22 +33,6 @@ class Clock extends Component {
     componentWillUnmount() {
         clearInterval(this.timerId);
     }
-
-	setRounds(obj) {
-		var newMaxRound = parseInt(obj.target.value);
-
-		this.setState({
-			maxrounds : newMaxRound
-		});
-	}
-
-	setTimer(obj) {
-		var newTimer = parseInt(obj.target.value);
-
-		this.setState({
-			timervalue : newTimer
-		});
-	}
 
     clockToggle() {
 		if(this.state.status != "Game Over")
@@ -74,6 +56,7 @@ class Clock extends Component {
     }
 
     tick() {
+	console.log(this.state.seconds);
       if(this.state.seconds <= 1 && this.state.status != "Game Over") {
 	clearInterval(this.timerId);
         this.setState({
@@ -101,17 +84,6 @@ class Clock extends Component {
     render(props) {
         return (
 		<div>
-			<div>
-				<button value = "5" onClick={this.setRounds}>5 Rounds</button>
-				<button value = "10" onClick={this.setRounds}>10 Rounds</button>
-				<button value = "15" onClick={this.setRounds}>15 Rounds</button>
-				
-			</div>
-			<div>
-				<button value = "30" onClick={this.setTimer}>30 seconds</button>
-				<button value = "60" onClick={this.setTimer}>60 seconds</button>
-				<button value = "90" onClick={this.setTimer}>90 seconds</button>
-			</div>
 	     <div id="clock">
 	         <p>{this.state.seconds + "s"}</p>
 	         <button onClick={this.clockToggle}>{this.state.status}</button>
