@@ -30,13 +30,17 @@ class Clock extends Component {
 		this.timerId = setInterval(
 			() => this.tick(), 1000
 		);
-		var newTimer = parseInt(sessionStorage.getItem("timeAmount"));
-
 		this.setState({
-			timervalue: newTimer,
-			seconds: newTimer
-		});
-		console.log(newTimer)
+			round: this.props.round
+		})
+		var newTimer = parseInt(sessionStorage.getItem("timeAmount"));
+		if (newTimer) {
+			this.setState({
+				timervalue: newTimer,
+				seconds: newTimer,
+
+			});
+		}
 	}
 
 	componentWillUnmount() {
@@ -80,11 +84,16 @@ class Clock extends Component {
 
 	tick() {
 		if (this.state.seconds <= 1 && this.state.status != "Game Over") {
+
 			clearInterval(this.timerId);
 			this.setState({
 				status: "Start Next Round",
-				round: this.state.round + 1
 			})
+			if (this.props.game.currentSubRound > Object.keys(this.props.userList).length) {
+				this.setState({
+					round: this.state.round + 1
+				})
+			}
 		}
 
 		if (this.state.round > this.state.maxrounds) {
