@@ -38,7 +38,7 @@ class Clock extends Component {
 			this.setState({
 				timervalue: newTimer,
 				seconds: newTimer,
-
+				maxrounds: this.props.game.totalRounds
 			});
 		}
 	}
@@ -51,7 +51,7 @@ class Clock extends Component {
 		var newMaxRound = parseInt(obj.target.value);
 
 		this.setState({
-			maxrounds: newMaxRound
+			maxrounds: this.props.game.totalRounds
 		});
 	}
 
@@ -96,7 +96,7 @@ class Clock extends Component {
 			}
 		}
 
-		if (this.state.round > this.state.maxrounds) {
+		if (this.state.round > this.props.game.totalRounds) {
 			this.setState({
 				status: "Game Over",
 				seconds: 0,
