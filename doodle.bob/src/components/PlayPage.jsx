@@ -50,11 +50,12 @@ class PlayPage extends Component {
 			perRoundChoices: [0, 0, 0],
 			choice: 0,
 			newKeyWord: "",
+			artists: {},
 
 			gameInfo: {
 				currentGames: [
-					{ gameid: 0, joincode: "0000", currentRound: 1, totalRounds: 5, currentArtistId: 2, currentWord: "ball", currentSubRound: 1 },
-					{ gameid: 1, joincode: "1111", currentRound: 1, totalRounds: 5, currentArtistId: 2, currentWord: "ball", currentSubRound: 1 }
+					{ gameid: 0, joincode: "0000", currentRound: 1, totalRounds: 5, currentArtistId: 1, currentWord: "ball", currentSubRound: 1 },
+					{ gameid: 1, joincode: "1111", currentRound: 1, totalRounds: 5, currentArtistId: 1, currentWord: "ball", currentSubRound: 1 }
 				],
 				users: {
 					1: { userid: 1, username: "iguanaoverlord", profilePic: "duck", role: "guesser", preRoundScore: 0, thisRoundScore: 0 },
@@ -69,6 +70,10 @@ class PlayPage extends Component {
 	}
 
 	componentDidMount() {
+		this.loadArtistHistory()
+		let thisRoundArtist = this.getRandomUnusedNumber()
+		sessionStorage.setItem("currentArtist", thisRoundArtist)
+		this.state.gameInfo.currentGames[0].currentArtistId = sessionStorage.getItem("currentArtist")
 		if (sessionStorage.getItem("preRound")) {
 			this.setState({
 				preRoundState: true
@@ -78,6 +83,23 @@ class PlayPage extends Component {
 			this.setState({
 				preRoundState: false
 			})
+		}
+		if (this.state.gameInfo.currentGames[0].currentSubRound > Object.keys(this.state.gameInfo.users).length) {
+			this.state.gameInfo.currentGames[0].currentRound = parseInt(sessionStorage.getItem("currentRound")) + 1
+			sessionStorage.setItem("currentRound", this.state.gameInfo.currentGames[0].currentRound)
+			this.state.gameInfo.currentGames[0].currentSubRound = 1
+			sessionStorage.setItem("currentSubRound", 1)
+			let tempArtists = {}
+			for (let user of Object.keys(this.state.gameInfo.users)) {
+				tempArtists[user] = 0
+			}
+			this.setState({
+				artists: tempArtists
+			})
+		}
+		else {
+			this.state.gameInfo.currentGames[0].currentRound = parseInt(sessionStorage.getItem("currentRound"))
+			this.state.gameInfo.currentGames[0].currentSubRound = parseInt(sessionStorage.getItem("currentSubRound")) + 1
 		}
 		let categoriesChosen = sessionStorage.getItem("wordCategories").split(',');
 		let current = []
@@ -94,6 +116,47 @@ class PlayPage extends Component {
 		})
 
 	};
+
+	loadArtistHistory() {
+		let tempArtists = {}
+		for (let user of Object.keys(this.state.gameInfo.users)) {
+			tempArtists[user] = 0
+		}
+		let artistHistory = sessionStorage.getItem("artistHistory").split(',')
+		let howDeepInRound = artistHistory.length % Object.keys(this.state.gameInfo.users).length
+		for (let i = 1; i <= howDeepInRound; i++) {
+			tempArtists[parseInt(artistHistory[artistHistory.length - i])] = 1
+		}
+		this.setState({
+			artists: tempArtists
+		})
+	}
+
+	getRandomUnusedNumber() {
+		let currentChoice = Math.floor(Math.random() * (Object.keys(this.state.gameInfo.users).length + 1));
+		let numIsGood = false;
+		let allOnes = true;
+		for (let artist of Object.keys(this.state.artists)) {
+			if (artist == 0) {
+				allOnes = false;
+			}
+		}
+		if (allOnes) {
+			this.loadArtistHistory()
+		}
+		while (!numIsGood) {
+			if (currentChoice == 0) {
+				currentChoice = Math.floor(Math.random() * (Object.keys(this.state.gameInfo.users).length + 1));
+			}
+			else if (this.state.artists[currentChoice] == 1) {
+				currentChoice = Math.floor(Math.random() * (Object.keys(this.state.gameInfo.users).length + 1));
+			}
+			else {
+				numIsGood = true;
+			}
+		}
+		return currentChoice;
+	}
 
 	changeWordChoice(index) {
 		this.setState({
@@ -120,12 +183,20 @@ class PlayPage extends Component {
 			preRoundState: false
 		})
 		sessionStorage.setItem("preRound", false)
-		console.log("new", this.state.preRoundState, sessionStorage.getItem("preRound"))
+		sessionStorage.setItem("currentRound", this.state.gameInfo.currentGames[0].currentRound)
+		sessionStorage.setItem("currentSubRound", this.state.gameInfo.currentGames[0].currentSubRound)
 		this.componentDidMount()
 		this.setState({
 			preRoundState: false
 		})
+		let artistHistory = []
+		if (sessionStorage.getItem("artistHistory") != "") {
+			artistHistory = sessionStorage.getItem("artistHistory").split(",")
+		}
+		artistHistory.push(sessionStorage.getItem("currentArtist"))
+		sessionStorage.setItem("artistHistory", [artistHistory])
 	}
+
 
 	/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */
 	toggleVisibility(e) {
@@ -175,13 +246,15 @@ class PlayPage extends Component {
 		const select = <select name="players" id="players">${players}</select>
 		const input = <input type="number" id="updateScore"></input>
 		/* DEMONSTRATION END */
-		console.log("rendering", this.state.preRoundState)
 		return (
 			<React.Fragment>
 				{!this.state.preRoundState && <div className="container">
 					<div className="left-col">
 						<Scoreboard userList={this.state.gameInfo.users} />
 						<Clock
+							game={this.state.gameInfo.currentGames[0]}
+							userList={this.state.gameInfo.users}
+							round={this.state.gameInfo.currentGames[0].currentRound}
 						/>
 						{/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */}
 						<button onClick={this.toggleVisibility}>Show end scoreboard</button>
