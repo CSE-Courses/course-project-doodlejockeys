@@ -71,9 +71,6 @@ class PlayPage extends Component {
 
 	componentDidMount() {
 		this.loadArtistHistory()
-		let thisRoundArtist = this.getRandomUnusedNumber()
-		sessionStorage.setItem("currentArtist", thisRoundArtist)
-		this.state.gameInfo.currentGames[0].currentArtistId = sessionStorage.getItem("currentArtist")
 		if (sessionStorage.getItem("preRound")) {
 			this.setState({
 				preRoundState: true
@@ -84,23 +81,51 @@ class PlayPage extends Component {
 				preRoundState: false
 			})
 		}
-		if (this.state.gameInfo.currentGames[0].currentSubRound > Object.keys(this.state.gameInfo.users).length) {
-			this.state.gameInfo.currentGames[0].currentRound = parseInt(sessionStorage.getItem("currentRound")) + 1
-			sessionStorage.setItem("currentRound", this.state.gameInfo.currentGames[0].currentRound)
-			this.state.gameInfo.currentGames[0].currentSubRound = 1
-			sessionStorage.setItem("currentSubRound", 1)
-			let tempArtists = {}
-			for (let user of Object.keys(this.state.gameInfo.users)) {
-				tempArtists[user] = 0
+		if (this.state.preRoundState) {
+			this.putArtist()
+			this.incrementRound()
+		}
+		console.log(sessionStorage.getItem("artistHistory"))
+		this.wordChoice()
+
+	};
+
+	putArtist() {
+		let tempArtists = {}
+		for (let user of Object.keys(this.state.gameInfo.users)) {
+			tempArtists[user] = 0
+		}
+		this.setState({
+			artists: tempArtists
+		})
+		this.loadArtistHistory()
+		// console.log(this.state.artists)
+		if (sessionStorage.getItem("sealedArtistStatus") != "true") {
+			let thisRoundArtist = this.getRandomUnusedNumber()
+			sessionStorage.setItem("currentArtist", thisRoundArtist)
+		}
+		if (sessionStorage.getItem("artistHistory").split(",").length <= (this.state.gameInfo.currentGames[0].currentRound - 1) * Object.keys(this.state.gameInfo.users).length + this.state.gameInfo.currentGames[0].currentSubRound + 1) {
+			this.state.gameInfo.currentGames[0].currentArtistId = sessionStorage.getItem("currentArtist")
+			let artistHistory = []
+			if (sessionStorage.getItem("artistHistory") != "") {
+				artistHistory = sessionStorage.getItem("artistHistory").split(",")
+				if (sessionStorage.getItem("artistHistory").split(",").length >= (this.state.gameInfo.currentGames[0].currentRound - 1) * Object.keys(this.state.gameInfo.users).length + this.state.gameInfo.currentGames[0].currentSubRound) {
+					// console.log("2.1")
+					// artistHistory[artistHistory.length] = (sessionStorage.getItem("currentArtist"))
+					//}
+				}
+				else {
+					artistHistory.push(sessionStorage.getItem("currentArtist"))
+				}
 			}
-			this.setState({
-				artists: tempArtists
-			})
+			else {
+				artistHistory.push(sessionStorage.getItem("currentArtist"))
+			}
+			sessionStorage.setItem("artistHistory", [artistHistory])
 		}
-		else {
-			this.state.gameInfo.currentGames[0].currentRound = parseInt(sessionStorage.getItem("currentRound"))
-			this.state.gameInfo.currentGames[0].currentSubRound = parseInt(sessionStorage.getItem("currentSubRound")) + 1
-		}
+	}
+
+	wordChoice() {
 		let categoriesChosen = sessionStorage.getItem("wordCategories").split(',');
 		let current = []
 		for (let category of categoriesChosen) {
@@ -114,8 +139,21 @@ class PlayPage extends Component {
 			wordOptions: current,
 			perRoundChoices: [current[Math.floor(Math.random() * current.length)], current[Math.floor(Math.random() * current.length)], current[Math.floor(Math.random() * current.length)]]
 		})
+	}
 
-	};
+	incrementRound() {
+		if (this.state.gameInfo.currentGames[0].currentSubRound > Object.keys(this.state.gameInfo.users).length) {
+			this.state.gameInfo.currentGames[0].currentRound = parseInt(sessionStorage.getItem("currentRound")) + 1
+			sessionStorage.setItem("currentRound", this.state.gameInfo.currentGames[0].currentRound)
+			this.state.gameInfo.currentGames[0].currentSubRound = 1
+			sessionStorage.setItem("currentSubRound", 1)
+
+		}
+		else {
+			this.state.gameInfo.currentGames[0].currentRound = parseInt(sessionStorage.getItem("currentRound"))
+			this.state.gameInfo.currentGames[0].currentSubRound = parseInt(sessionStorage.getItem("currentSubRound")) + 1
+		}
+	}
 
 	loadArtistHistory() {
 		let tempArtists = {}
@@ -124,6 +162,8 @@ class PlayPage extends Component {
 		}
 		let artistHistory = sessionStorage.getItem("artistHistory").split(',')
 		let howDeepInRound = artistHistory.length % Object.keys(this.state.gameInfo.users).length
+		// console.log(artistHistory)
+		// console.log(howDeepInRound)
 		for (let i = 1; i <= howDeepInRound; i++) {
 			tempArtists[parseInt(artistHistory[artistHistory.length - i])] = 1
 		}
@@ -133,10 +173,15 @@ class PlayPage extends Component {
 	}
 
 	getRandomUnusedNumber() {
+		let tempArtists = {}
+		let howDeepInRound = sessionStorage.getItem("artistHistory").split(",").length % Object.keys(this.state.gameInfo.users).length
+		for (let i = 1; i <= howDeepInRound; i++) {
+			tempArtists[parseInt(sessionStorage.getItem("artistHistory").split(",")[sessionStorage.getItem("artistHistory").split(",").length - i])] = 1
+		}
 		let currentChoice = Math.floor(Math.random() * (Object.keys(this.state.gameInfo.users).length + 1));
 		let numIsGood = false;
 		let allOnes = true;
-		for (let artist of Object.keys(this.state.artists)) {
+		for (let artist of Object.keys(tempArtists)) {
 			if (artist == 0) {
 				allOnes = false;
 			}
@@ -144,11 +189,12 @@ class PlayPage extends Component {
 		if (allOnes) {
 			this.loadArtistHistory()
 		}
+		console.log(this.state.artists)
 		while (!numIsGood) {
 			if (currentChoice == 0) {
 				currentChoice = Math.floor(Math.random() * (Object.keys(this.state.gameInfo.users).length + 1));
 			}
-			else if (this.state.artists[currentChoice] == 1) {
+			else if (tempArtists[currentChoice] == 1) {
 				currentChoice = Math.floor(Math.random() * (Object.keys(this.state.gameInfo.users).length + 1));
 			}
 			else {
@@ -185,16 +231,14 @@ class PlayPage extends Component {
 		sessionStorage.setItem("preRound", false)
 		sessionStorage.setItem("currentRound", this.state.gameInfo.currentGames[0].currentRound)
 		sessionStorage.setItem("currentSubRound", this.state.gameInfo.currentGames[0].currentSubRound)
+		sessionStorage.setItem("sealedArtistStatus", true)
+		this.state.artists[sessionStorage.getItem("currentArtist")] = 1
+		this.loadArtistHistory()
 		this.componentDidMount()
 		this.setState({
 			preRoundState: false
 		})
-		let artistHistory = []
-		if (sessionStorage.getItem("artistHistory") != "") {
-			artistHistory = sessionStorage.getItem("artistHistory").split(",")
-		}
-		artistHistory.push(sessionStorage.getItem("currentArtist"))
-		sessionStorage.setItem("artistHistory", [artistHistory])
+
 	}
 
 
@@ -237,6 +281,8 @@ class PlayPage extends Component {
 
 	render() {
 		/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */
+		let grammarHolder = "s"
+		if (this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"].split()[this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"].length - 1] == 's') grammarHolder = ""
 		const players = [];
 		for (let key of Object.keys(this.state.gameInfo.users)) {
 			players.push(
@@ -289,7 +335,7 @@ class PlayPage extends Component {
 						/>
 					</div>
 				</div>}
-				{this.state.preRoundState &&
+				{this.state.preRoundState && sessionStorage.getItem("userID") == sessionStorage.getItem("currentArtist") &&
 					<div>
 						<form className="signupPage">
 							<div className="SignUp">
@@ -329,6 +375,47 @@ class PlayPage extends Component {
 							</div>
 						</form>
 					</div>}
+				{this.state.preRoundState && sessionStorage.getItem("userID") != sessionStorage.getItem("currentArtist") &&
+					<div>
+						<form className="signupPage">
+							<div className="SignUp">
+								<h1 className="signUpHeading">It is {this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"]}'{grammarHolder} turn to draw!</h1>
+								<div>
+									<center>
+										<br />
+										<div>
+											<h3>Here are some suggestions for what to draw!</h3>
+											{this.state.perRoundChoices.map((option) => (
+												<div style={{ display: "inline-block", marginRight: "10px" }}>
+													{this.state.choice == this.state.perRoundChoices.indexOf(option) && <button style={{ border: "5px solid rgb(151, 0, 50)", width: "100%", height: "50px", borderRadius: "10px", marginRight: "50px", backgroundColor: "rgb(255, 214, 2)" }}>{option}</button>}
+													{this.state.choice != this.state.perRoundChoices.indexOf(option) && <button style={{ width: "100%", height: "50px", borderRadius: "10px", marginRight: "50px", backgroundColor: "rgb(255, 214, 2)" }} onClick={() => this.changeWordChoice(this.state.perRoundChoices.indexOf(option))}>{option}</button>}
+												</div>
+											))}
+										</div>
+										<br />
+										<div>
+											<div>
+												<h3>Don't like these? Create your own!</h3>
+												<textarea
+													onChange={this.handleNewKeyWord}
+													className="usernameBox"
+													placeholder="Choose Key Word"
+													rows="1"
+													cols="30"
+												></textarea>
+											</div>
+										</div>
+									</center>
+									<center>
+
+										<button type='submit' className="signUp_avatar" value="Let's Play!" onClick={(event) => this.sendKeyWord(event)}>Let's Play!</button>
+
+									</center>
+								</div>
+							</div>
+						</form>
+					</div>
+				}
 			</React.Fragment>
 		);
 	}

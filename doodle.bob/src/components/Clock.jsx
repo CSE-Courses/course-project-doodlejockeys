@@ -78,6 +78,7 @@ class Clock extends Component {
 				status: "Pause"
 			});
 			sessionStorage.setItem("preRound", true)
+			sessionStorage.setItem("sealedArtistStatus", false)
 			window.location.reload(false);
 		}
 	}
