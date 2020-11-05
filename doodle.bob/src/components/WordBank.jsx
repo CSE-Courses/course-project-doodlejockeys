@@ -54,6 +54,7 @@ class WordBank extends React.Component {
         sessionStorage.setItem("currentRound", 1)
         sessionStorage.setItem("currentSubRound", 0)
         sessionStorage.setItem("artistHistory", [])
+        sessionStorage.setItem("userID", 1)
         this.props.history.push("/PlayPage")
     }
 
