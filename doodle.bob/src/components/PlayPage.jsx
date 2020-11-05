@@ -7,6 +7,7 @@ import Toolbar from './Toolbar';
 import RoundsUI from './RoundsUI';
 import WordChoice from './WordChoice';
 import ScoreboardEnd from './ScoreboardEnd';
+import MiniGame from './MiniGame';
 import {
 	BrowserRouter as Router,
 	Route,
@@ -282,7 +283,10 @@ class PlayPage extends Component {
 	render() {
 		/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */
 		let grammarHolder = "s"
-		if (this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"].split()[this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"].length - 1] == 's') grammarHolder = ""
+		if (this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"].split("")[this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"].length - 1] == 's') {
+			console.log("grammar")
+			grammarHolder = ""
+		}
 		const players = [];
 		for (let key of Object.keys(this.state.gameInfo.users)) {
 			players.push(
@@ -378,37 +382,21 @@ class PlayPage extends Component {
 				{this.state.preRoundState && sessionStorage.getItem("userID") != sessionStorage.getItem("currentArtist") &&
 					<div>
 						<form className="signupPage">
-							<div className="SignUp">
-								<h1 className="signUpHeading">It is {this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"]}'{grammarHolder} turn to draw!</h1>
+							<div className="SignUp" style={{ height: "fit-content" }}>
+								<h1 className="signUpHeading">It is {this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"]}'{grammarHolder} turn to pick a word!</h1>
 								<div>
 									<center>
-										<br />
-										<div>
-											<h3>Here are some suggestions for what to draw!</h3>
-											{this.state.perRoundChoices.map((option) => (
-												<div style={{ display: "inline-block", marginRight: "10px" }}>
-													{this.state.choice == this.state.perRoundChoices.indexOf(option) && <button style={{ border: "5px solid rgb(151, 0, 50)", width: "100%", height: "50px", borderRadius: "10px", marginRight: "50px", backgroundColor: "rgb(255, 214, 2)" }}>{option}</button>}
-													{this.state.choice != this.state.perRoundChoices.indexOf(option) && <button style={{ width: "100%", height: "50px", borderRadius: "10px", marginRight: "50px", backgroundColor: "rgb(255, 214, 2)" }} onClick={() => this.changeWordChoice(this.state.perRoundChoices.indexOf(option))}>{option}</button>}
-												</div>
-											))}
-										</div>
+										<MiniGame />
 										<br />
 										<div>
 											<div>
-												<h3>Don't like these? Create your own!</h3>
-												<textarea
-													onChange={this.handleNewKeyWord}
-													className="usernameBox"
-													placeholder="Choose Key Word"
-													rows="1"
-													cols="30"
-												></textarea>
+												<h3>Is your friend taking too long?</h3>
 											</div>
 										</div>
 									</center>
 									<center>
 
-										<button type='submit' className="signUp_avatar" value="Let's Play!" onClick={(event) => this.sendKeyWord(event)}>Let's Play!</button>
+										<button type='submit' className="signUp_avatar" value="Let's Play!" onClick={(event) => this.sendKeyWord(event)}>Continue Anyways!</button>
 
 									</center>
 								</div>
