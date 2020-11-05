@@ -83,6 +83,7 @@ class PlayPage extends Component {
 			})
 		}
 		if (this.state.preRoundState) {
+			console.log("yo")
 			this.putArtist()
 			this.incrementRound()
 		}
@@ -102,6 +103,7 @@ class PlayPage extends Component {
 		this.loadArtistHistory()
 		// console.log(this.state.artists)
 		if (sessionStorage.getItem("sealedArtistStatus") != "true") {
+			console.log("yo")
 			let thisRoundArtist = this.getRandomUnusedNumber()
 			sessionStorage.setItem("currentArtist", thisRoundArtist)
 		}

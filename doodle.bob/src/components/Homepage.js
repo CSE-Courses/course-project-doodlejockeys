@@ -35,15 +35,15 @@ class HomePage extends Component {
     const rounds = document.getElementsByName("round");
     const time = document.getElementsByName("tm");
 
-    for(let r of rounds) {
-      if(r.checked) {
+    for (let r of rounds) {
+      if (r.checked) {
         sessionStorage.setItem("rounds", r.id);
         break;
       }
     }
 
-    for(let t of time) {
-      if(t.checked) {
+    for (let t of time) {
+      if (t.checked) {
         sessionStorage.setItem("time", t.id);
         break;
       }
@@ -95,7 +95,7 @@ class HomePage extends Component {
                         rows="1"
                         cols="30"
                       ></textarea>
-					  <div className="settings">
+                      <div className="settings">
                         <div className="rounds">
                           <input type="radio" id="5" name="round" checked />
                           <label for="5">5 rounds</label>
@@ -103,12 +103,12 @@ class HomePage extends Component {
                           <input type="radio" id="10" name="round" />
                           <label for="10">10 rounds</label>
 
-                          <input type="radio" id="15" name="round"/>
+                          <input type="radio" id="15" name="round" />
                           <label for="15">15 rounds</label>
                         </div>
                         <div className="time">
-                          <input type="radio" id="30" name="tm" checked />
-                          <label for="30">30 seconds</label>
+                          <input type="radio" id="2" name="tm" checked />
+                          <label for="2">2 seconds</label>
 
                           <input type="radio" id="60" name="tm" />
                           <label for="60">60 seconds</label>
