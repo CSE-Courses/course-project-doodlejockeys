@@ -48,6 +48,7 @@ class MiniGame extends Component {
                 </div>
                 <p>Find as many 3+ letter words as you can!</p>
                 <br />
+                <br />
                 <div style={{ display: "flex" }}>
                     <div style={{ width: "45%", marginTop: "30px" }}>Click to see some of doodl.bob's favorite words they came up with</div>
                     <div style={{ width: "45%", height: "150px", backgroundColor: "rgb(151, 0, 50)", borderRadius: "10px" }} className="minigameReveal">
