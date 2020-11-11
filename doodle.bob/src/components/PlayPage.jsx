@@ -385,7 +385,7 @@ class PlayPage extends Component {
 					<div>
 						<form className="signupPage">
 							<div className="SignUp" style={{ height: "fit-content" }}>
-								<h1 className="signUpHeading">It is {this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"]}'{grammarHolder} turn to pick a word!</h1>
+								<h1 style={{ marginLeft: "15%", marginRight: "15%", marginTop: "10px", textAlign: "center" }}>It is {this.state.gameInfo.users[sessionStorage.getItem("currentArtist")]["username"]}'{grammarHolder} turn to pick a word!</h1>
 								<div>
 									<center>
 										<MiniGame />

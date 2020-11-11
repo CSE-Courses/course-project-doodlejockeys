@@ -46,7 +46,7 @@ class MiniGame extends Component {
                 <div style={{ color: "white", backgroundColor: "rgb(46, 46, 46)", width: "fit-content", borderRadius: "4px", padding: "5px" }}>
                     <h1>{this.state.currentWord}</h1>
                 </div>
-                <p>Find as many 3+ letter words as you can!</p>
+                <p> Find as many 3+ letter words as you can! </p>
                 <br />
                 <br />
                 <div style={{ display: "flex" }}>
