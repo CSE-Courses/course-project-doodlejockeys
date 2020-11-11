@@ -34,7 +34,6 @@ class Stroke {
         this.init.x = point.x;
         this.init.y = point.y;
     }
-
 }
 //holds all strokes made
 let ALL_STROKES = [];
@@ -53,17 +52,27 @@ class Canvas extends Component {
 			isToggleOn: true,
             diffBrush: true,
             SAVED: false,
+            undo: false,
 		}
 		this.handleClick = this.handleClick.bind(this);
 		this.changeBrush = this.changeBrush.bind(this);
 		this.changeWidth = this.changeWidth.bind(this);
     }
 
-    buttonClicked = () => {
+    //sets saved button true when clicked.
+    savebuttonClicked = () => {
         this.setState({
             SAVED:true
         })
     }
+
+    //sets state when undo button is clicked
+    undoButtonClicked = () =>{
+        this.setState({
+            undo: true
+        })
+    }
+
 
     setup = (p5, parent) => {
         p5.createCanvas(700, 500).parent(parent)
@@ -71,14 +80,13 @@ class Canvas extends Component {
 		
         var eraserbtn = p5.createButton("Reset");
         eraserbtn.parent(parent);
-        // eraserbtn.parent(parent2);
         eraserbtn.mousePressed(this.resetSketch);
 
         saveimgbtn = p5.createButton("Save Canvas");
         saveimgbtn.parent(parent)
-        saveimgbtn.mousePressed(this.buttonClicked)
-     
+        saveimgbtn.mousePressed(this.savebuttonClicked)
     }
+
     //maybe refactor into switch statements. These functions change the brush color to said color.
     changeWhiteColor = () => {
         this.setState({strokes: "white"})
@@ -199,19 +207,42 @@ class Canvas extends Component {
         }));
       }
 
+    componentDidUpdate(){
+        if(this.state.undo){
+            console.log("undo state is true.");
+        }
+        else{
+            console.log("Not Undoing ");
+        }
+    }
 
     draw = (p5) => {
         p5.background(255);
+
+        if(this.state.undo == true){
+            for(var i = 0;  i < this.state.lastStrokeIdx; i++){
+                console.log(ALL_STROKES[i]);
+                // p5.line(x,y,)
+            }
+            this.setState({
+                lastStrokeIdx: this.state.lastStrokeIdx-1,
+                undo:false
+            })
+        }
         p5.noLoop();
     }
 
 	mousePressed = (p5) => {
-        if(this.state.SAVED == true){
+        if(this.state.undo == true){
+            ALL_STROKES.pop();
+            p5.redraw();
+        }
+        if(this.state.SAVED == true){ //saving drawing.
             saveimgbtn.mousePressed(p5.saveCanvas('my_canvas', 'png'));
             this.setState({
                 SAVED: false
             })
-            saveimgbtn.mousePressed(this.buttonClicked)
+            saveimgbtn.mousePressed(this.savebuttonClicked)
         }
  
 		if(this.state.erasing){
@@ -223,9 +254,11 @@ class Canvas extends Component {
 			this.setState({
 				lastStrokeIdx: this.state.lastStrokeIdx + 1,
 				drawing: true
-			});
-			ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));
-		}
+            });
+            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));
+           // console.log(ALL_STROKES[this.state.lastStrokeIdx])
+           // console.log(ALL_STROKES[this.state.lastStrokeIdx].init.x)
+        }
 	}
 
     mouseDragged = (p5) => {
@@ -339,7 +372,8 @@ class Canvas extends Component {
                         </button>
                         <button
                             classname="toolbar-button"
-							style={{ height: "35px", width: "35px"}}
+                            style={{ height: "35px", width: "35px"}}
+                            onClick={this.undoButtonClicked}
 							>
                             <FontAwesomeIcon icon={faUndoAlt}/>
                         </button>
