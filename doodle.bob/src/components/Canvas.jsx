@@ -38,9 +38,9 @@ class Stroke {
 }
 //holds all strokes made
 let ALL_STROKES = [];
+let saveimgbtn;
 
 class Canvas extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -52,10 +52,17 @@ class Canvas extends Component {
             diffWidth: true,
             isToggleOn: true,
             diffBrush: true,
-        }
-        this.handleClick = this.handleClick.bind(this);
-        this.changeBrush = this.changeBrush.bind(this);
-        this.changeWidth = this.changeWidth.bind(this);
+            SAVED: false,
+		}
+		this.handleClick = this.handleClick.bind(this);
+		this.changeBrush = this.changeBrush.bind(this);
+		this.changeWidth = this.changeWidth.bind(this);
+    }
+
+    buttonClicked = () => {
+        this.setState({
+            SAVED:true
+        })
     }
 
     setup = (p5, parent) => {
@@ -66,6 +73,11 @@ class Canvas extends Component {
         eraserbtn.parent(parent);
         // eraserbtn.parent(parent2);
         eraserbtn.mousePressed(this.resetSketch);
+
+        saveimgbtn = p5.createButton("Save Canvas");
+        saveimgbtn.parent(parent)
+        saveimgbtn.mousePressed(this.buttonClicked)
+     
     }
     //maybe refactor into switch statements. These functions change the brush color to said color.
     changeWhiteColor = () => {
@@ -193,20 +205,28 @@ class Canvas extends Component {
         p5.noLoop();
     }
 
-    mousePressed = (p5) => {
-        if (this.state.erasing) {
-            p5.background(255);
-            this.setState({ erasing: false, lastStrokeIdx: -1 });
-            ALL_STROKES = [];
-        }
-        else {
+	mousePressed = (p5) => {
+        if(this.state.SAVED == true){
+            saveimgbtn.mousePressed(p5.saveCanvas('my_canvas', 'png'));
             this.setState({
-                lastStrokeIdx: this.state.lastStrokeIdx + 1,
-                drawing: true
-            });
-            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));
+                SAVED: false
+            })
+            saveimgbtn.mousePressed(this.buttonClicked)
         }
-    }
+ 
+		if(this.state.erasing){
+			p5.background(255);
+			this.setState({erasing: false, lastStrokeIdx: -1});
+			ALL_STROKES = [];
+		}
+		else{
+			this.setState({
+				lastStrokeIdx: this.state.lastStrokeIdx + 1,
+				drawing: true
+			});
+			ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));
+		}
+	}
 
     mouseDragged = (p5) => {
         if (this.state.drawing) {
