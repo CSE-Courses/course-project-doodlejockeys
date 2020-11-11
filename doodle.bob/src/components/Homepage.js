@@ -31,6 +31,24 @@ class HomePage extends Component {
       onNewGameCard: !this.state.onNewGameCard
     });
   };
+  setRoundAndTime() {
+    const rounds = document.getElementsByName("round");
+    const time = document.getElementsByName("tm");
+
+    for (let r of rounds) {
+      if (r.checked) {
+        sessionStorage.setItem("rounds", r.id);
+        break;
+      }
+    }
+
+    for (let t of time) {
+      if (t.checked) {
+        sessionStorage.setItem("time", t.id);
+        break;
+      }
+    }
+  }
 
   render() {
     return (
@@ -77,10 +95,32 @@ class HomePage extends Component {
                         rows="1"
                         cols="30"
                       ></textarea>
+                      <div className="settings">
+                        <div className="rounds">
+                          <input type="radio" id="5" name="round" checked />
+                          <label for="5">5 rounds</label>
+
+                          <input type="radio" id="10" name="round" />
+                          <label for="10">10 rounds</label>
+
+                          <input type="radio" id="15" name="round" />
+                          <label for="15">15 rounds</label>
+                        </div>
+                        <div className="time">
+                          <input type="radio" id="2" name="tm" checked />
+                          <label for="2">2 seconds</label>
+
+                          <input type="radio" id="60" name="tm" />
+                          <label for="60">60 seconds</label>
+
+                          <input type="radio" id="90" name="tm" />
+                          <label for="90">90 seconds</label>
+                        </div>
+                      </div>
                       <p className="enterUsername">Congratulations on starting the game!!! </p>
                       <p className="enterUsername">Make sure to share the code with your friends!</p>
                       <div>
-                        <Link to="/Avatar"><button className="continueToPlay">
+                        <Link to="/Avatar" onClick={this.setRoundAndTime}><button className="continueToPlay">
                           Continue to Play
                         </button> </Link>
                       </div>

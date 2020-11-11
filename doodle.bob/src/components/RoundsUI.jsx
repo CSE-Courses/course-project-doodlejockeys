@@ -46,7 +46,7 @@ class RoundsUI extends Component {
             }
             historyReorganized.push(roundHistory)
         }
-        console.log(historyReorganized)
+        // console.log(historyReorganized)
         this.setState({
             roundArtist: historyReorganized
         })
@@ -72,13 +72,13 @@ class RoundsUI extends Component {
                             <div style={{ display: "flex", margin: "10px" }}>
                                 {round.map((subRound) => (
                                     <div>
-                                        {console.log("subround", subRound)}
-                                        {subRound !== 0 && (
+                                        {subRound !== 0 && this.props.userList[subRound] && (
                                             <div>
-                                                {console.log("BLAH", this.state.profilePictures[this.props.userList[this.props.game.currentArtistId]["profilePic"]])}
                                                 <img src={this.state.profilePictures[this.props.userList[subRound]["profilePic"]]} style={{ width: "20px", borderRadius: "50%", margin: '5px', textAlign: "center" }} />
                                             </div>
                                         )}
+                                        {(subRound !== 0 && !this.props.userList[subRound]) && (<div style={{ width: "20px", borderRadius: "50%", backgroundColor: "lightgrey", margin: '5px', textAlign: "center" }}>?
+                                        </div>)}
                                         {subRound === 0 && (<div style={{ width: "20px", borderRadius: "50%", backgroundColor: "lightgrey", margin: '5px', textAlign: "center" }}>?
                                         </div>)}
                                     </div>
@@ -91,7 +91,6 @@ class RoundsUI extends Component {
                             <div style={{ display: "flex", margin: "10px" }}>
                                 {round.map((subRound) => (
                                     <div>
-                                        {console.log("subround", subRound)}
                                         {subRound !== 0 && (
                                             <div>
                                                 {/* {console.log("BLAH", this.state.profilePictures[this.props.userList[this.props.game.currentArtistId]["profilePic"]])} */}
