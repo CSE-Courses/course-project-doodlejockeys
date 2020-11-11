@@ -567,3 +567,16 @@ body {
 }
 
 /* ScoreboardEnd -- end */
+
+/* Minigame -- start */
+
+.minigameReveal {
+  font-weight: bold;
+  position: relative;
+  z-index: 2;
+  background-color: rgb(151, 0, 50);
+}
+
+.minigameReveal:hover {
+  background-color: rgb(46, 46, 46);
+}
