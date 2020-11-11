@@ -50,6 +50,13 @@ class WordBank extends React.Component {
     submitWordBank() {
         console.log(this.state.results)
         sessionStorage.setItem("wordCategories", this.state.results)
+        sessionStorage.setItem("preRound", true)
+        sessionStorage.setItem("currentRound", 1)
+        sessionStorage.setItem("currentSubRound", 0)
+        sessionStorage.setItem("artistHistory", [])
+        sessionStorage.setItem("currentArtist", 1)
+        sessionStorage.setItem("sealedArtistStatus", false)
+        sessionStorage.setItem("userID", 1)
         this.props.history.push("/PlayPage")
     }
 
