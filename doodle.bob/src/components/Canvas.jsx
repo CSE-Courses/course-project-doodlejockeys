@@ -12,6 +12,7 @@ import {
     faPaintBrush
 } from
 "@fortawesome/free-solid-svg-icons";
+// import { SVG } from 'p5.js-svg/src/constants';
 
 class Stroke {
     // Default stroke settings
@@ -60,7 +61,7 @@ class Canvas extends Component {
 
     setup = (p5, parent) => {
         p5.createCanvas(700, 500).parent(parent)
-		p5.background(255);
+        p5.background(255);
 		
         var eraserbtn = p5.createButton("Reset");
         eraserbtn.parent(parent);
