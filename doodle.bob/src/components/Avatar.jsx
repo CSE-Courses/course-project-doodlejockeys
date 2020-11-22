@@ -1,17 +1,19 @@
 import React, { Component } from "react";
-import {
-    Link,
-    withRouter
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 import chicken from "../tempAvatars/chicken.png";
 import duck from "../tempAvatars/duck.png";
 import rhino from "../tempAvatars/rhino.png";
-import "../styles.css";
+import socket from '../server/socket'
+import Commands from "../commands";
+import '../css/Avatar.scss';
+import { Button } from 'react-bootstrap';
 
 class Avatar extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            room_code: props.match.params.room_code,
+            user_info: '',
             profilePictures: {
                 "chicken": chicken,
                 "duck": duck,
@@ -19,67 +21,61 @@ class Avatar extends Component {
             },
             current: rhino,
         };
+        this.submitPicture = this.submitPicture.bind(this);
+        this.onPictureChange = this.onPictureChange.bind(this);
     }
 
-    handleRhino = event => {
-        event.preventDefault();
-        this.setState({
-            current: rhino,
-        });
-    };
-    handleChicken = event => {
-        event.preventDefault();
-        this.setState({
-            current: chicken,
-        });
-    };
+    componentDidMount() {
+    }
 
-    handleDuck = event => {
+    onPictureChange(event) {
         event.preventDefault();
-        this.setState({
-            current: duck,
+        console.log(event.target.id);
+        let current = event.target.id;
+
+        this.setState((state) => {
+            return { current: state.profilePictures[current] }
+        })
+    }
+
+    submitPicture() {
+        socket.emit(Commands.SEND_PICTURE, {
+            room_code: this.state.room_code,
+            user_id: socket.id,
+            profile_picture: String(this.state.current)
         });
-    };
+
+        console.log(this.state.room_code);
+    }
 
 
     render() {
+
+        const options = [];
+
+        for (let picture of Object.keys(this.state.profilePictures)) {
+            options.push(
+                <img id={picture} key={picture} src={this.state.profilePictures[picture]} alt={`Cartoon ${picture}`} className="option" onClick={this.onPictureChange} />
+            );
+        }
+
         return (
-            <form className="signupPage">
+            <div className="avatar-container">
+                <div className="avatar" >
+                    <h1>Choose your profile picture.</h1>
 
-                <div className="SignUp">
+                    <form className="options">
+                        {options}
+                    </form>
 
-                    <h1 className="signUpHeading">
-                        <p>Choose your Avatar</p>
-                    </h1>
+                    <div className="current-container">
+                        <h2>Current picture</h2>
+                        <img src={this.state.current} alt={`Cartoon`} className="current" />
+                    </div>
 
-                    <center>
-
-                        <br />
-                        <div className="current">
-
-                            <input type="image" src={this.state.current} alt="avatar" className="currentPic" />
-                            <p className="currentLabel">Current Picture</p>
-                        </div>
-                        <div className="optionPics">
-
-                            <input onClick={this.handleRhino} type="image" src={this.state.profilePictures["rhino"]} alt="avatar" className="optionPic" />
-                            <input onClick={this.handleChicken} type="image" src={this.state.profilePictures.chicken} alt="avatar" className="optionPic" />
-                            <input onClick={this.handleDuck} type="image" src={this.state.profilePictures.duck} alt="avatar" className="optionPic" />
-                        </div>
-                        <div className="signUpInputLineWidth">
-                            <center>
-
-                                <Link to="/WordBank">
-                                    <input type='submit' className="signUp_avatar" value="Submit Avatar" />
-                                </Link>
-
-                            </center>
-
-                        </div>
-                    </center>
+                    <Link to={`/${this.state.room_code}/WordBank`} onClick={this.submitPicture}><Button variant="success">Submit Picture</Button></Link>
                 </div>
-
-            </form>
+            </div>
         )
     }
 }

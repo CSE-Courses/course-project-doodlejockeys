@@ -1,0 +1,41 @@
+.categories {
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	form {
+	
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		margin: 1rem;
+	
+		input {
+			display: none;
+		}
+	
+		label {
+			padding: 0.5rem 1rem;
+			margin: 0.5rem;
+			text-align: center;
+			cursor: pointer;
+			transition: background-color 200ms ease-in;
+			width: 30vh;
+		}
+
+		.category {
+			text-transform: capitalize;
+		}
+	
+		label:hover {
+			background-color: #eee;
+		}
+	
+		.selected {
+			border: 1px solid black;
+			background-color: #eee;
+		}
+	
+	}
+}

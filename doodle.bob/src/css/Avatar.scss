@@ -1,0 +1,46 @@
+$card-bg: #CBC7FC;
+$app-bg: #D6FFB7;
+
+.avatar-container {
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: $card-bg;
+
+	.avatar {
+		width: 40%;
+		display: flex;
+		padding: 3rem;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		background: $app-bg;
+
+		.options {
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			margin: 1rem;
+			.option {
+				width: 50%;
+				margin: auto;
+				transition: width 0.2s ease-in;
+				cursor: pointer;
+			}
+
+			.option:hover {
+				width: 55%;
+			}
+		}
+
+		.current-container {
+			margin: 1rem;
+			text-align: center;
+			.current {
+				width: 50%;
+				display: block;
+				margin: auto;
+			}
+		}
+	}
+}
