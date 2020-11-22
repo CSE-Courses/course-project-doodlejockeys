@@ -1,0 +1,107 @@
+/* .App {
+  font-family: sans-serif;
+  text-align: center;
+} */
+
+$card-bg: #CBC7FC;
+$app-bg: #D6FFB7;
+
+.home-container {
+	height: 100vh;
+	width: 100vw;
+	background: white;
+	background-image: linear-gradient(45deg, $app-bg 50%, white 50%);
+	display: flex;
+
+	.col {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
+}
+
+.greetings {
+	h2 {
+		font-size: 2rem;
+		text-align: center;
+	}
+
+	h1 {
+		font-size: 4rem;
+		text-align: center;
+	}
+}
+
+.game-state, {
+	display: flex;
+	flex-direction: column;
+}
+
+.gameTabs {
+	display: flex;
+
+	.tabOpen, .tabClosed {
+		background: transparent;
+		border: none;
+		padding: 1rem;
+		flex: 1;
+	}
+
+	.tabOpen {
+		background: $card-bg;
+		color: black;
+	}
+
+	.tabClosed {
+		font-weight: bold;
+		border: 1px solid $card-bg;
+	}
+}
+
+.literalCard {
+	background: $card-bg;
+	padding: 1rem;
+	text-align: center;
+	color: black;
+	display: flex;
+	flex-direction: column;
+	width: 30vw;
+	height: 70vh;
+	justify-content: space-evenly;
+
+	input[type="text"] {
+		margin: 1rem;
+		padding: 0.5rem;
+	}
+
+	input[type="radio"] {
+		margin: 0.5rem
+	}
+
+	.game-code {
+		background: white;
+		color: black;
+		font-weight: bold;
+		text-align: center;
+	}
+
+	.settings {
+		padding: 1rem;
+	}
+
+	.continueToPlay {
+		padding: 0.5rem 1rem;
+		margin: 1rem;
+		font-weight: bold;
+	}
+}
+  
+  .rounds {
+	margin-top: 1rem;
+  }
+  
+  .time {
+	margin-top: 1rem;
+  }
+  /*END OF CSS FOR THE HOMEPAGE */
