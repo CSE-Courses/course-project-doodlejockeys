@@ -27,14 +27,14 @@ class Avatar extends Component {
 
     componentDidMount() {
     }
-
+    
     onPictureChange(event) {
         event.preventDefault();
         console.log(event.target.id);
         let current = event.target.id;
 
         this.setState((state) => {
-            return { current: state.profilePictures[current] }
+            return {current: state.profilePictures[current]}
         })
     }
 
@@ -53,7 +53,7 @@ class Avatar extends Component {
 
         const options = [];
 
-        for (let picture of Object.keys(this.state.profilePictures)) {
+        for(let picture of Object.keys(this.state.profilePictures)) {
             options.push(
                 <img id={picture} key={picture} src={this.state.profilePictures[picture]} alt={`Cartoon ${picture}`} className="option" onClick={this.onPictureChange} />
             );

@@ -47,6 +47,7 @@ class Clock extends Component {
             let current_round = data.room_info.game_info.current_round; // current round
             let current_subround = data.room_info.game_info.current_subround; //current sub round
             let is_artist = false; //is this the current artist, initially false
+            
             if (data.room_info.game_info.current_artist_id === socket.id) {
                 is_artist = true
             }
@@ -78,9 +79,9 @@ class Clock extends Component {
                 })
             }
 
-            if (is_artist) {
+            /*if (is_artist) {
                 socket.emit(Commands.START_TIMER, { room_code: this.state.room_code });
-            }
+            }*/
 
         })
 

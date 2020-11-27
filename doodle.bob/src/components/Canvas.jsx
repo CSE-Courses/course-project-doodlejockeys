@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Sketch from 'react-p5';
-import "../styles.css";
+import "../css/styles.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faPencilAlt,
@@ -16,6 +16,7 @@ import {
 class Stroke {
     // Default stroke settings
     constructor(_init) {
+
         this.init = _init;
         this.points = [];
         this.stroke = "black";
@@ -40,12 +41,12 @@ class Stroke {
         let temp_X = this.init.x;
         let temp_Y = this.init.y;
 
-        for(let i=this.points.length-1; i >= 0; i--) {
+        for (let i = this.points.length - 1; i >= 0; i--) {
             p5.line(temp_X, temp_Y, this.points[i].x, this.points[i].y);
             temp_X = this.points[i].x;
             temp_Y = this.points[i].y;
         }
-        
+
     }
 }
 //holds all strokes made
@@ -66,32 +67,32 @@ class Canvas extends Component {
             diffBrush: true,
             SAVED: false,
             undo: false,
-		}
-		this.handleClick = this.handleClick.bind(this);
-		this.changeBrush = this.changeBrush.bind(this);
-		this.changeWidth = this.changeWidth.bind(this);
+        }
+        this.handleClick = this.handleClick.bind(this);
+        this.changeBrush = this.changeBrush.bind(this);
+        this.changeWidth = this.changeWidth.bind(this);
     }
 
     //sets saved button true when clicked.
     savebuttonClicked = () => {
         this.setState({
-            SAVED:true
+            SAVED: true
         })
     }
 
     //sets state when undo button is clicked
-    undoButtonClicked = () =>{
+    undoButtonClicked = () => {
         this.setState({
             undo: true
-        }); 
+        });
 
-        console.log(ALL_STROKES);
+        // console.log(ALL_STROKES);
 
         ALL_STROKES.pop();
 
         this.setState((state, props) => ({
-			lastStrokeIdx: ALL_STROKES.length
-		}));
+            lastStrokeIdx: ALL_STROKES.length
+        }));
     }
 
 
@@ -106,7 +107,7 @@ class Canvas extends Component {
         saveimgbtn = p5.createButton("Save Canvas");
         saveimgbtn.parent(parent)
         saveimgbtn.mousePressed(this.savebuttonClicked)
-        
+
         var undoBtn = p5.createButton('Undo');
         undoBtn.parent(parent);
         undoBtn.mousePressed(this.undoButtonClicked);
@@ -232,77 +233,77 @@ class Canvas extends Component {
         }));
     }
 
-    componentDidUpdate(){
-        if(this.state.undo){
-            console.log("undo state is true.");
+    componentDidUpdate() {
+        if (this.state.undo) {
+            // console.log("undo state is true.");
         }
-        else{
-            console.log("Not Undoing ");
+        else {
+            // console.log("Not Undoing ");
         }
     }
 
     draw = (p5) => {
 
-        console.log("Redrawing");
+        // console.log("Redrawing");
 
-        if(this.state.undo == true){
+        if (this.state.undo == true) {
             p5.background(255);
             // for(var i = 0;  i < this.state.lastStrokeIdx; i++){
             //     console.log(ALL_STROKES[i]);
             //     p5.line(x,y,)
             // }
 
-            for(var i = 0;  i < ALL_STROKES.length; i++){
-                console.log(ALL_STROKES[i]);
+            for (var i = 0; i < ALL_STROKES.length; i++) {
+                // console.log(ALL_STROKES[i]);
                 ALL_STROKES[i].draw(p5);
             }
 
             this.setState({
                 // lastStrokeIdx: this.state.lastStrokeIdx-1,
-                undo:false
+                undo: false
             })
         }
         p5.noLoop();
     }
 
-	mousePressed = (p5) => {
+    mousePressed = (p5) => {
         // if(this.state.undo == true){
         //     ALL_STROKES.pop();
-            
+
         // }
 
-        if(this.state.undo) {
+        if (this.state.undo) {
             p5.redraw();
             return;
         }
 
-        if(this.state.SAVED == true){ //saving drawing.
+        if (this.state.SAVED == true) { //saving drawing.
             saveimgbtn.mousePressed(p5.saveCanvas('my_canvas', 'png'));
             this.setState({
                 SAVED: false
             })
             saveimgbtn.mousePressed(this.savebuttonClicked)
         }
- 
-		if(this.state.erasing){
-			p5.background(255);
-			this.setState({erasing: false, lastStrokeIdx: -1});
-			ALL_STROKES = [];
-		}
-		else{
-			this.setState({
-				lastStrokeIdx: this.state.lastStrokeIdx + 1,
-				drawing: true
+
+        if (this.state.erasing) {
+            p5.background(255);
+            this.setState({ erasing: false, lastStrokeIdx: -1 });
+            ALL_STROKES = [];
+        }
+        else {
+            this.setState({
+                lastStrokeIdx: this.state.lastStrokeIdx + 1,
+                drawing: true
             });
             ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));
-           // console.log(ALL_STROKES[this.state.lastStrokeIdx])
-           // console.log(ALL_STROKES[this.state.lastStrokeIdx].init.x)
+            // console.log(ALL_STROKES[this.state.lastStrokeIdx])
+            // console.log(ALL_STROKES[this.state.lastStrokeIdx].init.x)
         }
-	}
+    }
 
     mouseDragged = (p5) => {
         if (this.state.drawing) {
-            ALL_STROKES[ALL_STROKES.length-1].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes, this.state.strokeWidth);
+            ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes, this.state.strokeWidth);
         }
     }
 
@@ -313,16 +314,16 @@ class Canvas extends Component {
     render(props) {
         return (
             <div id="canvas">
-                {sessionStorage.getItem("userID") == sessionStorage.getItem("currentArtist") && <Sketch
+                <Sketch
                     setup={this.setup}
                     draw={this.draw}
                     mousePressed={this.mousePressed}
                     mouseDragged={this.mouseDragged}
-                    mouseReleased={this.mouseReleased} />}
-                {sessionStorage.getItem("userID") != sessionStorage.getItem("currentArtist") &&
+                    mouseReleased={this.mouseReleased} />
+                {/* {sessionStorage.getItem("userID") != sessionStorage.getItem("currentArtist") &&
                     <Sketch
                         setup={this.setup} />
-                }
+                } */}
                 {/* <div> */}
                 {/*style={{disply:"inline-block"}} > */}
                 <div>
@@ -405,31 +406,31 @@ class Canvas extends Component {
                         style={{
                             backgroundColor: "#ffa6da"
                         }}
-                      
-                            onClick={this.changePinkColor}>
-                            <br/>
-                        </button>
-                        <br/>  {/*line break toolbar in half. */}
-						<button className="toolbar-button" 
-						 		 onClick={this.changeWidth}>
-                            {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm"/> : <FontAwesomeIcon icon={faCircle} size="md"/>}
-                        </button>
-                        <button
-                            classname="toolbar-button"
-                            style={{ height: "35px", width: "35px"}}
-                            onClick={this.undoButtonClicked}
-							>
-                            <FontAwesomeIcon icon={faUndoAlt}/>
-                        </button>
-                        <button
-                            classname="toolbar-button"
-                            style={{ height: "35px", width: "35px"}}
-                            onClick={this.resetSketch}>
-                            <FontAwesomeIcon icon={faTrashAlt} />
-                        </button>
-                      	<button
-                            className="toolbar-button"
-                            style={{
+
+                        onClick={this.changePinkColor}>
+                        <br />
+                    </button>
+                    <br />  {/*line break toolbar in half. */}
+                    <button className="toolbar-button"
+                        onClick={this.changeWidth}>
+                        {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm" /> : <FontAwesomeIcon icon={faCircle} size="md" />}
+                    </button>
+                    <button
+                        className="toolbar-button"
+                        style={{ height: "35px", width: "35px" }}
+                        onClick={this.undoButtonClicked}
+                    >
+                        <FontAwesomeIcon icon={faUndoAlt} />
+                    </button>
+                    <button
+                        className="toolbar-button"
+                        style={{ height: "35px", width: "35px" }}
+                        onClick={this.resetSketch}>
+                        <FontAwesomeIcon icon={faTrashAlt} />
+                    </button>
+                    <button
+                        className="toolbar-button"
+                        style={{
 
                             backgroundColor: "black"
                         }}

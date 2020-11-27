@@ -1,156 +1,161 @@
-import React, { Component } from 'react';
-import "../styles.css";
-import chicken from "../tempAvatars/chicken.png";
-import duck from "../tempAvatars/duck.png";
-import rhino from "../tempAvatars/rhino.png";
+import { Component } from 'react';
+import '../css/ChatRoom.scss';
+import Commands from '../commands';
+import socket from '../server/socket';
+import 'animate.css';
+// import '../css/Responsive.scss';
+import { Button } from 'react-bootstrap';
 
-class Chat extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            profilePictures: {
-                "chicken": chicken,
-                "duck": duck,
-                "rhino": rhino
-            },
-            messages: [
-                { userid: 1, messageid: 1, messageText: "hey man", correctFound: false },
-                { userid: 2, messageid: 2, messageText: "I think it's an iguana", correctFound: false },
-                { userid: 3, messageid: 3, messageText: "nah...that's a walrus", correctFound: false },
-                { userid: 1, messageid: 4, messageText: "u guys r silly", correctFound: false },
-                { userid: 3, messageid: 5, messageText: "ohhhhhh", correctFound: false },
-                { userid: 3, messageid: 6, messageText: "it's definitely a shoe", correctFound: false },
-                { userid: 3, messageid: 7, messageText: "what??? how is that wrong?", correctFound: false },
-                { userid: 2, messageid: 8, messageText: "lol oops", correctFound: false }
-            ],
-            orderedMessages: [],
-            newMessage: "",
-            messageidLast: 8
-        };
-        this.handleNewMessage = this.handleNewMessage.bind(this);
-        this.sendMessage = this.sendMessage.bind(this);
-    }
+class ChatRoom extends Component {
+	constructor(props) {
+		super(props);
 
-    componentDidMount() {
-        let temp = this.state.messages.sort()
-        // if (this.state.messageidLast % 2 != 0) {
-        this.setState({
-            orderedMessages: temp.reverse()
-        })
-        // }
-    }
+		this.state = {
+			room_code: props.room_code,
+			messageToSend: '',
+			user_info: '',
+			messages: [],
+			current_word: '',
+		}
 
-    handleNewMessage(event) {
-        this.setState({
-            newMessage: event.target.value
-        });
-    }
+		this.sendMessage = this.sendMessage.bind(this);
+		this.onMessageChange = this.onMessageChange.bind(this);
+		this.keyPressHandler = this.keyPressHandler.bind(this);
+		this.addMessage = this.addMessage.bind(this);
 
-    sendMessage(event) {
-        if (this.state.newMessage.length > 0) {
+		// Not sure why socket.io is firing the receive message event twice so using this hack.
+		socket.off(Commands.RECEIVE_MESSAGE).on(Commands.RECEIVE_MESSAGE, (data) => {
+			this.addMessage(data);
+		});
+
+		socket.off(Commands.JOINED_ROOM).on(Commands.JOINED_ROOM, (data) => {
+			let messages = document.querySelector('.messages');
+			let username = (socket.id === data.user_id)? "You" : data.username;
+			messages.innerHTML += `<li class="joining-message">${username} joined.</li>`;
+		});
+
+		socket.off(Commands.USER_LEFT).on(Commands.USER_LEFT, (user_data) => {
+			let messages = document.querySelector('.messages');
+			let username = (socket.id === user_data.user_id)? "You" : user_data.username;
+			messages.innerHTML += `<li class="joining-message">${username} left.</li>`;
+		});
+	}
+
+	componentDidMount() {
+		socket.on(Commands.UPDATE_USERS, (data) => {
+			this.setState({
+				user_info: data[socket.id]
+			});
+		});
+
+		socket.emit(Commands.GET_USER_INFO, this.state.room_code);
+
+		socket.on(Commands.UPDATE_ROOMS_CLIENT, (data) => {
+            console.log(data.game_info)
             this.setState({
-                orderedMessages: this.state.orderedMessages.reverse()
+                current_word: data.game_info.current_word
             })
-            let copyMessages = this.state.messages;
-            if (this.state.newMessage.toLowerCase() == this.props.word.toLowerCase()) {
-                copyMessages.push({
-                    userid: 1,
-                    messageid: this.state.messageidLast + 1,
-                    messageText: "Correct",
-                    correctFound: true
-                });
-                this.props.userList[1].thisRoundScore = 1
-                this.setState({
-                    messages: copyMessages,
-                    newMessage: "",
-                    messageidLast: this.state.messageidLast + 1
-                });
-            }
-            else {
-                copyMessages.push({
-                    userid: 1,
-                    messageid: this.state.messageidLast + 1,
-                    messageText: this.state.newMessage,
-                    correctFound: false
-                });
-                this.setState({
-                    messages: copyMessages,
-                    newMessage: "",
-                    messageidLast: this.state.messageidLast + 1
-                });
-            }
-            this.componentDidMount()
+            console.log(this.state)
+        })
+
+		console.log(socket.id);
+
+	}
+
+	addMessage(data) {
+
+		const user_id = data.user_id;
+		const current_user_id = socket.id;
+		let message = data.message;
+		let username = data.username;
+
+		if(user_id === current_user_id) {
+			username = 'You';
+		}
+
+		if (message.toLowerCase().trim() == this.state.current_word.toLowerCase().trim()) {
+            message = "Correct"
         }
 
-    }
+		this.state.messages.push({
+			username: username,
+			message: message,
+			sentByCurrentUser: user_id === current_user_id 
+		});
 
-    render(props) {
-        return (
-            <div className="chat">
-                <div className="conversation">
-                    <header className="chatHeader">Chat and Guess!</header>
-                    <p className="roundName"> Round {this.props.round}</p>
-                    <hr></hr>
-                    <div className="chatHistory">
-                        {this.state.orderedMessages.map((message) => (
-                            <div>
-                                {message.userid === 1 && (
-                                    <div>
-                                        <img src={this.state.profilePictures[this.props.userList[message.userid]["profilePic"]]} alt="my profile pic" className="myProPic" />
-                                        <div>
-                                            <p className="userNameChatSender">{this.props.userList[message.userid]["username"]}</p>
-                                            {!message.correctFound && <div className="messageBoxSenderWrong">
-                                                <h5 className="messageTextSender">{message.messageText}</h5>
-                                            </div>}
-                                            {message.correctFound && <div className="messageBoxSenderRight">
-                                                <h5 className="messageTextSender">{message.messageText}</h5>
-                                            </div>}
-                                        </div>
-                                    </div>
-                                )}
-                                {message.userid !== 1 && (
-                                    <div>
-                                        <img src={this.state.profilePictures[this.props.userList[message.userid]["profilePic"]]} alt="others profile pic" className="otherProPic" />
-                                        <div>
-                                            <p className="userNameChatReceiver">{this.props.userList[message.userid]["username"]}</p>
-                                            {!message.correctFound && <div className="messageBoxReceiverWrong">
-                                                <h5 className="messageTextReceiver">
-                                                    {message.messageText}
-                                                </h5>
-                                            </div>}
-                                            {message.correctFound && <div className="messageBoxReceiverRight">
-                                                <h5 className="messageTextReceiver">
-                                                    {message.messageText}
-                                                </h5>
-                                            </div>}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                    <div className="sending">
-                        <textarea
-                            onChange={this.handleNewMessage}
-                            value={this.state.newMessage}
-                            className="messageArea"
-                            placeholder="Send A Message..."
-                            rows="3" cols="1"
-                        ></textarea>
-                        <button
-                            onClick={(event) => this.sendMessage(event)}
-                            className="sendMessage"
-                            type="submit"
-                            value="Send"
-                            name="PostContent"
-                        >
-                            Send
-                </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+		this.setState((state) => {
+			return {room_code: state.room_code}
+		});
+
+	}
+
+	onMessageChange(event) {
+		this.setState({
+			messageToSend: event.target.value
+		});
+	}
+
+	keyPressHandler(event) {
+
+		if(event.key === 'Enter') {
+			this.sendMessage(event);
+			this.setState({
+				messageToSend: ''
+			});
+		}
+	}
+
+	sendMessage(event) {
+
+		if(this.state.messageToSend === '') {
+			event.preventDefault();
+
+			// TODO: Can't send empty message.
+		
+		} else {
+			socket.emit(Commands.SEND_MESSAGE, {
+				message: this.state.messageToSend,
+				user_id: socket.id,
+				username: this.state.user_info.username,
+				room_code: this.state.room_code
+			});
+
+			this.setState({
+				messageToSend: ''
+			});
+		}
+	}
+
+	render() {
+		return(
+			<div className="chat-room">
+				<div className="header">
+					<div className="info">
+						<div className="room-id">Room ID: <span className="grey">{this.state.room_code}</span></div>
+						<div className="username">Username: <span className="grey">{this.state.user_info.username}</span></div>
+					</div>
+					<h1>Welcome to ChatRoom!</h1>
+				</div>
+
+				<ul className="messages">
+					{this.state.messages.map( (message, i) => (
+						<li
+							key={i}
+							className={`animate__animated animate__faster message ${message.sentByCurrentUser? "animate__fadeInRight current-user" : "animate__fadeInLeft other-user"}`}
+						>
+							<span>{message.message}</span>
+							<div className="sender">{message.username}</div>
+						</li>
+					))}
+				</ul>
+
+				<div className="controls">
+					<input onChange={this.onMessageChange} onKeyUp={this.keyPressHandler} type="text" placeholder="Type here..." value={this.state.messageToSend} />
+					<Button variant="success" onClick={this.sendMessage}>Send</Button>
+				</div>
+			</div>
+		);
+	}
 }
 
-export default Chat;
+export default ChatRoom;

@@ -1,20 +1,25 @@
 import React, { Component } from 'react';
+import socket from '../server/socket';
 import Canvas from "./Canvas"
 import ChatRoom from "./ChatRoom"
 import Clock from "./Clock"
 import RoundsUI from "./RoundsUI"
 import Scoreboard from "./Scoreboard"
 import Toolbar from "./Toolbar"
+import Commands from '../commands';
+import Categories from '../categories';
+import { Modal } from 'react-bootstrap';
+import '../css/PlayPage.scss'
 
 
 // Step 1, enter playpage, with modal for who is the artist open (if artist, choose word, if not, do not choose word)
-//make function to be called in Commands.PICK_WORDS and onClick of start next round
+// make function to be called in Commands.PICK_WORDS and onClick of start next round
 // on exit of wordbank assign 1st artist, give role artist to selected, role guesser to not, add to artist history
 // for selection have list of user_ids randomly pop until empty, when empty start next round with newly full list
-//if artist, choose word
-//set word to what artist chose in OPEN_ROOMS.game_info
-//subround played
-//call function on click of start next round
+// if artist, choose word
+// set word to what artist chose in OPEN_ROOMS.game_info
+// subround played
+// call function on click of start next round
 
 
 class PlayPage extends Component {
@@ -22,18 +27,130 @@ class PlayPage extends Component {
 		super(props);
 		this.state = {
             preRoundState: false,
-            room_code: props.match.params.room_code
-		}
+            room_code: props.match.params.room_code,
+            game_info: {
+                word_categories: [],
+                rounds: 0,
+                current_round: 0,
+                current_subround: 0,
+                current_word: '',
+                time_per_round: 0,
+                current_time: 0,
+                current_artist_id: '',
+                artist_history: []
+            },
+            is_artist: false,
+            show_modal: false,
+        }
+        
+        this.closeModal = this.closeModal.bind(this);
+        this.displayRandomWords = this.displayRandomWords.bind(this);
+        this.random = this.random.bind(this);
+        this.beginRound = this.beginRound.bind(this);
+    }
+    
+    componentDidMount() {
 
-		console.log('Hello world');
-	}
+        socket.off(Commands.BEGIN_ROUND).on(Commands.BEGIN_ROUND, (data) => {
+            
+            let sent_game_info = data.game_info;
+            console.log(sent_game_info);
+            let is_artist = data.users[socket.id].is_artist;
+            
+            console.log(`Is artist: ${is_artist}`);
+            let game_info = {
+                word_categories: sent_game_info.word_categories,
+                rounds: sent_game_info.rounds,
+                current_round: sent_game_info.current_round,
+                current_subround: sent_game_info.current_subround,
+                current_word: '',
+                time_per_round: sent_game_info.time_per_round,
+                current_round: sent_game_info.current_round,
+                current_artist_id: sent_game_info.current_artist_id,
+                artist_history: sent_game_info.artist_history
+            };
+
+            if(is_artist) {
+                this.setState({
+                    show_modal: true,
+                    game_info: game_info
+                });
+            
+            } else {
+                this.setState({
+                    show_modal: false,
+                    game_info: game_info
+                })
+            }
+        });
+
+    }
+
+    beginRound() {
+        this.setState({
+            show_modal: false
+        })
+        socket.emit(Commands.BEGIN_ROUND, this.state.game_info);
+    }
+
+    closeModal() {
+        this.setState({
+            show_modal: false
+        })
+    }
+
+    random(a, b) {
+        return Math.floor(a + Math.random() * (b - a));
+    }
+
+    displayRandomWords(categories) {
+
+        console.log(categories);
+
+        let words = [];
+
+        for(let category of categories) {
+            let available_words = Categories[category];
+            let word = available_words[this.random(0, available_words.length)];
+
+            words.push(<div className="choice" onClick={this.beginRound}>{word}</div>);
+        }
+
+        console.log(words);
+
+        return (
+        <div className="choices">
+            {words}
+        </div>)
+    }
+
     render() {
+        let pick_words = this.displayRandomWords(this.state.game_info.word_categories);
         return (
             <React.Fragment>
+                
+                <Modal show={this.state.show_modal} onHide={this.closeModal} centered>
+                    <Modal.Header>
+                        <Modal.Title className="m-auto">Pick a word!</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        {pick_words}
+                    </Modal.Body>
+                </Modal>
+
+                {/* <Modal show={!this.state.is_artist} onHide={this.closeModal} centered>
+                    <Modal.Header>
+                        <Modal.Title className="m-auto">The artist is picking a word.</Modal.Title>
+                    </Modal.Header>
+                </Modal> */}
+
+
+            
             {!this.state.preRoundState && <div className="container">
                 <div className="left-col">
                     <Scoreboard />
-                    <Clock />
+                    <Clock room_code={this.state.room_code} />
                     {/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */}
                     <button>Show end scoreboard</button>
                     <div className="debug">
@@ -44,7 +161,7 @@ class PlayPage extends Component {
                 </div>
                 <div className="center-col">
                     {/* <ScoreboardEnd /> */}
-                    <RoundsUI />
+                    <RoundsUI artist_history={this.state.game_info.artist_history} />
                     <Toolbar />
                 </div>
 

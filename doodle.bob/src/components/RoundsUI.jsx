@@ -5,6 +5,7 @@ import Commands from "../commands";
 class RoundsUI extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
             user_id: socket.id,
             room_code: '',
