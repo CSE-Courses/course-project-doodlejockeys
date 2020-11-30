@@ -20,7 +20,7 @@ class RoundsUI extends Component {
     }
 
     componentDidMount() {
-        socket.on(Commands.SEND_ARTIST_INFO, (data) => {
+        socket.off(Commands.SEND_ARTIST_INFO).on(Commands.SEND_ARTIST_INFO, (data) => {
             let room_code = data.room_code
             let total_rounds = data.room_info.game_info.rounds
             let artist_id = data.room_info.game_info.current_artist_id

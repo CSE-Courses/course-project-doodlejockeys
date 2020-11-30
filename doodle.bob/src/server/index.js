@@ -57,7 +57,7 @@ function timer_tick(io, room_code) {
 		current_room_game_info.current_time = current_room_game_info.time_per_round;
 		// TODO: Emit to indicate that round has ended
 		chooseArtist(room_code);
-		io.in(room_code).emit(Commands.BEGIN_ROUND, OPEN_ROOMS[room_code]);
+		//io.in(room_code).emit(Commands.BEGIN_ROUND, OPEN_ROOMS[room_code]);
 	}
 }
 
@@ -83,18 +83,20 @@ function chooseArtist(room_code) {
 	var currentRoundIndex = OPEN_ROOMS[room_code].game_info.current_round - 1
 	var currentSubroundIndex = OPEN_ROOMS[room_code].game_info.current_subround - 1
 
-	var randomlyChosen = Math.floor(Math.random() * ARTIST_POOL.length)
-	var chosenArtist = ARTIST_POOL[randomlyChosen]
-	ARTIST_POOL.splice(randomlyChosen, 1)
+	if (OPEN_ROOMS[room_code].game_info.artist_history[currentRoundIndex][currentSubroundIndex] === '') {
+		var randomlyChosen = Math.floor(Math.random() * ARTIST_POOL.length)
+		var chosenArtist = ARTIST_POOL[randomlyChosen]
+		ARTIST_POOL.splice(randomlyChosen, 1)
 
-	OPEN_ROOMS[room_code].game_info.current_artist_id = chosenArtist
-
-	OPEN_ROOMS[room_code].game_info.artist_history[currentRoundIndex][currentSubroundIndex] = chosenArtist
-	OPEN_ROOMS[room_code].users[chosenArtist].is_artist = true
-	for (var user of Object.keys(OPEN_ROOMS[room_code].users)) {
-		if (OPEN_ROOMS[room_code].game_info.current_artist_id !== user) {
-			// console.log(OPEN_ROOMS[room_code].game_info.current_artist_id, user)
-			OPEN_ROOMS[room_code].users[chosenArtist].is_artist = false
+		OPEN_ROOMS[room_code].game_info.current_artist_id = chosenArtist
+		OPEN_ROOMS[room_code].game_info.artist_history[currentRoundIndex][currentSubroundIndex] = chosenArtist
+		console.log(currentRoundIndex, currentSubroundIndex, chosenArtist)
+		OPEN_ROOMS[room_code].users[chosenArtist].is_artist = true
+		for (var user of Object.keys(OPEN_ROOMS[room_code].users)) {
+			if (OPEN_ROOMS[room_code].game_info.current_artist_id !== user) {
+				// console.log(OPEN_ROOMS[room_code].game_info.current_artist_id, user)
+				OPEN_ROOMS[room_code].users[chosenArtist].is_artist = false
+			}
 		}
 	}
 
@@ -264,7 +266,7 @@ io.on('connection', socket => {
 		OPEN_ROOMS[room_code].game_info.word_categories = word_categories
 
 		io.in(room_code).emit(Commands.MOVE_ON, {});
-		
+
 		io.in(room_code).emit(Commands.UPDATE_ROOMS_CLIENT, OPEN_ROOMS[room_code]);
 		//for scoreboard
 		io.in(room_code).emit(Commands.SEND_SCOREBOARD_INFO, {
@@ -328,7 +330,6 @@ io.on('connection', socket => {
 		game_info.current_time = game_info.time_per_round;
 		console.log(OPEN_ROOMS[room_code].users)
 		console.log(OPEN_ROOMS[room_code].game_info)
-		// console.log(OPEN_ROOMS[room_code].game_info.artist_history)
 		//where we want to emit back to all users, everything except timer count down gets emitted to all users
 		io.in(room_code).emit(Commands.SEND_CLOCK_INFO, {
 			room_info: OPEN_ROOMS[room_code],
@@ -343,6 +344,8 @@ io.on('connection', socket => {
 		// 	room_info: data.room_info,
 		// 	room_code: data.room_code
 		// })
+
+		io.in(room_code).emit(Commands.BEGIN_ROUND, OPEN_ROOMS[room_code]);
 	});
 
 	// This event gets emitted when tthe artist starts the game.
@@ -380,10 +383,10 @@ io.on('connection', socket => {
 		// console.log(data.game_info);
 		let room_code = CONNECTED_USERS[data.current_artist_id].room_code;
 
-		io.in(room_code).emit(Commands.SEND_ARTIST_INFO, {
-			room_info: OPEN_ROOMS[room_code],
-			room_code: room_code
-		});
+		// io.in(room_code).emit(Commands.SEND_ARTIST_INFO, {
+		// 	room_info: OPEN_ROOMS[room_code],
+		// 	room_code: room_code
+		// });
 
 		console.log(`Starting the timer`);
 		timer_id = setInterval(() => {

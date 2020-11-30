@@ -24,8 +24,8 @@ import '../css/PlayPage.scss'
 
 class PlayPage extends Component {
     constructor(props) {
-		super(props);
-		this.state = {
+        super(props);
+        this.state = {
             preRoundState: false,
             room_code: props.match.params.room_code,
             game_info: {
@@ -42,21 +42,22 @@ class PlayPage extends Component {
             is_artist: false,
             show_modal: false,
         }
-        
+
         this.closeModal = this.closeModal.bind(this);
         this.displayRandomWords = this.displayRandomWords.bind(this);
         this.random = this.random.bind(this);
         this.beginRound = this.beginRound.bind(this);
     }
-    
+
     componentDidMount() {
 
         socket.off(Commands.BEGIN_ROUND).on(Commands.BEGIN_ROUND, (data) => {
-            
+
             let sent_game_info = data.game_info;
             console.log(sent_game_info);
-            let is_artist = data.users[socket.id].is_artist;
-            
+            let is_artist = false
+            if (data.game_info.current_artist_id === socket.id) is_artist = true
+
             console.log(`Is artist: ${is_artist}`);
             let game_info = {
                 word_categories: sent_game_info.word_categories,
@@ -70,13 +71,15 @@ class PlayPage extends Component {
                 artist_history: sent_game_info.artist_history
             };
 
-            if(is_artist) {
+            if (is_artist) {
+                console.log("artist")
                 this.setState({
                     show_modal: true,
                     game_info: game_info
                 });
-            
+
             } else {
+                console.log("not artist")
                 this.setState({
                     show_modal: false,
                     game_info: game_info
@@ -91,6 +94,7 @@ class PlayPage extends Component {
             show_modal: false
         })
         socket.emit(Commands.BEGIN_ROUND, this.state.game_info);
+        this.closeModal()
     }
 
     closeModal() {
@@ -109,7 +113,7 @@ class PlayPage extends Component {
 
         let words = [];
 
-        for(let category of categories) {
+        for (let category of categories) {
             let available_words = Categories[category];
             let word = available_words[this.random(0, available_words.length)];
 
@@ -119,17 +123,17 @@ class PlayPage extends Component {
         console.log(words);
 
         return (
-        <div className="choices">
-            {words}
-        </div>)
+            <div className="choices">
+                {words}
+            </div>)
     }
 
     render() {
         let pick_words = this.displayRandomWords(this.state.game_info.word_categories);
         return (
             <React.Fragment>
-                
-                <Modal show={this.state.show_modal} onHide={this.closeModal} centered>
+
+                <Modal show={this.state.show_modal} centered>
                     <Modal.Header>
                         <Modal.Title className="m-auto">Pick a word!</Modal.Title>
                     </Modal.Header>
@@ -146,30 +150,30 @@ class PlayPage extends Component {
                 </Modal> */}
 
 
-            
-            {!this.state.preRoundState && <div className="container">
-                <div className="left-col">
-                    <Scoreboard />
-                    <Clock room_code={this.state.room_code} />
-                    {/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */}
-                    <button>Show end scoreboard</button>
-                    <div className="debug">
-                        <label htmlFor="players">Update score:</label>
-                        <button>Update</button>
-                    </div>
-                    {/* DEMONSTRATION END */}
-                </div>
-                <div className="center-col">
-                    {/* <ScoreboardEnd /> */}
-                    <RoundsUI artist_history={this.state.game_info.artist_history} />
-                    <Toolbar />
-                </div>
 
-                <div className="right-col">
-                    <ChatRoom room_code={this.state.room_code} />
-                </div>
-            </div>}
-        </React.Fragment>
+                {!this.state.preRoundState && <div className="container">
+                    <div className="left-col">
+                        <Scoreboard />
+                        <Clock room_code={this.state.room_code} />
+                        {/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */}
+                        <button>Show end scoreboard</button>
+                        <div className="debug">
+                            <label htmlFor="players">Update score:</label>
+                            <button>Update</button>
+                        </div>
+                        {/* DEMONSTRATION END */}
+                    </div>
+                    <div className="center-col">
+                        {/* <ScoreboardEnd /> */}
+                        <RoundsUI artist_history={this.state.game_info.artist_history} />
+                        <Toolbar />
+                    </div>
+
+                    <div className="right-col">
+                        <ChatRoom room_code={this.state.room_code} />
+                    </div>
+                </div>}
+            </React.Fragment>
         );
     }
 }
