@@ -50,6 +50,11 @@ class WordBank extends Component {
                 }
             }
         });
+
+        socket.emit(Commands.JOIN_GAME, {
+            room_code: this.state.room_code,
+            user_id: socket.id
+        })
     }
 
     componentDidMount() {
@@ -93,7 +98,7 @@ class WordBank extends Component {
                 });
             }
             else {
-                this.props.history.push(`/${this.state.room_code}/PlayPage`)
+                this.props.history.push(`/${this.state.room_code}/PlayPage`);
             }
         }
     }

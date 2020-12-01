@@ -116,7 +116,7 @@ io.on('connection', socket => {
 		profile_picture: ''
 	};
 
-	socket.emit(Commands.UPDATE_ROOMS, Object.keys(OPEN_ROOMS));
+	socket.emit(Commands.UPDATE_ROOMS, OPEN_ROOMS);
 
 	// console.log(CONNECTED_USERS); 
 
@@ -183,7 +183,8 @@ io.on('connection', socket => {
 				current_subround: 1,
 				current_artist_id: '',
 				artist_history: [],
-				current_word: 'ball'
+				current_word: 'ball',
+				game_started: false
 			}
 
 		};
@@ -205,7 +206,13 @@ io.on('connection', socket => {
 			username: username,
 			user_id: host_id
 		});
-		socket.broadcast.emit(Commands.UPDATE_ROOMS, Object.keys(OPEN_ROOMS));
+		socket.broadcast.emit(Commands.UPDATE_ROOMS, OPEN_ROOMS);
+	});
+
+	socket.on(Commands.UPDATE_USER_INFO, data => {
+		let username = data.username;
+		let user_id = data.user_id;
+		CONNECTED_USERS[user_id].username = username;
 	});
 
 
@@ -224,18 +231,18 @@ io.on('connection', socket => {
 	 */
 	socket.on(Commands.JOIN_GAME, (data) => {
 		let room_code = data.room_code;
-		let username = data.username;
 		let user_id = data.user_id;
+		let username = CONNECTED_USERS[user_id].username;
+		let profile_picture = CONNECTED_USERS[user_id].profile_picture;
 
 		CONNECTED_USERS[user_id].room_code = room_code;
-		CONNECTED_USERS[user_id].username = username;
 
 		if (room_code in OPEN_ROOMS) {
 			OPEN_ROOMS[room_code].users[user_id] = {
 				username: username,
 				host: false,
 				points: 0,
-				profile_picture: ''
+				profile_picture: profile_picture
 			};
 
 			socket.join(room_code);
@@ -256,7 +263,6 @@ io.on('connection', socket => {
 		let profile_picture = data.profile_picture
 
 		CONNECTED_USERS[user_id].profile_picture = profile_picture
-		OPEN_ROOMS[room_code].users[user_id].profile_picture = profile_picture
 
 		io.in(room_code).emit(Commands.UPDATE_ROOMS_CLIENT, OPEN_ROOMS[room_code]);
 	})
@@ -267,6 +273,9 @@ io.on('connection', socket => {
 		let word_categories = data.word_categories
 
 		OPEN_ROOMS[room_code].game_info.word_categories = word_categories
+		OPEN_ROOMS[room_code].game_info.game_started = true
+
+		io.emit(Commands.UPDATE_ROOMS, OPEN_ROOMS);
 
 		io.in(room_code).emit(Commands.MOVE_ON, {});
 
@@ -397,6 +406,10 @@ io.on('connection', socket => {
 			timer_tick(io, room_code);
 		}, 1000);
 	});
+
+	socket.on(Commands.UPDATE_ROOMS, data => {
+		io.emit(Commands.UPDATE_ROOMS, OPEN_ROOMS)
+	})
 
 });
 
