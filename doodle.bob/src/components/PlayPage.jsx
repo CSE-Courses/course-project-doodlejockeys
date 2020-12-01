@@ -103,6 +103,10 @@ class PlayPage extends Component {
             // console.log("time changing", this.state.game_info.current_time)
         })
 
+        socket.on(Commands.END_ROUND, (data) => {
+            console.log("we done, fools")
+        })
+
     }
 
     beginRound(event) {

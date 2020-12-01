@@ -61,7 +61,30 @@ function timer_tick(io, room_code) {
 		// TODO: Emit to indicate that round has ended
 		chooseArtist(room_code);
 		//io.in(room_code).emit(Commands.BEGIN_ROUND, OPEN_ROOMS[room_code]);
+		io.in(room_code).emit(Commands.END_ROUND, OPEN_ROOMS[room_code])
 	}
+}
+
+function calculateNonArtistScore(room_code, current_time) {
+	finalScore = 0
+	BASE = 100
+	// SCALE_NUM_PLAYERS = 15
+	CORRECT_GUESS_SCORE = 5
+	TIME_BONUS = [0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.001]
+	var hit_bonus = false
+	var numPlayers = Object.keys(OPEN_ROOMS[room_code].users).length
+	var totalTime = OPEN_ROOMS[room_code].game_info.time_per_round
+
+	for (var time of TIME_BONUS) {
+		if (!hit_bonus) {
+			if (current_time >= time * totalTime) {
+				hit_bonus = true
+				finalScore = BASE * time + CORRECT_GUESS_SCORE
+			}
+		}
+	}
+	return finalScore
+
 }
 
 
@@ -193,7 +216,8 @@ io.on('connection', socket => {
 			host: true,
 			points: 0,
 			profile_picture: '',
-			is_artist: false
+			is_artist: false,
+			points_history: [],
 		};
 
 		// console.log(OPEN_ROOMS[room_code].users);
@@ -235,7 +259,8 @@ io.on('connection', socket => {
 				username: username,
 				host: false,
 				points: 0,
-				profile_picture: ''
+				profile_picture: '',
+				points_history: [],
 			};
 
 			socket.join(room_code);
@@ -283,13 +308,22 @@ io.on('connection', socket => {
 		})
 		//choose the artist
 		//update artist_history to have correct amount of slots
+		let points_history = []
 		for (let i = 0; i < OPEN_ROOMS[room_code].game_info.rounds; i++) {
 			let round_history = [];
+			let round_history_points = [];
 			for (let user of Object.keys(OPEN_ROOMS[room_code].users)) {
 				round_history.push('')
+				round_history_points.push(0)
 			}
 			OPEN_ROOMS[room_code].game_info.artist_history.push(round_history)
+			points_history.push(round_history_points)
 		}
+		console.log(points_history)
+		for (let user of Object.keys(OPEN_ROOMS[room_code].users)) {
+			OPEN_ROOMS[room_code].users[user].points_history = points_history
+		}
+		console.log(OPEN_ROOMS[room_code].users)
 		if (ARTIST_POOL.length == 0) {
 			resetArtistPool(data.room_code)
 		}
@@ -397,6 +431,28 @@ io.on('connection', socket => {
 			timer_tick(io, room_code);
 		}, 1000);
 	});
+
+	socket.on(Commands.GOT_CORRECT_WORD, (data) => {
+		let room_code = data.room_code
+		let current_time = data.current_time
+		let user_id = data.user_id
+		var current_artist_id = OPEN_ROOMS[room_code].game_info.current_artist_id
+		var currentRoundIndex = OPEN_ROOMS[room_code].game_info.current_round - 1
+		var currentSubroundIndex = OPEN_ROOMS[room_code].game_info.current_subround - 1
+		var points_history = OPEN_ROOMS[room_code].users[user_id].points_history
+
+		console.log(current_artist_id, socket.id)
+		console.log(currentRoundIndex, currentSubroundIndex)
+		if (current_time > 0 && current_artist_id != socket.id) {
+			if (points_history[currentRoundIndex][currentSubroundIndex] === 0) {
+				var score_for_round = calculateNonArtistScore(room_code, current_time)
+				points_history[currentRoundIndex][currentSubroundIndex] = score_for_round
+			}
+		}
+		for (var user of Object.keys(OPEN_ROOMS[room_code].users)) {
+			console.log(OPEN_ROOMS[room_code].users[user])
+		}
+	})
 
 });
 
