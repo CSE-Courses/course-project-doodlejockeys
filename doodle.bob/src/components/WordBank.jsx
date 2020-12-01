@@ -148,7 +148,7 @@ class WordBank extends Component {
         return (
             <div className="categories">
 
-                <Modal show={this.state.show_error} onHide={this.closeModal} centered>
+                <Modal animation={false} show={this.state.show_error} onHide={this.closeModal} centered>
                     <Modal.Header>
                         <Modal.Title className="text-danger">Error!</Modal.Title>
                     </Modal.Header>

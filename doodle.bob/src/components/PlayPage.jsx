@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import socket from '../server/socket';
-import Canvas from "./Canvas"
 import ChatRoom from "./ChatRoom"
 import Clock from "./Clock"
 import RoundsUI from "./RoundsUI"
@@ -127,15 +126,25 @@ class PlayPage extends Component {
 
     displayRandomWords(categories) {
 
-        console.log(categories);
-
+        console.log(categories, categories.length);
+        
         let words = [];
-
+        const MAX_WORDS = 3;
+        let w = 0;
+        
         for (let category of categories) {
-            let available_words = Categories[category];
+            let random_category = categories[this.random(0, categories.length)];
+
+            console.log(random_category);
+            let available_words = Categories[random_category];
             let word = available_words[this.random(0, available_words.length)];
 
             words.push(<div className="choice" data-value={word} onClick={this.beginRound}>{word}</div>);
+            w++;
+
+            if(w >= MAX_WORDS) {
+                break;
+            }
         }
 
         console.log(words);
@@ -152,7 +161,7 @@ class PlayPage extends Component {
         return (
             <React.Fragment>
 
-                <Modal show={this.state.show_modal && this.state.is_artist} centered>
+                <Modal animation={false} show={this.state.show_modal && this.state.is_artist} centered>
                     <Modal.Header>
                         <Modal.Title className="m-auto">Pick a word!</Modal.Title>
                     </Modal.Header>
@@ -161,20 +170,11 @@ class PlayPage extends Component {
                         {pick_words}
                     </Modal.Body>
                 </Modal>
-                <Modal show={this.state.show_modal && !this.state.is_artist} onHide={this.closeModal} centered>
+                <Modal animation={false} show={this.state.show_modal && !this.state.is_artist} onHide={this.closeModal} centered>
                     <Modal.Header>
                         <Modal.Title className="m-auto">The artist is picking a word.</Modal.Title>
                     </Modal.Header>
                 </Modal>
-
-
-
-                {/* <Modal show={!this.state.is_artist} onHide={this.closeModal} centered>
-                    <Modal.Header>
-                        <Modal.Title className="m-auto">The artist is picking a word.</Modal.Title>
-                    </Modal.Header>
-                </Modal> */}
-
 
 
                 {!this.state.preRoundState && <div className="container">

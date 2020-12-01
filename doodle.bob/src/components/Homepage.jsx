@@ -143,7 +143,7 @@ class Homepage extends Component {
 		return (
 			<div className="home-container">
 
-				<Modal show={this.state.show_username_error} onHide={this.closeModal} centered>
+				<Modal animation={false} show={this.state.show_username_error} onHide={this.closeModal} centered>
 					<Modal.Header closeButton>
 						<Modal.Title className="text-danger">Error!</Modal.Title>
 					</Modal.Header>
@@ -153,7 +153,7 @@ class Homepage extends Component {
 					</Modal.Body>
 				</Modal>
 
-				<Modal show={this.state.show_code_error} onHide={this.closeModal} centered>
+				<Modal animation={false} show={this.state.show_code_error} onHide={this.closeModal} centered>
 					<Modal.Header closeButton>
 						<Modal.Title className="text-danger">Error!</Modal.Title>
 					</Modal.Header>
