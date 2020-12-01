@@ -41,6 +41,7 @@ class PlayPage extends Component {
             },
             is_artist: false,
             show_modal: false,
+            users: {},
         }
 
         this.closeModal = this.closeModal.bind(this);
@@ -54,7 +55,7 @@ class PlayPage extends Component {
         socket.off(Commands.BEGIN_ROUND).on(Commands.BEGIN_ROUND, (data) => {
 
             let sent_game_info = data.game_info;
-            console.log(sent_game_info);
+            console.log("YO", data.users);
             let is_artist = false
             if (data.game_info.current_artist_id === socket.id) is_artist = true
 
@@ -90,7 +91,8 @@ class PlayPage extends Component {
             this.setState({
                 show_modal: true,
                 game_info: game_info,
-                is_artist: is_artist
+                is_artist: is_artist,
+                users: data.users
             })
         });
 
@@ -104,7 +106,10 @@ class PlayPage extends Component {
         })
 
         socket.on(Commands.END_ROUND, (data) => {
-            console.log("we done, fools")
+            console.log(data.users)
+            this.setState({
+                users: data.users
+            })
         })
 
     }
@@ -183,7 +188,9 @@ class PlayPage extends Component {
 
                 {!this.state.preRoundState && <div className="container">
                     <div className="left-col">
-                        <Scoreboard />
+                        <Scoreboard
+                            users={this.state.users}
+                        />
                         <Clock room_code={this.state.room_code} />
                         {/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */}
                         <button>Show end scoreboard</button>
