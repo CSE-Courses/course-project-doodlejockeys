@@ -308,19 +308,23 @@ io.on('connection', socket => {
 		})
 		//choose the artist
 		//update artist_history to have correct amount of slots
-		let points_history = []
+
 		for (let i = 0; i < OPEN_ROOMS[room_code].game_info.rounds; i++) {
 			let round_history = [];
-			let round_history_points = [];
 			for (let user of Object.keys(OPEN_ROOMS[room_code].users)) {
 				round_history.push('')
-				round_history_points.push(0)
 			}
 			OPEN_ROOMS[room_code].game_info.artist_history.push(round_history)
-			points_history.push(round_history_points)
 		}
-		console.log(points_history)
 		for (let user of Object.keys(OPEN_ROOMS[room_code].users)) {
+			let points_history = []
+			for (let i = 0; i < OPEN_ROOMS[room_code].game_info.rounds; i++) {
+				let round_history_points = [];
+				for (let user of Object.keys(OPEN_ROOMS[room_code].users)) {
+					round_history_points.push(0)
+				}
+				points_history.push(round_history_points)
+			}
 			OPEN_ROOMS[room_code].users[user].points_history = points_history
 		}
 		console.log(OPEN_ROOMS[room_code].users)
@@ -441,16 +445,19 @@ io.on('connection', socket => {
 		var currentSubroundIndex = OPEN_ROOMS[room_code].game_info.current_subround - 1
 		var points_history = OPEN_ROOMS[room_code].users[user_id].points_history
 
-		console.log(current_artist_id, socket.id)
+		console.log(current_artist_id, user_id)
 		console.log(currentRoundIndex, currentSubroundIndex)
-		if (current_time > 0 && current_artist_id != socket.id) {
-			if (points_history[currentRoundIndex][currentSubroundIndex] === 0) {
-				var score_for_round = calculateNonArtistScore(room_code, current_time)
-				points_history[currentRoundIndex][currentSubroundIndex] = score_for_round
+		if (current_time > 0) {
+			if (user_id === socket.id) {
+				if (points_history[currentRoundIndex][currentSubroundIndex] === 0) {
+					console.log("only this one", points_history[currentRoundIndex][currentSubroundIndex])
+					var score_for_round = calculateNonArtistScore(room_code, current_time)
+					points_history[currentRoundIndex][currentSubroundIndex] = score_for_round
+				}
 			}
 		}
 		for (var user of Object.keys(OPEN_ROOMS[room_code].users)) {
-			console.log(OPEN_ROOMS[room_code].users[user])
+			console.log(user, OPEN_ROOMS[room_code].users[user])
 		}
 	})
 

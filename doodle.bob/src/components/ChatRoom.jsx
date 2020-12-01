@@ -78,12 +78,13 @@ class ChatRoom extends Component {
 		console.log(message.toLowerCase().trim(), this.props.current_word.toLowerCase().trim())
 		if (message.toLowerCase().trim() === this.props.current_word.toLowerCase().trim()) {
 			message = "Correct"
-
-			socket.emit(Commands.GOT_CORRECT_WORD, {
-				current_time: this.props.current_time,
-				user_id: socket.id,
-				room_code: this.state.room_code
-			})
+			if (user_id === current_user_id) {
+				socket.emit(Commands.GOT_CORRECT_WORD, {
+					current_time: this.props.current_time,
+					user_id: socket.id,
+					room_code: this.state.room_code
+				})
+			}
 		}
 
 		this.state.messages.push({
