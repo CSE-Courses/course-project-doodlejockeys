@@ -15,6 +15,16 @@
 		transition: background-color 0.5s, color 0.5s;
 	}
 
+	.custom-word {
+		margin: 1rem;
+		width: 20vw;
+
+		button {
+			margin-top: 0.5rem;
+			width: 20vw;
+		}
+	}
+
 	.choice:hover {
 		background-color: black;
 		color: white;

@@ -7,7 +7,7 @@ import Scoreboard from "./Scoreboard"
 import Toolbar from "./Toolbar"
 import Commands from '../commands';
 import Categories from '../categories';
-import { Modal } from 'react-bootstrap';
+import { Form, Button, Modal } from 'react-bootstrap';
 import '../css/PlayPage.scss'
 
 
@@ -46,6 +46,7 @@ class PlayPage extends Component {
         this.displayRandomWords = this.displayRandomWords.bind(this);
         this.random = this.random.bind(this);
         this.beginRound = this.beginRound.bind(this);
+        this.setCustomWord = this.setCustomWord.bind(this);
     }
 
     componentDidMount() {
@@ -124,6 +125,23 @@ class PlayPage extends Component {
         return Math.floor(a + Math.random() * (b - a));
     }
 
+    onCustomWordChange(event) {
+        this.setState({
+            custom_word: event.target.value
+        })
+    }
+
+    setCustomWord(event) {
+        let custom_word = document.querySelector("#c-word").value;
+        if(custom_word === '') {
+            event.preventDefault();
+        
+        } else {
+            event.target.dataset.value = custom_word;
+            this.beginRound(event);
+        }
+    }
+
     displayRandomWords(categories) {
 
         console.log(categories, categories.length);
@@ -146,6 +164,13 @@ class PlayPage extends Component {
                 break;
             }
         }
+
+        words.push(
+            <div className="custom-word">
+                <Form.Control type="text" placeholder="Enter custom word" id="c-word" />
+                <Button onClick={this.setCustomWord} variant="success">Submit Word</Button>
+            </div>
+        )
 
         console.log(words);
 
