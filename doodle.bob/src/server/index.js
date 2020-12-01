@@ -47,6 +47,9 @@ function timer_tick(io, room_code) {
 	let current_room_game_info = OPEN_ROOMS[room_code].game_info;
 
 	io.in(room_code).emit(Commands.RECEIVE_CLOCK_INFO, current_room_game_info.current_time);
+	//This is to pass to playpage
+	console.log(current_room_game_info.current_word)
+	io.in(room_code).emit(Commands.CLOCK_PLAYPAGE, current_room_game_info);
 	current_room_game_info.current_time -= 1;
 
 	console.log(`Timer value: ${current_room_game_info.current_time}`);
@@ -380,9 +383,10 @@ io.on('connection', socket => {
 	});
 
 	socket.on(Commands.BEGIN_ROUND, (data) => {
+		console.log(data.current_word)
 		// console.log(data.game_info);
 		let room_code = CONNECTED_USERS[data.current_artist_id].room_code;
-
+		OPEN_ROOMS[room_code].game_info.current_word = data.current_word
 		// io.in(room_code).emit(Commands.SEND_ARTIST_INFO, {
 		// 	room_info: OPEN_ROOMS[room_code],
 		// 	room_code: room_code

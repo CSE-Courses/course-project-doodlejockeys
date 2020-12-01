@@ -64,35 +64,53 @@ class PlayPage extends Component {
                 rounds: sent_game_info.rounds,
                 current_round: sent_game_info.current_round,
                 current_subround: sent_game_info.current_subround,
-                current_word: '',
+                current_word: sent_game_info.current_word,
                 time_per_round: sent_game_info.time_per_round,
                 current_round: sent_game_info.current_round,
                 current_artist_id: sent_game_info.current_artist_id,
-                artist_history: sent_game_info.artist_history
+                artist_history: sent_game_info.artist_history,
+                current_time: sent_game_info.current_time
             };
 
             if (is_artist) {
                 console.log("artist")
-                this.setState({
-                    show_modal: true,
-                    game_info: game_info
-                });
+                // this.setState({
+                //     show_modal: true,
+                //     game_info: game_info
+                // });
 
             } else {
                 console.log("not artist")
-                this.setState({
-                    show_modal: false,
-                    game_info: game_info
-                })
+                // this.setState({
+                //     show_modal: false,
+                //     game_info: game_info
+                // })
             }
+
+            this.setState({
+                show_modal: true,
+                game_info: game_info,
+                is_artist: is_artist
+            })
         });
+
+        //This is for passing into ChatRoom so we can keep track of the score
+        socket.on(Commands.CLOCK_PLAYPAGE, (data) => {
+            this.state.game_info.current_time = data.current_time
+            this.state.game_info.current_word = data.current_word
+            this.setState((state) => { return { show_modal: state.show_modal } })
+            this.closeModal()
+            // console.log("time changing", this.state.game_info.current_time)
+        })
 
     }
 
-    beginRound() {
+    beginRound(event) {
         this.setState({
             show_modal: false
         })
+        console.log(event.target.dataset.value)
+        this.state.game_info.current_word = event.target.dataset.value;
         socket.emit(Commands.BEGIN_ROUND, this.state.game_info);
         this.closeModal()
     }
@@ -117,7 +135,7 @@ class PlayPage extends Component {
             let available_words = Categories[category];
             let word = available_words[this.random(0, available_words.length)];
 
-            words.push(<div className="choice" onClick={this.beginRound}>{word}</div>);
+            words.push(<div className="choice" data-value={word} onClick={this.beginRound}>{word}</div>);
         }
 
         console.log(words);
@@ -130,10 +148,11 @@ class PlayPage extends Component {
 
     render() {
         let pick_words = this.displayRandomWords(this.state.game_info.word_categories);
+        console.log(this.state.game_info.current_time)
         return (
             <React.Fragment>
 
-                <Modal show={this.state.show_modal} centered>
+                <Modal show={this.state.show_modal && this.state.is_artist} centered>
                     <Modal.Header>
                         <Modal.Title className="m-auto">Pick a word!</Modal.Title>
                     </Modal.Header>
@@ -142,6 +161,13 @@ class PlayPage extends Component {
                         {pick_words}
                     </Modal.Body>
                 </Modal>
+                <Modal show={this.state.show_modal && !this.state.is_artist} onHide={this.closeModal} centered>
+                    <Modal.Header>
+                        <Modal.Title className="m-auto">The artist is picking a word.</Modal.Title>
+                    </Modal.Header>
+                </Modal>
+
+
 
                 {/* <Modal show={!this.state.is_artist} onHide={this.closeModal} centered>
                     <Modal.Header>
@@ -170,7 +196,11 @@ class PlayPage extends Component {
                     </div>
 
                     <div className="right-col">
-                        <ChatRoom room_code={this.state.room_code} />
+                        <ChatRoom
+                            current_time={this.state.game_info.current_time}
+                            current_word={this.state.game_info.current_word}
+                            room_code={this.state.room_code}
+                        />
                     </div>
                 </div>}
             </React.Fragment>

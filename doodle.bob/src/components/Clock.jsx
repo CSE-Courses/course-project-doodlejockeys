@@ -87,7 +87,7 @@ class Clock extends Component {
 
         socket.off(Commands.RECEIVE_CLOCK_INFO).on(Commands.RECEIVE_CLOCK_INFO, (data) => {
             let seconds = data
-
+            // console.log("time getting called")
             this.setState({
                 seconds: seconds
             })

@@ -6,6 +6,7 @@ import 'animate.css';
 // import '../css/Responsive.scss';
 import { Button } from 'react-bootstrap';
 
+
 class ChatRoom extends Component {
 	constructor(props) {
 		super(props);
@@ -16,6 +17,7 @@ class ChatRoom extends Component {
 			user_info: '',
 			messages: [],
 			current_word: '',
+			current_time: this.props.current_time
 		}
 
 		this.sendMessage = this.sendMessage.bind(this);
@@ -30,18 +32,19 @@ class ChatRoom extends Component {
 
 		socket.off(Commands.JOINED_ROOM).on(Commands.JOINED_ROOM, (data) => {
 			let messages = document.querySelector('.messages');
-			let username = (socket.id === data.user_id)? "You" : data.username;
+			let username = (socket.id === data.user_id) ? "You" : data.username;
 			messages.innerHTML += `<li class="joining-message">${username} joined.</li>`;
 		});
 
 		socket.off(Commands.USER_LEFT).on(Commands.USER_LEFT, (user_data) => {
 			let messages = document.querySelector('.messages');
-			let username = (socket.id === user_data.user_id)? "You" : user_data.username;
+			let username = (socket.id === user_data.user_id) ? "You" : user_data.username;
 			messages.innerHTML += `<li class="joining-message">${username} left.</li>`;
 		});
 	}
 
 	componentDidMount() {
+		// console.log(this.props.current_time)
 		socket.on(Commands.UPDATE_USERS, (data) => {
 			this.setState({
 				user_info: data[socket.id]
@@ -51,12 +54,12 @@ class ChatRoom extends Component {
 		socket.emit(Commands.GET_USER_INFO, this.state.room_code);
 
 		socket.on(Commands.UPDATE_ROOMS_CLIENT, (data) => {
-            console.log(data.game_info)
-            this.setState({
-                current_word: data.game_info.current_word
-            })
-            console.log(this.state)
-        })
+			console.log(data.game_info)
+			this.setState({
+				current_word: this.props.current_word
+			})
+			console.log(this.state)
+		})
 
 		console.log(socket.id);
 
@@ -69,22 +72,24 @@ class ChatRoom extends Component {
 		let message = data.message;
 		let username = data.username;
 
-		if(user_id === current_user_id) {
+		if (user_id === current_user_id) {
 			username = 'You';
 		}
+		console.log(message.toLowerCase().trim(), this.props.current_word.toLowerCase().trim())
+		if (message.toLowerCase().trim() === this.props.current_word.toLowerCase().trim()) {
+			message = "Correct"
 
-		if (message.toLowerCase().trim() == this.state.current_word.toLowerCase().trim()) {
-            message = "Correct"
-        }
+			// socket.emit(Commands.GOT_CORRECT_WORD, )
+		}
 
 		this.state.messages.push({
 			username: username,
 			message: message,
-			sentByCurrentUser: user_id === current_user_id 
+			sentByCurrentUser: user_id === current_user_id
 		});
 
 		this.setState((state) => {
-			return {room_code: state.room_code}
+			return { room_code: state.room_code }
 		});
 
 	}
@@ -97,7 +102,7 @@ class ChatRoom extends Component {
 
 	keyPressHandler(event) {
 
-		if(event.key === 'Enter') {
+		if (event.key === 'Enter') {
 			this.sendMessage(event);
 			this.setState({
 				messageToSend: ''
@@ -107,11 +112,11 @@ class ChatRoom extends Component {
 
 	sendMessage(event) {
 
-		if(this.state.messageToSend === '') {
+		if (this.state.messageToSend === '') {
 			event.preventDefault();
 
 			// TODO: Can't send empty message.
-		
+
 		} else {
 			socket.emit(Commands.SEND_MESSAGE, {
 				message: this.state.messageToSend,
@@ -127,8 +132,9 @@ class ChatRoom extends Component {
 	}
 
 	render() {
-		return(
+		return (
 			<div className="chat-room">
+				<h1>{this.props.current_time}</h1>
 				<div className="header">
 					<div className="info">
 						<div className="room-id">Room ID: <span className="grey">{this.state.room_code}</span></div>
@@ -138,10 +144,10 @@ class ChatRoom extends Component {
 				</div>
 
 				<ul className="messages">
-					{this.state.messages.map( (message, i) => (
+					{this.state.messages.map((message, i) => (
 						<li
 							key={i}
-							className={`animate__animated animate__faster message ${message.sentByCurrentUser? "animate__fadeInRight current-user" : "animate__fadeInLeft other-user"}`}
+							className={`animate__animated animate__faster message ${message.sentByCurrentUser ? "animate__fadeInRight current-user" : "animate__fadeInLeft other-user"}`}
 						>
 							<span>{message.message}</span>
 							<div className="sender">{message.username}</div>
