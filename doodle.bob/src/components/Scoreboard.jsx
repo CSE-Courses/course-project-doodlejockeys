@@ -13,7 +13,7 @@ class Scoreboard extends Component {
     }
 
     componentDidMount() {
-        console.log("this page exists")
+        console.log(this.props.users)
         socket.on(Commands.SEND_SCOREBOARD_INFO, (data) => {
             console.log(data)
             console.log(data.room_info.game_info);
