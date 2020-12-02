@@ -26,6 +26,7 @@ const BEGIN_ROUND = 'BEGIN_ROUND';
 const CLOCK_PLAYPAGE = 'CLOCK_PLAYPAGE';
 const GOT_CORRECT_WORD = 'GOT_CORRECT_WORD';
 const END_ROUND = 'END_ROUND';
+const UPDATE_USER_INFO = 'UPDATE_USER_INFO';
 
 module.exports = {
     START_GAME,
@@ -55,5 +56,6 @@ module.exports = {
     BEGIN_ROUND,
     CLOCK_PLAYPAGE,
     GOT_CORRECT_WORD,
-    END_ROUND
+    END_ROUND,
+    UPDATE_USER_INFO
 }

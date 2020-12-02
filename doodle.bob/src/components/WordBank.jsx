@@ -4,7 +4,7 @@ import socket from '../server/socket';
 import Commands from "../commands";
 import '../css/WordBank.scss';
 import Categories from '../categories';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 
 class WordBank extends Component {
     constructor(props) {
@@ -13,9 +13,12 @@ class WordBank extends Component {
             room_code: props.match.params.room_code,
             user_info: '',
             results: new Set(),
+            show_error: false,
+            is_host: false
         }
         this.submitWordBank = this.submitWordBank.bind(this);
         this.updateCurrentCategories = this.updateCurrentCategories.bind(this);
+        this.closeModal = this.closeModal.bind(this);
 
         socket.on(Commands.MOVE_ON, () => {
 
@@ -47,6 +50,11 @@ class WordBank extends Component {
                 }
             }
         });
+
+        socket.emit(Commands.JOIN_GAME, {
+            room_code: this.state.room_code,
+            user_id: socket.id
+        })
     }
 
     componentDidMount() {
@@ -71,18 +79,27 @@ class WordBank extends Component {
         socket.emit(Commands.GET_SELECTED_CATEGORIES, this.state.room_code);
     }
 
-    submitWordBank() {
+    submitWordBank(event) {
         let passedCategories = Array.from(this.state.results)
 
-        if (this.state.is_host) {
-            socket.emit(Commands.PICK_WORDS, {
-                room_code: this.state.room_code,
-                user_id: socket.id,
-                word_categories: passedCategories
+        if(this.state.is_host && passedCategories.length < 3) {
+            this.setState({
+                show_error: true
             });
-        }
-        else {
-            this.props.history.push(`/${this.state.room_code}/PlayPage`)
+            event.preventDefault();
+        
+        } else {
+
+            if (this.state.is_host) {
+                socket.emit(Commands.PICK_WORDS, {
+                    room_code: this.state.room_code,
+                    user_id: socket.id,
+                    word_categories: passedCategories
+                });
+            }
+            else {
+                this.props.history.push(`/${this.state.room_code}/PlayPage`);
+            }
         }
     }
 
@@ -115,6 +132,12 @@ class WordBank extends Component {
 
     }
 
+    closeModal() {
+        this.setState({
+            show_error: false
+        })
+    }
+
     render() {
         const categories = [];
 
@@ -129,6 +152,17 @@ class WordBank extends Component {
 
         return (
             <div className="categories">
+
+                <Modal animation={false} show={this.state.show_error} onHide={this.closeModal} centered>
+                    <Modal.Header>
+                        <Modal.Title className="text-danger">Error!</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <p>Please select atleast 3 categories!</p>
+                    </Modal.Body>
+                </Modal>
+
                 <h1 className="title">DOODLE.BOB</h1>
                 <p className="heading"> Choose a category </p>
 

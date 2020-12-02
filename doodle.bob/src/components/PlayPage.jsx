@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import socket from '../server/socket';
-import Canvas from "./Canvas"
 import ChatRoom from "./ChatRoom"
 import Clock from "./Clock"
 import RoundsUI from "./RoundsUI"
@@ -8,7 +7,7 @@ import Scoreboard from "./Scoreboard"
 import Toolbar from "./Toolbar"
 import Commands from '../commands';
 import Categories from '../categories';
-import { Modal } from 'react-bootstrap';
+import { Form, Button, Modal } from 'react-bootstrap';
 import '../css/PlayPage.scss'
 
 
@@ -48,6 +47,7 @@ class PlayPage extends Component {
         this.displayRandomWords = this.displayRandomWords.bind(this);
         this.random = this.random.bind(this);
         this.beginRound = this.beginRound.bind(this);
+        this.setCustomWord = this.setCustomWord.bind(this);
     }
 
     componentDidMount() {
@@ -134,18 +134,52 @@ class PlayPage extends Component {
         return Math.floor(a + Math.random() * (b - a));
     }
 
+    onCustomWordChange(event) {
+        this.setState({
+            custom_word: event.target.value
+        })
+    }
+
+    setCustomWord(event) {
+        let custom_word = document.querySelector("#c-word").value;
+        if(custom_word === '') {
+            event.preventDefault();
+        
+        } else {
+            event.target.dataset.value = custom_word;
+            this.beginRound(event);
+        }
+    }
+
     displayRandomWords(categories) {
 
-        console.log(categories);
-
+        console.log(categories, categories.length);
+        
         let words = [];
-
+        const MAX_WORDS = 3;
+        let w = 0;
+        
         for (let category of categories) {
-            let available_words = Categories[category];
+            let random_category = categories[this.random(0, categories.length)];
+
+            console.log(random_category);
+            let available_words = Categories[random_category];
             let word = available_words[this.random(0, available_words.length)];
 
             words.push(<div className="choice" data-value={word} onClick={this.beginRound}>{word}</div>);
+            w++;
+
+            if(w >= MAX_WORDS) {
+                break;
+            }
         }
+
+        words.push(
+            <div className="custom-word">
+                <Form.Control type="text" placeholder="Enter custom word" id="c-word" />
+                <Button onClick={this.setCustomWord} variant="success">Submit Word</Button>
+            </div>
+        )
 
         console.log(words);
 
@@ -161,7 +195,7 @@ class PlayPage extends Component {
         return (
             <React.Fragment>
 
-                <Modal show={this.state.show_modal && this.state.is_artist} centered>
+                <Modal animation={false} show={this.state.show_modal && this.state.is_artist} centered>
                     <Modal.Header>
                         <Modal.Title className="m-auto">Pick a word!</Modal.Title>
                     </Modal.Header>
@@ -170,20 +204,11 @@ class PlayPage extends Component {
                         {pick_words}
                     </Modal.Body>
                 </Modal>
-                <Modal show={this.state.show_modal && !this.state.is_artist} onHide={this.closeModal} centered>
+                <Modal animation={false} show={this.state.show_modal && !this.state.is_artist} onHide={this.closeModal} centered>
                     <Modal.Header>
                         <Modal.Title className="m-auto">The artist is picking a word.</Modal.Title>
                     </Modal.Header>
                 </Modal>
-
-
-
-                {/* <Modal show={!this.state.is_artist} onHide={this.closeModal} centered>
-                    <Modal.Header>
-                        <Modal.Title className="m-auto">The artist is picking a word.</Modal.Title>
-                    </Modal.Header>
-                </Modal> */}
-
 
 
                 {!this.state.preRoundState && <div className="container">

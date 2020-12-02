@@ -20,12 +20,34 @@ class Avatar extends Component {
                 "rhino": rhino,
             },
             current: rhino,
+            open_rooms: []
         };
         this.submitPicture = this.submitPicture.bind(this);
         this.onPictureChange = this.onPictureChange.bind(this);
     }
 
     componentDidMount() {
+
+        socket.emit(Commands.UPDATE_ROOMS, {
+            room_code: this.state.room_code
+        });
+
+        socket.on(Commands.UPDATE_ROOMS, open_rooms => {
+            console.log('Updating rooms...', Object.keys(open_rooms));
+			let rooms = [];
+
+			for(let room of Object.keys(open_rooms)) {
+				let game_info = open_rooms[room].game_info;
+
+				if(!game_info.game_started) {
+					rooms.push(room);
+				}
+			}
+
+			this.setState({
+				open_rooms: rooms
+			});
+        });
     }
     
     onPictureChange(event) {
@@ -38,14 +60,21 @@ class Avatar extends Component {
         })
     }
 
-    submitPicture() {
-        socket.emit(Commands.SEND_PICTURE, {
-            room_code: this.state.room_code,
-            user_id: socket.id,
-            profile_picture: String(this.state.current)
-        });
+    submitPicture(event) {
 
-        console.log(this.state.room_code);
+        if(this.state.open_rooms.includes(this.state.room_code)) {
+            socket.emit(Commands.SEND_PICTURE, {
+                room_code: this.state.room_code,
+                user_id: socket.id,
+                profile_picture: String(this.state.current)
+            });
+    
+            console.log(this.state.room_code);
+        
+        } else {
+            event.preventDefault();
+            this.props.history.push(`/`);
+        }
     }
 
 

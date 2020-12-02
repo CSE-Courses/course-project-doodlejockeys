@@ -37,10 +37,19 @@ class Homepage extends Component {
 
 		socket.off(Commands.UPDATE_ROOMS).on(Commands.UPDATE_ROOMS, (open_rooms) => {
 
-			console.log('Updating rooms...', open_rooms);
+			console.log('Updating rooms...', Object.keys(open_rooms));
+			let rooms = [];
+
+			for(let room of Object.keys(open_rooms)) {
+				let game_info = open_rooms[room].game_info;
+
+				if(!game_info.game_started) {
+					rooms.push(room);
+				}
+			}
 
 			this.setState({
-				open_rooms: open_rooms
+				open_rooms: rooms
 			});
 		});
 	}
@@ -111,8 +120,7 @@ class Homepage extends Component {
 			});
 
 		} else {
-			socket.emit(Commands.JOIN_GAME, {
-				room_code: this.state.entered_code,
+			socket.emit(Commands.UPDATE_USER_INFO, {
 				username: this.state.username,
 				user_id: socket.id
 			});
@@ -143,7 +151,7 @@ class Homepage extends Component {
 		return (
 			<div className="home-container">
 
-				<Modal show={this.state.show_username_error} onHide={this.closeModal} centered>
+				<Modal animation={false} show={this.state.show_username_error} onHide={this.closeModal} centered>
 					<Modal.Header closeButton>
 						<Modal.Title className="text-danger">Error!</Modal.Title>
 					</Modal.Header>
@@ -153,7 +161,7 @@ class Homepage extends Component {
 					</Modal.Body>
 				</Modal>
 
-				<Modal show={this.state.show_code_error} onHide={this.closeModal} centered>
+				<Modal animation={false} show={this.state.show_code_error} onHide={this.closeModal} centered>
 					<Modal.Header closeButton>
 						<Modal.Title className="text-danger">Error!</Modal.Title>
 					</Modal.Header>
