@@ -8,7 +8,8 @@ class Scoreboard extends Component {
         this.state = {
             users: [],
             user_id: '',
-            room_code: ''
+            room_code: '',
+            highestScore: 0
         }
     }
 
@@ -25,7 +26,17 @@ class Scoreboard extends Component {
                 user_id: socket.id,
                 room_code: room_code
             })
+            for (var user of Object.keys(users)) {
+                console.log(users[user].points, this.state.highestScore)
+                if (users[user].points > this.state.highestScore) {
+                    this.setState({
+                        highestScore: users[user].points
+                    })
+                }
+            }
+
         })
+
     }
 
     render(props) {
@@ -41,10 +52,16 @@ class Scoreboard extends Component {
                 <div className="user-score">
                     {console.log("user", this.state.users[user])}
                     <img src={this.state.users[user].profile_picture} alt="my profile pic" className="myProPic" />
-                    <div className="user-info">
+                    {this.state.highestScore <= this.state.users[user].points && <div style={{ border: "3px solid yellow" }} className="user-info">
                         <p className="user-name">{this.state.users[user].username}</p>
-                        <p className="score">{this.state.users[user].points}</p>
-                    </div>
+                        {console.log(this.state.highestScore, this.state.users[user].points)}
+                        <p className="score" >{this.state.users[user].points}</p>
+                    </div>}
+                    {this.state.highestScore > this.state.users[user].points && <div className="user-info">
+                        <p className="user-name">{this.state.users[user].username}</p>
+                        {console.log(this.state.highestScore, this.state.users[user].points)}
+                        <p className="score" >{this.state.users[user].points}</p>
+                    </div>}
                 </div>
             );
         }
