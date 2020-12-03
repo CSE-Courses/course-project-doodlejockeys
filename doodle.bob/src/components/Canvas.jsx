@@ -16,7 +16,6 @@ import {
 class Stroke {
     // Default stroke settings
     constructor(_init) {
-
         this.init = _init;
         this.points = [];
         this.stroke = "black";
@@ -62,7 +61,6 @@ class Canvas extends Component {
             drawing: false,
             strokes: "black",
             strokeWidth: 2,
-            diffWidth: true,
             isToggleOn: true,
             diffBrush: true,
             SAVED: false,
@@ -72,21 +70,12 @@ class Canvas extends Component {
         this.changeBrush = this.changeBrush.bind(this);
         this.changeWidth = this.changeWidth.bind(this);
     }
-
-    //sets saved button true when clicked.
-    savebuttonClicked = () => {
-        this.setState({
-            SAVED: true
-        })
-    }
-
-    //sets state when undo button is clicked
     undoButtonClicked = () => {
         this.setState({
             undo: true
         });
 
-        // console.log(ALL_STROKES);
+        console.log(ALL_STROKES);
 
         ALL_STROKES.pop();
 
@@ -235,16 +224,16 @@ class Canvas extends Component {
 
     componentDidUpdate() {
         if (this.state.undo) {
-            // console.log("undo state is true.");
+            console.log("undo state is true.");
         }
         else {
-            // console.log("Not Undoing ");
+            console.log("Not Undoing ");
         }
     }
 
     draw = (p5) => {
 
-        // console.log("Redrawing");
+        console.log("Redrawing");
 
         if (this.state.undo == true) {
             p5.background(255);
@@ -254,7 +243,7 @@ class Canvas extends Component {
             // }
 
             for (var i = 0; i < ALL_STROKES.length; i++) {
-                // console.log(ALL_STROKES[i]);
+                console.log(ALL_STROKES[i]);
                 ALL_STROKES[i].draw(p5);
             }
 
@@ -314,16 +303,16 @@ class Canvas extends Component {
     render(props) {
         return (
             <div id="canvas">
-                <Sketch
+                {sessionStorage.getItem("userID") == sessionStorage.getItem("currentArtist") && <Sketch
                     setup={this.setup}
                     draw={this.draw}
                     mousePressed={this.mousePressed}
                     mouseDragged={this.mouseDragged}
-                    mouseReleased={this.mouseReleased} />
-                {/* {sessionStorage.getItem("userID") != sessionStorage.getItem("currentArtist") &&
+                    mouseReleased={this.mouseReleased} />}
+                {sessionStorage.getItem("userID") != sessionStorage.getItem("currentArtist") &&
                     <Sketch
                         setup={this.setup} />
-                } */}
+                }
                 {/* <div> */}
                 {/*style={{disply:"inline-block"}} > */}
                 <div>
@@ -406,7 +395,6 @@ class Canvas extends Component {
                         style={{
                             backgroundColor: "#ffa6da"
                         }}
-
                         onClick={this.changePinkColor}>
                         <br />
                     </button>
@@ -416,14 +404,14 @@ class Canvas extends Component {
                         {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm" /> : <FontAwesomeIcon icon={faCircle} size="md" />}
                     </button>
                     <button
-                        className="toolbar-button"
+                        classname="toolbar-button"
                         style={{ height: "35px", width: "35px" }}
                         onClick={this.undoButtonClicked}
                     >
                         <FontAwesomeIcon icon={faUndoAlt} />
                     </button>
                     <button
-                        className="toolbar-button"
+                        classname="toolbar-button"
                         style={{ height: "35px", width: "35px" }}
                         onClick={this.resetSketch}>
                         <FontAwesomeIcon icon={faTrashAlt} />
@@ -431,7 +419,6 @@ class Canvas extends Component {
                     <button
                         className="toolbar-button"
                         style={{
-
                             backgroundColor: "black"
                         }}
                         onClick={this.changeBlackColor}>
