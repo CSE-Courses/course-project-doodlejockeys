@@ -30,6 +30,8 @@ const UPDATE_USER_INFO = 'UPDATE_USER_INFO';
 const SEND_STROKES = 'SEND_STROKES';
 const DONE_DRAWING = 'DONE_DRAWING';
 const SKETCH_RESET = 'SKETCH_RESET';
+const UNDO_STROKE  = 'UNDO_STROKE';
+const PUSH_STROKE = 'PUSH_STROKE';
 
 module.exports = {
     START_GAME,
@@ -64,5 +66,6 @@ module.exports = {
     SEND_STROKES,
     DONE_DRAWING,
     SKETCH_RESET,
-
+    UNDO_STROKE,
+    PUSH_STROKE,
 }

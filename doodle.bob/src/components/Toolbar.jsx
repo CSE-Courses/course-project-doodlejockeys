@@ -18,10 +18,7 @@ class Toolbar extends Component {
     render() {
         return (
             <div className="toolbar">
-                <button className="toolbar-button"
-                    style={{ width: "auto" }}
-                    onClick={this.handleClick}> {this.state.isToggleOn ? 'Show' : 'Hide'}
-                </button>
+                <p>_ _ _ _ _ _ _ </p>
                 <Canvas 
                     room_code={this.props.room_code}
                     is_artist={this.props.is_artist}

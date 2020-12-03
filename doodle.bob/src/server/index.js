@@ -482,6 +482,19 @@ io.on('connection', socket => {
 		socket.broadcast.to(room_code).emit(Commands.SKETCH_RESET, {});
 	})
 
+	// Undo Stroke
+	socket.on(Commands.UNDO_STROKE, (data) => {
+		let room_code = data.room_code;
+		
+		socket.broadcast.to(room_code).emit(Commands.UNDO_STROKE, data);
+	})
+
+	socket.on(Commands.PUSH_STROKE, (data) => {
+		let room_code = data.room_code;
+		
+		socket.broadcast.to(room_code).emit(Commands.PUSH_STROKE, data);
+	})
+
 	/**
 	 * This event gets fired when a user sends a message in a room.
 	 * 

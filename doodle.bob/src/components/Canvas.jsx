@@ -125,15 +125,20 @@ class Canvas extends Component {
         // Recieve strokes and display
         socket.on(Commands.SEND_STROKES, (data) => {
             if(initial_x  > 0 || initial_y > 0){ 
-                p5.stroke(data.stroke_color);
-                p5.strokeWeight(data.stroke_weight);
-                p5.line(initial_x, initial_y, data.x, data.y);
+                ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(data.x, data.y), data.stroke_color, data.stroke_weight);
+                
+                // p5.stroke(data.stroke_color);
+                // p5.strokeWeight(data.stroke_weight);
+                // p5.line(initial_x, initial_y, data.x, data.y);
 
                 initial_x = data.x;
                 initial_y = data.y;
+
+
                 console.log(data);
             }
             else{
+                // ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));    
                 initial_x = data.x;
                 initial_y = data.y;
             }
@@ -147,6 +152,18 @@ class Canvas extends Component {
         socket.on(Commands.SKETCH_RESET, (data) => {
             p5.background(255);
             console.log("Sketch Reset");
+        })
+
+        socket.on(Commands.UNDO_STROKE, (data) => {
+            p5.background(255);
+            ALL_STROKES.pop();
+            for (var i = 0; i < ALL_STROKES.length; i++) {
+                ALL_STROKES[i].draw(p5);
+            }
+        })
+
+        socket.on(Commands.PUSH_STROKE, (data) => {
+            ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));     
         })
 
     }
@@ -344,6 +361,11 @@ class Canvas extends Component {
 
         if (this.state.undo) {
             p5.redraw();
+
+            socket.emit(Commands.UNDO_STROKE, {
+                room_code: this.state.room_code,
+            })
+
             return;
         }
 
@@ -369,8 +391,16 @@ class Canvas extends Component {
                 lastStrokeIdx: this.state.lastStrokeIdx + 1,
                 drawing: true
             });
-            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));       
-            }
+
+            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));     
+              
+            socket.emit(Commands.PUSH_STROKE, {
+                room_code: this.state.room_code,
+                x: p5.mouseX,
+                y: p5.mouseY,
+            })
+        }
+
         }
     }
 
@@ -386,7 +416,6 @@ class Canvas extends Component {
                     stroke_weight: this.state.strokeWidth,
                     stroke_color: this.state.strokes,
                 });
-                console.log("test,testestsetdfggfgdfpslkfhgdlfk");
             }
         }
     }
