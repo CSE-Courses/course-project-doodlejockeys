@@ -12,6 +12,9 @@ import {
     faPaintBrush
 } from
     "@fortawesome/free-solid-svg-icons";
+import Commands from '../commands';
+import socket from '../server/socket';
+
 
 class Stroke {
     // Default stroke settings
@@ -21,13 +24,12 @@ class Stroke {
         this.stroke = "black";
         this.strokeWidth = 2;
     }
+
     // Adds stroke
     add(p5, point, stroke, strokeWidth) {
         this.strokeWidth = strokeWidth;
         p5.strokeWeight(this.strokeWidth);
-        this
-            .points
-            .push(point);
+        this.points.push(point);
         this.stroke = stroke;
         p5.stroke(this.stroke);
         p5.line(this.init.x, this.init.y, point.x, point.y);
@@ -36,7 +38,6 @@ class Stroke {
     }
 
     draw(p5) {
-
         let temp_X = this.init.x;
         let temp_Y = this.init.y;
 
@@ -45,12 +46,16 @@ class Stroke {
             temp_X = this.points[i].x;
             temp_Y = this.points[i].y;
         }
-
     }
 }
 //holds all strokes made
 let ALL_STROKES = [];
 let saveimgbtn;
+let canv;
+let initial_x = -1;
+let initial_y = -1;
+
+
 
 class Canvas extends Component {
     constructor(props) {
@@ -65,28 +70,32 @@ class Canvas extends Component {
             diffBrush: true,
             SAVED: false,
             undo: false,
+            room_code: props.room_code,
+            is_artist: this.props.is_artist,
         }
         this.handleClick = this.handleClick.bind(this);
         this.changeBrush = this.changeBrush.bind(this);
         this.changeWidth = this.changeWidth.bind(this);
     }
     undoButtonClicked = () => {
-        this.setState({
-            undo: true
-        });
+        if(this.props.is_artist){
+            this.setState({
+                undo: true
+            });
 
-        console.log(ALL_STROKES);
+            ALL_STROKES.pop();
 
-        ALL_STROKES.pop();
-
-        this.setState((state, props) => ({
-            lastStrokeIdx: ALL_STROKES.length
-        }));
+            this.setState((state, props) => ({
+                lastStrokeIdx: ALL_STROKES.length
+            }));
+        }
     }
 
 
     setup = (p5, parent) => {
-        p5.createCanvas(700, 500).parent(parent)
+        console.log(this.props.is_artist);
+
+        canv = p5.createCanvas(700, 500).parent(parent)
         p5.background(255);
 
         var eraserbtn = p5.createButton("Reset");
@@ -100,93 +109,178 @@ class Canvas extends Component {
         var undoBtn = p5.createButton('Undo');
         undoBtn.parent(parent);
         undoBtn.mousePressed(this.undoButtonClicked);
+
+        // Recieve strokes and display
+        socket.on(Commands.SEND_STROKES, (data) => {
+            if(initial_x  > 0 || initial_y > 0){ 
+                ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(data.x, data.y), data.stroke_color, data.stroke_weight);
+                
+                // p5.stroke(data.stroke_color);
+                // p5.strokeWeight(data.stroke_weight);
+                // p5.line(initial_x, initial_y, data.x, data.y);
+
+                initial_x = data.x;
+                initial_y = data.y;
+
+
+                console.log(data);
+            }
+            else{
+                // ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));    
+                initial_x = data.x;
+                initial_y = data.y;
+            }
+        })
+
+        socket.on(Commands.DONE_DRAWING, (data) => {
+            initial_x =  data.x;
+            initial_y = data.y;
+        })
+
+        socket.on(Commands.SKETCH_RESET, (data) => {
+            p5.background(255);
+            console.log("Sketch Reset");
+        })
+
+        socket.on(Commands.UNDO_STROKE, (data) => {
+            p5.background(255);
+            ALL_STROKES.pop();
+            for (var i = 0; i < ALL_STROKES.length; i++) {
+                ALL_STROKES[i].draw(p5);
+            }
+        })
+
+        socket.on(Commands.PUSH_STROKE, (data) => {
+            ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));     
+        })
+
     }
 
     //maybe refactor into switch statements. These functions change the brush color to said color.
     changeWhiteColor = () => {
-        this.setState({ strokes: "white" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "white" })
+        }
     }
 
     changeBlackColor = () => {
-        this.setState({ strokes: "black" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "black" })
+        }
     }
 
     changeRedColor = () => {
-        this.setState({ strokes: "red" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "red" })
+        }
     }
 
     changeOrangeColor = () => {
-        this.setState({ strokes: "orange" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "orange" })
+        }
     }
 
     changeYellowColor = () => {
-        this.setState({ strokes: "yellow" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "yellow" })
+        }
     }
 
     changeGreenColor = () => {
-        this.setState({ strokes: "#26A65B" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "#26A65B" })
+        }
     }
 
     changeBlueColor = () => {
-        this.setState({ strokes: "blue" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "blue" })
+        }
     }
 
     changeIndigoColor = () => {
-        this.setState({ strokes: "indigo" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "indigo" })
+        }
     }
 
-    changeVioletColor = () => {
-        this.setState({ strokes: "#c74691" })
+    changeVioletColor = () => { 
+        if(this.props.is_artist){
+            this.setState({ strokes: "#c74691" })
+        }
     }
 
     changeLightGrayColor = () => {
-        this.setState({ strokes: "#c9c9c9" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "#c9c9c9" })
+        }
     }
 
     changeDodgerBlueColor = () => {
-        this.setState({ strokes: "dodgerblue" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "dodgerblue" })
+        }
     }
 
     changeLightPurpleColor = () => {
-        this.setState({ strokes: "#d8a6ff" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "#d8a6ff" })
+        }
     }
 
     changePinkColor = () => {
-        this.setState({ strokes: "#ffa6da" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "#ffa6da" })
+        }
     }
 
     changeGrayColor = () => {
-        this.setState({ strokes: "gray" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "gray" })
+        }
     }
 
     changeDarkRedColor = () => {
-        this.setState({ strokes: "#850000" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "#850000" })
+        }
     }
 
     changeDarkOrangeColor = () => {
-        this.setState({ strokes: "#ad6b00" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "#ad6b00" })
+        }
     }
 
     changeDarkYellowColor = () => {
-        this.setState({ strokes: "#e3e312" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "#e3e312" })
+        }
     }
 
     changeDarkGreenColor = () => {
-        this.setState({ strokes: "#006442" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "#006442" })
+        }
     }
 
     changePurpleColor = () => {
-        this.setState({ strokes: "#7918c4" })
+        if(this.props.is_artist){
+            this.setState({ strokes: "#7918c4" })
+        }
     }
 
     resetSketch = () => {
-        this.setState({
-            erasing: true
+        if(this.props.is_artist){
+            this.setState({
+                erasing: true
         })
     }
+}
 
     changeWidth = () => {
-
+        if(this.props.is_artist){
         if (this.state.strokeWidth == 2) {
             this.setState({
                 strokeWidth: 5
@@ -209,26 +303,28 @@ class Canvas extends Component {
         }
         this.setState(prevState => ({ diffWidth: !prevState.diffWidth, }));
     }
+}
 
     changeBrush() {
-        this.setState(prevState => ({
-            diffBrush: !prevState.diffBrush,
-        }));
+        if(this.props.is_artist){
+            this.setState(prevState => ({
+                diffBrush: !prevState.diffBrush,
+            }));
+        }
     }
 
     handleClick() {
-        this.setState(prevState => ({
-            isToggleOn: !prevState.isToggleOn,
-        }));
+        if(this.props.is_artist){
+            this.setState(prevState => ({
+                isToggleOn: !prevState.isToggleOn,
+            }));
+        }
     }
 
     componentDidUpdate() {
-        if (this.state.undo) {
-            console.log("undo state is true.");
-        }
-        else {
-            console.log("Not Undoing ");
-        }
+
+       // console.log(this.props.is_artist, this.props.is_artist);
+
     }
 
     draw = (p5) => {
@@ -237,37 +333,35 @@ class Canvas extends Component {
 
         if (this.state.undo == true) {
             p5.background(255);
-            // for(var i = 0;  i < this.state.lastStrokeIdx; i++){
-            //     console.log(ALL_STROKES[i]);
-            //     p5.line(x,y,)
-            // }
 
             for (var i = 0; i < ALL_STROKES.length; i++) {
-                console.log(ALL_STROKES[i]);
+
                 ALL_STROKES[i].draw(p5);
             }
 
             this.setState({
-                // lastStrokeIdx: this.state.lastStrokeIdx-1,
                 undo: false
             })
         }
         p5.noLoop();
     }
 
-    mousePressed = (p5) => {
-        // if(this.state.undo == true){
-        //     ALL_STROKES.pop();
 
-        // }
+    mousePressed = (p5) => {
+        if(this.props.is_artist){
 
         if (this.state.undo) {
             p5.redraw();
+
+            socket.emit(Commands.UNDO_STROKE, {
+                room_code: this.state.room_code,
+            })
+
             return;
         }
 
         if (this.state.SAVED == true) { //saving drawing.
-            saveimgbtn.mousePressed(p5.saveCanvas('my_canvas', 'png'));
+            saveimgbtn.mousePressed(p5.saveCanvas(canv,'my_canvas', 'png'));
             this.setState({
                 SAVED: false
             })
@@ -278,26 +372,55 @@ class Canvas extends Component {
             p5.background(255);
             this.setState({ erasing: false, lastStrokeIdx: -1 });
             ALL_STROKES = [];
+
+            socket.emit(Commands.SKETCH_RESET, {
+                room_code: this.state.room_code,
+            })
         }
-        else {
+        else { //drawing
             this.setState({
                 lastStrokeIdx: this.state.lastStrokeIdx + 1,
                 drawing: true
             });
-            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));
-            // console.log(ALL_STROKES[this.state.lastStrokeIdx])
-            // console.log(ALL_STROKES[this.state.lastStrokeIdx].init.x)
+
+            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));     
+              
+            socket.emit(Commands.PUSH_STROKE, {
+                room_code: this.state.room_code,
+                x: p5.mouseX,
+                y: p5.mouseY,
+            })
+        }
+
         }
     }
 
     mouseDragged = (p5) => {
-        if (this.state.drawing) {
-            ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes, this.state.strokeWidth);
+        if(this.props.is_artist){
+            if (this.state.drawing ) {
+                ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes, this.state.strokeWidth);
+            
+                socket.emit(Commands.SEND_STROKES, {
+                    room_code: this.state.room_code,
+                    x: p5.mouseX,
+                    y: p5.mouseY,
+                    stroke_weight: this.state.strokeWidth,
+                    stroke_color: this.state.strokes,
+                });
+            }
         }
     }
 
     mouseReleased = () => {
-        this.setState({ drawing: false, erasing: false });
+        if(this.props.is_artist){
+            this.setState({ drawing: false, erasing: false });
+
+            socket.emit(Commands.DONE_DRAWING, {
+                room_code: this.state.room_code,
+                x: -1,
+                y: -1,
+            })
+        }  
     }
 
     render(props) {
@@ -308,13 +431,8 @@ class Canvas extends Component {
                     draw={this.draw}
                     mousePressed={this.mousePressed}
                     mouseDragged={this.mouseDragged}
-                    mouseReleased={this.mouseReleased} />}
-                {sessionStorage.getItem("userID") != sessionStorage.getItem("currentArtist") &&
-                    <Sketch
-                        setup={this.setup} />
-                }
-                {/* <div> */}
-                {/*style={{disply:"inline-block"}} > */}
+
+                    mouseReleased={this.mouseReleased} />
                 <div>
                     <button className="toolbar-button" onClick={this.changeBrush}>
                         {this.state.diffBrush ? <FontAwesomeIcon icon={faPencilAlt} /> : <FontAwesomeIcon icon={faPaintBrush} />}
@@ -398,7 +516,8 @@ class Canvas extends Component {
                         onClick={this.changePinkColor}>
                         <br />
                     </button>
-                    <br />  {/*line break toolbar in half. */}
+                     {/*line break toolbar in half. */}
+                    <br /> 
                     <button className="toolbar-button"
                         onClick={this.changeWidth}>
                         {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm" /> : <FontAwesomeIcon icon={faCircle} size="md" />}
@@ -406,8 +525,7 @@ class Canvas extends Component {
                     <button
                         classname="toolbar-button"
                         style={{ height: "35px", width: "35px" }}
-                        onClick={this.undoButtonClicked}
-                    >
+                        onClick={this.undoButtonClicked}>
                         <FontAwesomeIcon icon={faUndoAlt} />
                     </button>
                     <button

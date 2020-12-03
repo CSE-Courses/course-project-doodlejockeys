@@ -1,6 +1,7 @@
 const path = require('path');
 const Commands = require('../commands');
 const express = require('express');
+const commands = require('../commands');
 const app = express();
 
 // Need this so that it works on localhost. *Remove it when pushing to heroku*.
@@ -435,6 +436,9 @@ io.on('connection', socket => {
 		// })
 
 		io.in(room_code).emit(Commands.BEGIN_ROUND, OPEN_ROOMS[room_code]);
+
+		//victoria
+		io.in(room_code).emit(Commands.SKETCH_RESET, OPEN_ROOMS[room_code]);
 	});
 
 	// This event gets emitted when tthe artist starts the game.
@@ -448,6 +452,48 @@ io.on('connection', socket => {
 			timer_tick(io, room_code);
 		}, 1000);
 	});
+
+	// Sending strokes to all non-artist players
+	socket.on(Commands.SEND_STROKES, (data) => {
+		let room_code = data.room_code;
+		let x = data.x;
+		let y = data.y;
+		let stroke_weight = data.stroke_weight;
+		let stroke_color = data.stroke_color;
+
+		socket.broadcast.to(room_code).emit(Commands.SEND_STROKES,{x,y,stroke_weight,stroke_color});
+		// console.log("Sending strokes");
+	})
+
+	// Setting end points for next stroke to be sent to non-artist players
+	socket.on(Commands.DONE_DRAWING, (data) => {
+		let room_code = data.room_code;
+		let x = data.x;
+		let y  = data.y;
+
+		socket.broadcast.to(room_code).emit(Commands.DONE_DRAWING,{x,y});
+		// console.log("Finished drawing");
+	})
+
+	// Reset Sketch
+	socket.on(Commands.SKETCH_RESET, (data) => {
+		let room_code = data.room_code;
+
+		socket.broadcast.to(room_code).emit(Commands.SKETCH_RESET, {});
+	})
+
+	// Undo Stroke
+	socket.on(Commands.UNDO_STROKE, (data) => {
+		let room_code = data.room_code;
+		
+		socket.broadcast.to(room_code).emit(Commands.UNDO_STROKE, data);
+	})
+
+	socket.on(Commands.PUSH_STROKE, (data) => {
+		let room_code = data.room_code;
+		
+		socket.broadcast.to(room_code).emit(Commands.PUSH_STROKE, data);
+	})
 
 	/**
 	 * This event gets fired when a user sends a message in a room.

@@ -228,7 +228,9 @@ class PlayPage extends Component {
                     <div className="center-col">
                         {/* <ScoreboardEnd /> */}
                         <RoundsUI artist_history={this.state.game_info.artist_history} />
-                        <Toolbar />
+                        <Toolbar 
+                            room_code={this.state.room_code}
+                            is_artist={this.state.is_artist}/>
                     </div>
 
                     <div className="right-col">
