@@ -42,6 +42,8 @@ class Stroke {
         let temp_Y = this.init.y;
 
         for (let i = this.points.length - 1; i >= 0; i--) {
+            p5.stroke(this.stroke)
+            p5.strokeWeight(this.strokeWidth)
             p5.line(temp_X, temp_Y, this.points[i].x, this.points[i].y);
             temp_X = this.points[i].x;
             temp_Y = this.points[i].y;
@@ -78,16 +80,16 @@ class Canvas extends Component {
         this.changeWidth = this.changeWidth.bind(this);
     }
     undoButtonClicked = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({
                 undo: true
             });
 
             ALL_STROKES.pop();
 
-            this.setState((state, props) => ({
-                lastStrokeIdx: ALL_STROKES.length
-            }));
+            // this.setState((state, props) => ({
+            //     lastStrokeIdx: ALL_STROKES.length
+            // }));
         }
     }
 
@@ -109,12 +111,55 @@ class Canvas extends Component {
         var undoBtn = p5.createButton('Undo');
         undoBtn.parent(parent);
         undoBtn.mousePressed(this.undoButtonClicked);
+        canv.canvas.addEventListener("mousedown", () => {
+
+            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));
+
+            socket.emit(Commands.PUSH_STROKE, {
+                room_code: this.state.room_code,
+                x: p5.mouseX,
+                y: p5.mouseY,
+            })
+
+            this.setState({
+                drawing: true
+            });
+        })
+        canv.canvas.addEventListener("mousemove", () => {
+            if (this.props.is_artist && this.state.drawing) {
+                ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes, this.state.strokeWidth);
+
+                socket.emit(Commands.SEND_STROKES, {
+                    room_code: this.state.room_code,
+                    x: p5.mouseX,
+                    y: p5.mouseY,
+                    stroke_weight: this.state.strokeWidth,
+                    stroke_color: this.state.strokes,
+                });
+            }
+        })
+        canv.canvas.addEventListener("mouseup", () => {
+            if (this.props.is_artist) {
+                this.setState({ drawing: false, erasing: false });
+
+                socket.emit(Commands.DONE_DRAWING, {
+                    room_code: this.state.room_code,
+                    x: -1,
+                    y: -1,
+                })
+            }
+        })
+        canv.canvas.addEventListener("mouseout", () => {
+            this.setState({
+                drawing: false
+            })
+        })
 
         // Recieve strokes and display
         socket.on(Commands.SEND_STROKES, (data) => {
-            if(initial_x  > 0 || initial_y > 0){ 
+            if (initial_x > 0 || initial_y > 0) {
                 ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(data.x, data.y), data.stroke_color, data.stroke_weight);
-                
+
                 // p5.stroke(data.stroke_color);
                 // p5.strokeWeight(data.stroke_weight);
                 // p5.line(initial_x, initial_y, data.x, data.y);
@@ -125,7 +170,7 @@ class Canvas extends Component {
 
                 console.log(data);
             }
-            else{
+            else {
                 // ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));    
                 initial_x = data.x;
                 initial_y = data.y;
@@ -133,12 +178,13 @@ class Canvas extends Component {
         })
 
         socket.on(Commands.DONE_DRAWING, (data) => {
-            initial_x =  data.x;
+            initial_x = data.x;
             initial_y = data.y;
         })
 
         socket.on(Commands.SKETCH_RESET, (data) => {
             p5.background(255);
+            ALL_STROKES = [];
             console.log("Sketch Reset");
         })
 
@@ -151,162 +197,162 @@ class Canvas extends Component {
         })
 
         socket.on(Commands.PUSH_STROKE, (data) => {
-            ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));     
+            ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));
         })
 
     }
 
     //maybe refactor into switch statements. These functions change the brush color to said color.
     changeWhiteColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "white" })
         }
     }
 
     changeBlackColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "black" })
         }
     }
 
     changeRedColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "red" })
         }
     }
 
     changeOrangeColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "orange" })
         }
     }
 
     changeYellowColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "yellow" })
         }
     }
 
     changeGreenColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "#26A65B" })
         }
     }
 
     changeBlueColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "blue" })
         }
     }
 
     changeIndigoColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "indigo" })
         }
     }
 
-    changeVioletColor = () => { 
-        if(this.props.is_artist){
+    changeVioletColor = () => {
+        if (this.props.is_artist) {
             this.setState({ strokes: "#c74691" })
         }
     }
 
     changeLightGrayColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "#c9c9c9" })
         }
     }
 
     changeDodgerBlueColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "dodgerblue" })
         }
     }
 
     changeLightPurpleColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "#d8a6ff" })
         }
     }
 
     changePinkColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "#ffa6da" })
         }
     }
 
     changeGrayColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "gray" })
         }
     }
 
     changeDarkRedColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "#850000" })
         }
     }
 
     changeDarkOrangeColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "#ad6b00" })
         }
     }
 
     changeDarkYellowColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "#e3e312" })
         }
     }
 
     changeDarkGreenColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "#006442" })
         }
     }
 
     changePurpleColor = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({ strokes: "#7918c4" })
         }
     }
 
     resetSketch = () => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState({
                 erasing: true
-        })
+            })
+        }
     }
-}
 
     changeWidth = () => {
-        if(this.props.is_artist){
-        if (this.state.strokeWidth == 2) {
-            this.setState({
-                strokeWidth: 5
-            })
+        if (this.props.is_artist) {
+            if (this.state.strokeWidth == 2) {
+                this.setState({
+                    strokeWidth: 5
+                })
+            }
+            else if (this.state.strokeWidth == 5) {
+                this.setState({
+                    strokeWidth: 15
+                })
+            }
+            else if (this.state.strokeWidth == 15) {
+                this.setState({
+                    strokeWidth: 30
+                })
+            }
+            else {
+                this.setState({
+                    strokeWidth: 2
+                })
+            }
+            this.setState(prevState => ({ diffWidth: !prevState.diffWidth, }));
         }
-        else if (this.state.strokeWidth == 5) {
-            this.setState({
-                strokeWidth: 15
-            })
-        }
-        else if (this.state.strokeWidth == 15) {
-            this.setState({
-                strokeWidth: 30
-            })
-        }
-        else {
-            this.setState({
-                strokeWidth: 2
-            })
-        }
-        this.setState(prevState => ({ diffWidth: !prevState.diffWidth, }));
     }
-}
 
     changeBrush() {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState(prevState => ({
                 diffBrush: !prevState.diffBrush,
             }));
@@ -314,7 +360,7 @@ class Canvas extends Component {
     }
 
     handleClick() {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
             this.setState(prevState => ({
                 isToggleOn: !prevState.isToggleOn,
             }));
@@ -323,7 +369,7 @@ class Canvas extends Component {
 
     componentDidUpdate() {
 
-       // console.log(this.props.is_artist, this.props.is_artist);
+        // console.log(this.props.is_artist, this.props.is_artist);
 
     }
 
@@ -348,85 +394,52 @@ class Canvas extends Component {
 
 
     mousePressed = (p5) => {
-        if(this.props.is_artist){
+        if (this.props.is_artist) {
 
-        if (this.state.undo) {
-            p5.redraw();
+            if (this.state.undo) {
+                p5.redraw();
 
-            socket.emit(Commands.UNDO_STROKE, {
-                room_code: this.state.room_code,
-            })
+                socket.emit(Commands.UNDO_STROKE, {
+                    room_code: this.state.room_code,
+                })
 
-            return;
-        }
+                return;
+            }
 
-        if (this.state.SAVED == true) { //saving drawing.
-            saveimgbtn.mousePressed(p5.saveCanvas(canv,'my_canvas', 'png'));
-            this.setState({
-                SAVED: false
-            })
-            saveimgbtn.mousePressed(this.savebuttonClicked)
-        }
+            if (this.state.SAVED == true) { //saving drawing.
+                saveimgbtn.mousePressed(p5.saveCanvas(canv, 'my_canvas', 'png'));
+                this.setState({
+                    SAVED: false
+                })
+                saveimgbtn.mousePressed(this.savebuttonClicked)
+            }
 
-        if (this.state.erasing) {
-            p5.background(255);
-            this.setState({ erasing: false, lastStrokeIdx: -1 });
-            ALL_STROKES = [];
+            if (this.state.erasing) {
+                p5.background(255);
+                this.setState({ erasing: false, lastStrokeIdx: -1 });
+                ALL_STROKES = [];
 
-            socket.emit(Commands.SKETCH_RESET, {
-                room_code: this.state.room_code,
-            })
-        }
-        else { //drawing
-            this.setState({
-                lastStrokeIdx: this.state.lastStrokeIdx + 1,
-                drawing: true
-            });
-
-            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));     
-              
-            socket.emit(Commands.PUSH_STROKE, {
-                room_code: this.state.room_code,
-                x: p5.mouseX,
-                y: p5.mouseY,
-            })
-        }
+                socket.emit(Commands.SKETCH_RESET, {
+                    room_code: this.state.room_code,
+                })
+            }
 
         }
     }
 
     mouseDragged = (p5) => {
-        if(this.props.is_artist){
-            if (this.state.drawing ) {
-                ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes, this.state.strokeWidth);
-            
-                socket.emit(Commands.SEND_STROKES, {
-                    room_code: this.state.room_code,
-                    x: p5.mouseX,
-                    y: p5.mouseY,
-                    stroke_weight: this.state.strokeWidth,
-                    stroke_color: this.state.strokes,
-                });
-            }
-        }
+
     }
 
     mouseReleased = () => {
-        if(this.props.is_artist){
-            this.setState({ drawing: false, erasing: false });
 
-            socket.emit(Commands.DONE_DRAWING, {
-                room_code: this.state.room_code,
-                x: -1,
-                y: -1,
-            })
-        }  
     }
 
     render(props) {
         return (
             <div id="canvas">
-                {sessionStorage.getItem("userID") == sessionStorage.getItem("currentArtist") && <Sketch
+                {/* {sessionStorage.getItem("userID") == sessionStorage.getItem("currentArtist") &&  */}
+                <Sketch
                     setup={this.setup}
                     draw={this.draw}
                     mousePressed={this.mousePressed}
@@ -516,8 +529,8 @@ class Canvas extends Component {
                         onClick={this.changePinkColor}>
                         <br />
                     </button>
-                     {/*line break toolbar in half. */}
-                    <br /> 
+                    {/*line break toolbar in half. */}
+                    <br />
                     <button className="toolbar-button"
                         onClick={this.changeWidth}>
                         {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm" /> : <FontAwesomeIcon icon={faCircle} size="md" />}
