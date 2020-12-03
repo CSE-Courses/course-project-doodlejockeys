@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import '../css/ChatRoom.scss';
 import Commands from '../commands';
 import socket from '../server/socket';

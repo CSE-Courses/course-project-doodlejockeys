@@ -22,7 +22,10 @@ class Toolbar extends Component {
                     style={{ width: "auto" }}
                     onClick={this.handleClick}> {this.state.isToggleOn ? 'Show' : 'Hide'}
                 </button>
-                <Canvas />
+                <Canvas 
+                    room_code={this.props.room_code}
+                    is_artist={this.props.is_artist}
+                />
             </div>
         );
     }
