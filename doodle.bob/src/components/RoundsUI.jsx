@@ -60,7 +60,7 @@ class RoundsUI extends Component {
                 {this.state.artist_history.map((round_history) => (
                     <React.Fragment>
                         {this.state.artist_history.indexOf(round_history) + 1 === this.state.current_round &&
-                        <div className="round">
+                        <div className="round round-active">
                             <div className="round-num"><p>Round {this.state.artist_history.indexOf(round_history) + 1}</p></div>
                             
                             <div className="profile-pictures">

@@ -6,7 +6,7 @@
 		flex: 1;	
 		padding: 0.5rem;
 		border: 1px solid white;
-		background: rgb(151, 0, 50);
+		background-color: rgb(41, 41, 41);
 	  
 		.round-num {
 			text-align: center;
@@ -36,5 +36,9 @@
 				text-align: center; 
 			}
 		}
+	}
+
+	.round-active {
+		background: rgb(151, 0, 50);
 	}
 }
