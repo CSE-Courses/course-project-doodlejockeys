@@ -142,9 +142,9 @@ class PlayPage extends Component {
 
     setCustomWord(event) {
         let custom_word = document.querySelector("#c-word").value;
-        if(custom_word === '') {
+        if (custom_word === '') {
             event.preventDefault();
-        
+
         } else {
             event.target.dataset.value = custom_word;
             this.beginRound(event);
@@ -154,11 +154,11 @@ class PlayPage extends Component {
     displayRandomWords(categories) {
 
         console.log(categories, categories.length);
-        
+
         let words = [];
         const MAX_WORDS = 3;
         let w = 0;
-        
+
         for (let category of categories) {
             let random_category = categories[this.random(0, categories.length)];
 
@@ -169,7 +169,7 @@ class PlayPage extends Component {
             words.push(<div className="choice" data-value={word} onClick={this.beginRound}>{word}</div>);
             w++;
 
-            if(w >= MAX_WORDS) {
+            if (w >= MAX_WORDS) {
                 break;
             }
         }
@@ -228,9 +228,13 @@ class PlayPage extends Component {
                     <div className="center-col">
                         {/* <ScoreboardEnd /> */}
                         <RoundsUI artist_history={this.state.game_info.artist_history} />
-                        <Toolbar 
+                        <Toolbar
                             room_code={this.state.room_code}
-                            is_artist={this.state.is_artist}/>
+                            is_artist={this.state.is_artist}
+                            current_word={this.state.game_info.current_word}
+                            current_time={this.state.game_info.current_time}
+                            time_per_round={this.state.game_info.time_per_round}
+                        />
                     </div>
 
                     <div className="right-col">
