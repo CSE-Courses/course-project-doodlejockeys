@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import socket from '../server/socket'
 import Commands from "../commands";
+import { Button } from 'react-bootstrap';
 
 
 const ROUND_VALUE = 1;
@@ -188,27 +189,25 @@ class Clock extends Component {
     render(props) {
 
         return (
-            <div>
-                <div id="clock">
+            <div id="clock">
 
-                    {/* {this.state.is_artist && <button onClick={this.clockToggle}>{this.state.status}</button>} */}
-                    {this.state.seconds !== 0 && <p>{this.state.seconds + "s"}</p>}
-                    {this.state.is_artist && (this.state.seconds <= 0) && !this.state.on_last_round && (
-                        <React.Fragment>
-                            <button onClick={this.startNextRound}>{this.state.status}</button>
+                {/* {this.state.is_artist && <button onClick={this.clockToggle}>{this.state.status}</button>} */}
+                {this.state.seconds !== 0 && <div>{this.state.seconds + "s"}</div>}
+                {this.state.is_artist && (this.state.seconds <= 0) && !this.state.on_last_round && (
+                    <React.Fragment>
+                        <Button variant="primary" onClick={this.startNextRound}>{this.state.status}</Button>
 
-                        </React.Fragment>)
-                    }
+                    </React.Fragment>)
+                }
 
-                    {this.state.on_last_round && this.state.seconds == 0 && (
-                        <React.Fragment>
-                            <p>Your time is Up!</p>
-                            <p>Game Over!</p>
+                {this.state.on_last_round && this.state.seconds <= 0 && (
+                    <React.Fragment>
+                        <div>Your time is Up!</div>
+                        <div>Game Over!</div>
 
-                        </React.Fragment>)}
-                    <p>{"Round " + this.state.round}</p>
+                    </React.Fragment>)}
+                <div>{"Round " + this.state.round}</div>
 
-                </div>
             </div>
         );
     }

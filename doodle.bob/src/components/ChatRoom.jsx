@@ -139,13 +139,12 @@ class ChatRoom extends Component {
 	render() {
 		return (
 			<div className="chat-room">
-				<h1>{this.props.current_time}</h1>
 				<div className="header">
+					<h1>{this.props.current_time}</h1>
 					<div className="info">
 						<div className="room-id">Room ID: <span className="grey">{this.state.room_code}</span></div>
 						<div className="username">Username: <span className="grey">{this.state.user_info.username}</span></div>
 					</div>
-					<h1>Welcome to ChatRoom!</h1>
 				</div>
 
 				<ul className="messages">

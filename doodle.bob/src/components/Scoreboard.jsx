@@ -49,19 +49,13 @@ class Scoreboard extends Component {
 
         for (let user of Object.keys(this.state.users)) {
             tags.push(
-                <div className="user-score">
-                    {console.log("user", this.state.users[user])}
+                <div className={`user-score ${(this.state.highestScore <= this.state.users[user].points)?'highlight': ''}`}>
                     <img src={this.state.users[user].profile_picture} alt="my profile pic" className="myProPic" />
-                    {this.state.highestScore <= this.state.users[user].points && <div style={{ border: "3px solid yellow" }} className="user-info">
+                    <div className="user-info">
                         <p className="user-name">{this.state.users[user].username}</p>
                         {console.log(this.state.highestScore, this.state.users[user].points)}
                         <p className="score" >{this.state.users[user].points}</p>
-                    </div>}
-                    {this.state.highestScore > this.state.users[user].points && <div className="user-info">
-                        <p className="user-name">{this.state.users[user].username}</p>
-                        {console.log(this.state.highestScore, this.state.users[user].points)}
-                        <p className="score" >{this.state.users[user].points}</p>
-                    </div>}
+                    </div>
                 </div>
             );
         }

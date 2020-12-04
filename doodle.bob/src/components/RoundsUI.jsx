@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import socket from '../server/socket';
 import Commands from "../commands";
+import '../css/RoundsUI.scss'
 
 class RoundsUI extends Component {
     constructor(props) {
@@ -17,6 +18,8 @@ class RoundsUI extends Component {
             users: {},
 
         }
+
+        this.displayProfilePictures = this.displayProfilePictures.bind(this);
     }
 
     componentDidMount() {
@@ -28,16 +31,6 @@ class RoundsUI extends Component {
             let current_subround = data.room_info.game_info.current_subround
             let current_round = data.room_info.game_info.current_round
             let users = data.room_info.users
-
-            // for (let i = 0; i < total_rounds; i++) {
-            //     let roundHistory = []
-            //     for (let j of Object.keys(data.room_info.users)) {
-            //         roundHistory.push(j)
-            //     }
-            //     console.log(roundHistory)
-            //     artist_history.push(roundHistory)
-            // }
-            console.log(artist_history)
 
             this.setState({
                 room_code: room_code,
@@ -51,51 +44,46 @@ class RoundsUI extends Component {
         })
     }
 
+    displayProfilePictures(subRound_artist) {
+        if(subRound_artist !== '') {
+            return <img src={this.state.users[subRound_artist].profile_picture} alt="Player Profile picture"/>
+       
+        } else {
+            return <div className="empty">?</div>
+        }
+    }
+
 
     render() {
-        return (<div style={{ backgroundColor: "rgb(41, 41, 41)", width: "100%", margin: "0px", display: "flex" }}>
-            {this.state.artist_history.map((round_history) => (
-                <div style={{ margin: "0px" }}>
-                    {this.state.artist_history.indexOf(round_history) + 1 === this.state.current_round && <div style={{ padding: "0px", backgroundColor: "rgb(151, 0, 50)" }}>
-                        <h3 style={{ color: "white", textAlign: "center" }}>Round {this.state.artist_history.indexOf(round_history) + 1}</h3>
-                        <div style={{ display: "flex", margin: "10px" }}>
-                            {round_history.map((subRound_artist) => (
-                                <div>
-                                    {subRound_artist !== '' && (
-                                        <div>
-                                            {/* {console.log("BLAH", this.state.profilePictures[this.props.userList[this.props.game.currentArtistId]["profilePic"]])} */}
-                                            <img src={this.state.users[subRound_artist].profile_picture} style={{ width: "20px", borderRadius: "50%", margin: '5px', textAlign: "center" }} />
-                                        </div>
-                                    )}
-                                    {subRound_artist === '' && (<div style={{ width: "20px", borderRadius: "50%", backgroundColor: "lightgrey", margin: '5px', textAlign: "center" }}>?
-                                    </div>)}
-                                </div>
-                            ))}
+        return(
+            <div className="rounds-container">
+                {this.state.artist_history.map((round_history) => (
+                    <React.Fragment>
+                        {this.state.artist_history.indexOf(round_history) + 1 === this.state.current_round &&
+                        <div className="round">
+                            <div className="round-num"><p>Round {this.state.artist_history.indexOf(round_history) + 1}</p></div>
+                            
+                            <div className="profile-pictures">
+                                {round_history.map((subRound_artist) => (
+                                    this.displayProfilePictures(subRound_artist)                                
+                                ))}
+                            </div>
+                        </div>}
 
-                        </div>
-                    </div>}
-                    {this.state.artist_history.indexOf(round_history) + 1 !== this.state.current_round && <div style={{ padding: "0px" }}>
-                        <h3 style={{ color: "white", textAlign: "center" }}>Round {this.state.artist_history.indexOf(round_history) + 1}</h3>
-                        <div style={{ display: "flex", margin: "10px" }}>
-                            {round_history.map((subRound_artist) => (
-                                <div>
-                                    {subRound_artist !== '' && (
-                                        <div>
-                                            {/* {console.log("BLAH", this.state.profilePictures[this.props.userList[this.props.game.currentArtistId]["profilePic"]])} */}
-                                            <img src={this.state.users[subRound_artist].profile_picture} style={{ width: "20px", borderRadius: "50%", margin: '5px', textAlign: "center" }} />
-                                        </div>
-                                    )}
-                                    {subRound_artist === '' && (<div style={{ width: "20px", borderRadius: "50%", backgroundColor: "lightgrey", margin: '5px', textAlign: "center" }}>?
-                                    </div>)}
-                                </div>
-                            ))}
-
-                        </div>
-                    </div>}
-
-                </div>
-            ))}
-        </div>);
+                        {this.state.artist_history.indexOf(round_history) + 1 !== this.state.current_round &&
+                        <div className="round">
+                            <div className="round-num"><p>Round {this.state.artist_history.indexOf(round_history) + 1}</p></div>
+                            
+                            <div className="profile-pictures">
+                                {round_history.map((subRound_artist) => (
+                                    this.displayProfilePictures(subRound_artist)                                
+                                ))}
+                            </div>
+                        </div>}
+                    </React.Fragment>
+                ))}
+            </div>
+        );
     }
 }
 
