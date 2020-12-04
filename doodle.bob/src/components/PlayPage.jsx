@@ -217,13 +217,6 @@ class PlayPage extends Component {
                             users={this.state.users}
                         />
                         <Clock room_code={this.state.room_code} />
-                        {/* ADDED FOR DEMONSTRATION PURPOSES REMOVE LATER */}
-                        <button>Show end scoreboard</button>
-                        <div className="debug">
-                            <label htmlFor="players">Update score:</label>
-                            <button>Update</button>
-                        </div>
-                        {/* DEMONSTRATION END */}
                     </div>
                     <div className="center-col">
                         {/* <ScoreboardEnd /> */}
