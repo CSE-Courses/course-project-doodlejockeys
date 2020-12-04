@@ -247,7 +247,7 @@ io.on('connection', socket => {
 				current_subround: 1,
 				current_artist_id: '',
 				artist_history: [],
-				current_word: 'ball',
+				current_word: '',
 				game_started: false
 			}
 
@@ -461,7 +461,7 @@ io.on('connection', socket => {
 		let stroke_weight = data.stroke_weight;
 		let stroke_color = data.stroke_color;
 
-		socket.broadcast.to(room_code).emit(Commands.SEND_STROKES,{x,y,stroke_weight,stroke_color});
+		socket.broadcast.to(room_code).emit(Commands.SEND_STROKES, { x, y, stroke_weight, stroke_color });
 		// console.log("Sending strokes");
 	})
 
@@ -469,9 +469,9 @@ io.on('connection', socket => {
 	socket.on(Commands.DONE_DRAWING, (data) => {
 		let room_code = data.room_code;
 		let x = data.x;
-		let y  = data.y;
+		let y = data.y;
 
-		socket.broadcast.to(room_code).emit(Commands.DONE_DRAWING,{x,y});
+		socket.broadcast.to(room_code).emit(Commands.DONE_DRAWING, { x, y });
 		// console.log("Finished drawing");
 	})
 
@@ -485,13 +485,13 @@ io.on('connection', socket => {
 	// Undo Stroke
 	socket.on(Commands.UNDO_STROKE, (data) => {
 		let room_code = data.room_code;
-		
+
 		socket.broadcast.to(room_code).emit(Commands.UNDO_STROKE, data);
 	})
 
 	socket.on(Commands.PUSH_STROKE, (data) => {
 		let room_code = data.room_code;
-		
+
 		socket.broadcast.to(room_code).emit(Commands.PUSH_STROKE, data);
 	})
 
