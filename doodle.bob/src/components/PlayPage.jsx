@@ -211,12 +211,12 @@ class PlayPage extends Component {
                 </Modal>
 
 
-                {!this.state.preRoundState && <div className="container">
+                {!this.state.preRoundState && <div className="play-container">
                     <div className="left-col">
+                        <Clock room_code={this.state.room_code} />
                         <Scoreboard
                             users={this.state.users}
                         />
-                        <Clock room_code={this.state.room_code} />
                     </div>
                     <div className="center-col">
                         {/* <ScoreboardEnd /> */}

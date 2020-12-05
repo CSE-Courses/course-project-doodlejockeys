@@ -1,0 +1,21 @@
+$tool-cols: 3;
+$color-cols: 9;
+
+#canvas {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	.tools-container {
+		display: flex;
+		.tools {
+			display: grid;
+			grid-template-columns: repeat($tool-cols, 1fr);
+		}
+
+		.color-palette {
+			display: grid;
+			grid-template-columns: repeat($color-cols, 1fr);
+		}
+	}
+}

@@ -5,7 +5,6 @@ import { customAlphabet } from "nanoid";
 import { Button, Modal } from 'react-bootstrap';
 import socket from '../server/socket';
 import Commands from "../commands";
-import '../css/Responsive.scss';
 import logo from '../images/logo.png';
 //Import all needed Component for this tutorial
 

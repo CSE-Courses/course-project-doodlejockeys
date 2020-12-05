@@ -3,7 +3,6 @@ import '../css/ChatRoom.scss';
 import Commands from '../commands';
 import socket from '../server/socket';
 import 'animate.css';
-// import '../css/Responsive.scss';
 import { Button } from 'react-bootstrap';
 
 
@@ -140,7 +139,6 @@ class ChatRoom extends Component {
 		return (
 			<div className="chat-room">
 				<div className="header">
-					<h1>{this.props.current_time}</h1>
 					<div className="info">
 						<div className="room-id">Room ID: <span className="grey">{this.state.room_code}</span></div>
 						<div className="username">Username: <span className="grey">{this.state.user_info.username}</span></div>

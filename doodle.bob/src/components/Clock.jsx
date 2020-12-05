@@ -192,7 +192,8 @@ class Clock extends Component {
             <div id="clock">
 
                 {/* {this.state.is_artist && <button onClick={this.clockToggle}>{this.state.status}</button>} */}
-                {this.state.seconds !== 0 && <div>{this.state.seconds + "s"}</div>}
+                {!this.state.is_artist && <div>{this.state.seconds + "s"}</div>}
+                {this.state.is_artist && this.state.seconds !== 0 && <div>{this.state.seconds + "s"}</div>}
                 {this.state.is_artist && (this.state.seconds <= 0) && !this.state.on_last_round && (
                     <React.Fragment>
                         <Button variant="primary" onClick={this.startNextRound}>{this.state.status}</Button>
@@ -206,7 +207,6 @@ class Clock extends Component {
                         <div>Game Over!</div>
 
                     </React.Fragment>)}
-                <div>{"Round " + this.state.round}</div>
 
             </div>
         );

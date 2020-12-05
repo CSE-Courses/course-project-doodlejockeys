@@ -33,10 +33,6 @@
   width: 35px;
 }
 
-.container {
-	display: flex;
-}
-
 .left-col {
 	display: flex;
 	flex-direction: column;
@@ -96,8 +92,7 @@
 .center-col {
 	display: flex;
 	flex-direction: column;
-  flex: 3;
-  position: relative;
+  flex: 5;
 }
 
 .right-col {
