@@ -140,7 +140,7 @@ class ChatRoom extends Component {
 			<div className="chat-room">
 				<div className="header">
 					<div className="info">
-						<div className="room-id">Room ID: <span className="grey">{this.state.room_code}</span></div>
+						<div className="room-id">Chat and Guess!</div>
 						<div className="username">Username: <span className="grey">{this.state.user_info.username}</span></div>
 					</div>
 				</div>

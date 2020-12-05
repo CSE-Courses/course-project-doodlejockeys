@@ -34,43 +34,43 @@ class Avatar extends Component {
 
         socket.on(Commands.UPDATE_ROOMS, open_rooms => {
             console.log('Updating rooms...', Object.keys(open_rooms));
-			let rooms = [];
+            let rooms = [];
 
-			for(let room of Object.keys(open_rooms)) {
-				let game_info = open_rooms[room].game_info;
+            for (let room of Object.keys(open_rooms)) {
+                let game_info = open_rooms[room].game_info;
 
-				if(!game_info.game_started) {
-					rooms.push(room);
-				}
-			}
+                if (!game_info.game_started) {
+                    rooms.push(room);
+                }
+            }
 
-			this.setState({
-				open_rooms: rooms
-			});
+            this.setState({
+                open_rooms: rooms
+            });
         });
     }
-    
+
     onPictureChange(event) {
         event.preventDefault();
         console.log(event.target.id);
         let current = event.target.id;
 
         this.setState((state) => {
-            return {current: state.profilePictures[current]}
+            return { current: state.profilePictures[current] }
         })
     }
 
     submitPicture(event) {
 
-        if(this.state.open_rooms.includes(this.state.room_code)) {
+        if (this.state.open_rooms.includes(this.state.room_code)) {
             socket.emit(Commands.SEND_PICTURE, {
                 room_code: this.state.room_code,
                 user_id: socket.id,
                 profile_picture: String(this.state.current)
             });
-    
+
             console.log(this.state.room_code);
-        
+
         } else {
             event.preventDefault();
             this.props.history.push(`/`);
@@ -82,7 +82,7 @@ class Avatar extends Component {
 
         const options = [];
 
-        for(let picture of Object.keys(this.state.profilePictures)) {
+        for (let picture of Object.keys(this.state.profilePictures)) {
             options.push(
                 <img id={picture} key={picture} src={this.state.profilePictures[picture]} alt={`Cartoon ${picture}`} className="option" onClick={this.onPictureChange} />
             );
@@ -90,6 +90,7 @@ class Avatar extends Component {
 
         return (
             <div className="avatar-container">
+                <p className="invite">Invite your Friends: {this.state.room_code}</p>
                 <div className="avatar" >
                     <h1>Choose your profile picture.</h1>
 

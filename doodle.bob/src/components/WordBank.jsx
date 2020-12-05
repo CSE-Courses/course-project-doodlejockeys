@@ -22,7 +22,7 @@ class WordBank extends Component {
 
         socket.on(Commands.MOVE_ON, () => {
 
-            if(!this.state.is_host) {
+            if (!this.state.is_host) {
                 this.submitWordBank()
             }
         });
@@ -32,9 +32,9 @@ class WordBank extends Component {
             let correspondingLabel = document.querySelector(`label[for="${data.category}"]`);
             categoryToUpdate.checked = data.checked;
 
-            if(data.checked) {
+            if (data.checked) {
                 correspondingLabel.classList.add('selected');
-            
+
             } else {
                 correspondingLabel.classList.remove('selected');
             }
@@ -42,10 +42,10 @@ class WordBank extends Component {
 
         socket.off(Commands.GET_SELECTED_CATEGORIES).on(Commands.GET_SELECTED_CATEGORIES, (selected_categories) => {
 
-            for(let category of selected_categories) {
+            for (let category of selected_categories) {
                 const label = document.querySelector(`label[for="${category}"]`);
 
-                if(!label.classList.contains('selected')) {
+                if (!label.classList.contains('selected')) {
                     label.classList.add('selected');
                 }
             }
@@ -82,12 +82,12 @@ class WordBank extends Component {
     submitWordBank(event) {
         let passedCategories = Array.from(this.state.results)
 
-        if(this.state.is_host && passedCategories.length < 3) {
+        if (this.state.is_host && passedCategories.length < 3) {
             this.setState({
                 show_error: true
             });
             event.preventDefault();
-        
+
         } else {
 
             if (this.state.is_host) {
@@ -141,7 +141,7 @@ class WordBank extends Component {
     render() {
         const categories = [];
 
-        for(let category of Object.keys(Categories)) {
+        for (let category of Object.keys(Categories)) {
             categories.push(
                 <div key={category} className="category">
                     <label htmlFor={category}>{category}</label>
@@ -152,7 +152,7 @@ class WordBank extends Component {
 
         return (
             <div className="categories">
-
+                <p className="invite">Invite your Friends: {this.state.room_code}</p>
                 <Modal animation={false} show={this.state.show_error} onHide={this.closeModal} centered>
                     <Modal.Header>
                         <Modal.Title className="text-danger">Error!</Modal.Title>

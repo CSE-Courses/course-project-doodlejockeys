@@ -1,3 +1,8 @@
+$card-bg: #CBC7FC;
+$dark: #948BF9;
+$app-bg: #D6FFB7;
+$block: rgb(46, 46, 46);
+
 :root {
 	/* --bg-color: #FFD600; */
 	--bg-color: rgb(255, 214, 2);
@@ -43,14 +48,17 @@
 	text-align: center;
 	font-weight: bold;
   display: flex;
+  font-size: 30px;
   flex-direction: column-reverse;
 	color: #fff;
 }
 
 #clock div {
 	padding: 1rem;
-	background: var(--dk-maroon);
-	border: 1px solid var(--lt-maroon);
+  background: $dark;
+  color: white;
+  border: 1px solid white;
+  height: 88px;
 }
 
 #scoreboard {
@@ -63,9 +71,9 @@
 	text-align: center;
 	justify-content: center;
 	align-items: center;
-  color: #fff;
+  color: $block;
   padding: 0.5rem 1rem;
-  background: var(--dk-maroon);
+  background: $card-bg;
 }
 
 .user-name {
@@ -73,7 +81,8 @@
 }
 
 .user-score:nth-child(even) {
-  background: var(--lt-maroon);
+  background: $dark;
+  color: white;
 }
 
 .user-score .user-info {
@@ -82,7 +91,7 @@
 }
 
 .highlight {
-  border: 3px solid yellow;
+  border: 3px solid #0AD3FF;
 }
 
 .roundName {
@@ -134,4 +143,9 @@
 
 .minigameReveal:hover {
   background-color: rgb(46, 46, 46);
+}
+
+.startRound {
+  height: 88px !important;
+  border: 1px solid white;
 }

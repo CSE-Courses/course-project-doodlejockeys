@@ -39,7 +39,7 @@ const OPEN_ROOMS = {};
  * - Their username
  */
 const CONNECTED_USERS = {};
-let ARTIST_POOL = [];
+// let ARTIST_POOL = [];
 let timer_id;
 
 function timer_tick(io, room_code) {
@@ -131,6 +131,8 @@ function endOfRoundScore(room_code) {
 
 //functions that will allow us to pick the artist, gets called once from wordBank (in Commands.PICK_WORDS) and then each subround after
 function resetArtistPool(room_code) {
+	var ARTIST_POOL = OPEN_ROOMS[room_code].game_info.artist_pool
+	console.log("yo", ARTIST_POOL)
 	if (ARTIST_POOL.length === 0) {
 		for (var user of Object.keys(OPEN_ROOMS[room_code].users)) {
 			ARTIST_POOL.push(user)
@@ -142,7 +144,7 @@ function resetArtistPool(room_code) {
 	}
 }
 function chooseArtist(room_code) {
-
+	var ARTIST_POOL = OPEN_ROOMS[room_code].game_info.artist_pool
 	if (ARTIST_POOL.length == 0) {
 		resetArtistPool(room_code)
 	}
@@ -247,6 +249,7 @@ io.on('connection', socket => {
 				current_subround: 1,
 				current_artist_id: '',
 				artist_history: [],
+				artist_pool: [],
 				current_word: '',
 				game_started: false
 			}
@@ -336,6 +339,7 @@ io.on('connection', socket => {
 		let room_code = data.room_code;
 		let user_id = data.user_id;
 		let word_categories = data.word_categories
+		var ARTIST_POOL = OPEN_ROOMS[room_code].game_info.artist_pool
 
 		OPEN_ROOMS[room_code].game_info.word_categories = word_categories
 		OPEN_ROOMS[room_code].game_info.game_started = true
@@ -410,6 +414,7 @@ io.on('connection', socket => {
 		let current_subround = data.room_info.game_info.current_subround;
 		let time_per_round = data.room_info.game_info.time_per_round;
 		let game_info = OPEN_ROOMS[room_code].game_info;
+		var ARTIST_POOL = OPEN_ROOMS[room_code].game_info.artist_pool
 		OPEN_ROOMS[room_code].game_info.current_round = current_round;
 		OPEN_ROOMS[room_code].game_info.current_subround = current_subround;
 		if (ARTIST_POOL.length == 0) {

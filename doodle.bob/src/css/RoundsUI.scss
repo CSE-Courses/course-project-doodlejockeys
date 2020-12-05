@@ -1,3 +1,7 @@
+$card-bg: #CBC7FC;
+$app-bg: #D6FFB7;
+$block: rgb(46, 46, 46);
+
 .rounds-container{
 	display: flex;
 	background-color: rgb(41, 41, 41);
@@ -39,6 +43,15 @@
 	}
 
 	.round-active {
-		background: rgb(151, 0, 50);
+		background: $card-bg;
+		.round-num {
+			color: $block;
+		}
+		.profile-pictures {
+			.empty {
+				background-color: $block;
+				color: white;
+			}
+		}
 	}
 }

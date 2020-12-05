@@ -4,6 +4,7 @@ $app-bg: #D6FFB7;
 .avatar-container {
 	height: 100vh;
 	display: flex;
+	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	background: $card-bg;
@@ -16,6 +17,7 @@ $app-bg: #D6FFB7;
 		justify-content: center;
 		align-items: center;
 		background: $app-bg;
+		border-radius: 7%;
 
 		.options {
 			display: grid;
@@ -42,5 +44,12 @@ $app-bg: #D6FFB7;
 				margin: auto;
 			}
 		}
+	}
+	.invite {
+		width: 100%;
+		text-align: right;
+		position: absolute;
+		right: 10px;
+		top: 0;
 	}
 }
