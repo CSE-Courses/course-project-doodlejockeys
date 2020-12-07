@@ -1,5 +1,27 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import antelope from "../tempAvatars/antelope.png";
+import baby_penguin from "../tempAvatars/baby_penguin.png";
+import bear from "../tempAvatars/bear.png";
+import cat  from "../tempAvatars/cat.png";
+import cobra from "../tempAvatars/cobra.png";
+import cow from "../tempAvatars/cow.png";
+import deer from "../tempAvatars/deer.png";
+import dog from "../tempAvatars/dog.png";
+import elephant from "../tempAvatars/elephant.png";
+import fox from "../tempAvatars/fox.png";
+import giraffe from "../tempAvatars/giraffe.png";
+import gorilla from "../tempAvatars/gorilla.png";
+import lion from "../tempAvatars/lion.png";
+import monkey from "../tempAvatars/monkey.png";
+import penguin from "../tempAvatars/penguin.png";
+import pig  from "../tempAvatars/pig.png";
+import rabbit from "../tempAvatars/rabbit.png";
+import red_panda  from "../tempAvatars/red_panda.png";
+import sheep from "../tempAvatars/sheep.png";
+import koala from "../tempAvatars/koala.png";
+import tiger from "../tempAvatars/tiger.png";
+import wolf from "../tempAvatars/wolf.png";
 import chicken from "../tempAvatars/chicken.png";
 import duck from "../tempAvatars/duck.png";
 import rhino from "../tempAvatars/rhino.png";
@@ -18,6 +40,28 @@ class Avatar extends Component {
                 "chicken": chicken,
                 "duck": duck,
                 "rhino": rhino,
+                "antelope": antelope,
+                "baby penguin": baby_penguin,
+                "bear": bear,
+                "cat": cat,
+                "cobra": cobra,
+                "cow": cow,
+                "deer": deer,
+                "dog": dog,
+                "elephant": elephant,
+                "fox": fox,
+                "giraffe": giraffe,
+                "gorilla": gorilla,
+                "koala": koala,
+                "lion": lion,
+                "monkey": monkey,
+                "penguin": penguin,
+                "pig": pig,
+                "rabbit": rabbit,
+                "red panda": red_panda,
+                "sheep": sheep,
+                "tiger": tiger,
+                "wolf": wolf,
             },
             current: rhino,
             open_rooms: []
