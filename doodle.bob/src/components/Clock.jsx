@@ -161,31 +161,6 @@ class Clock extends Component {
         }
     }
 
-    tick() {
-        if (this.state.seconds <= 1 && this.state.status != "Game Over") {
-            clearInterval(this.timerId);
-            this.setState({
-                status: "Start Next Round",
-                round: this.state.round
-            })
-        }
-
-        if (this.state.round + 1 > this.state.maxrounds && Object.keys(this.state.users).length == this.state.current_subround) {
-            this.setState({
-                status: "Game Over",
-                seconds: 0,
-                round: "has ended"
-
-            });
-        }
-        if (this.state.paused == false && this.state.status != "Game Over") {
-            this.setState({
-                seconds: this.state.seconds - 1
-            });
-
-        }
-    }
-
     render(props) {
 
         return (

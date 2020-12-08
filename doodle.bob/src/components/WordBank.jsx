@@ -164,7 +164,8 @@ class WordBank extends Component {
                 </Modal>
 
                 <h1 className="title">DOODLE.BOB</h1>
-                <p className="heading"> Choose a category </p>
+                {this.state.is_host && <p className="heading">Choose atleast 3 categories.</p>}
+                {!this.state.is_host && <p className="heading">The host is choosing the categories.</p>}
 
                 <form onChange={this.updateCurrentCategories}>
                     {categories}

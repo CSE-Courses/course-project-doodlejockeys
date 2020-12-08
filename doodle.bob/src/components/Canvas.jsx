@@ -95,6 +95,7 @@ class Canvas extends Component {
         this.changeWidth = this.changeWidth.bind(this);
         this.savebuttonClicked = this.savebuttonClicked.bind(this);
         this.changeColor = this.changeColor.bind(this);
+        this.equipEraser = this.equipEraser.bind(this);
     }
 
     undoButtonClicked(p5) {
@@ -123,7 +124,7 @@ class Canvas extends Component {
         let center_col_width = document.querySelector('.center-col').clientWidth;
         let center_col_height = document.querySelector('.center-col').clientHeight;
         let toolbar_height = document.querySelector('.tools-container').clientHeight;
-        let rounds_container_height = 90;
+        let rounds_container_height = 105;
 
         let canvas_container = p5.createCanvas(center_col_width-50, center_col_height - rounds_container_height - 2*toolbar_height).parent(parent)
         p5.background(255);
@@ -306,6 +307,12 @@ class Canvas extends Component {
         }
     }
 
+    equipEraser() {
+        this.setState({
+            stroke: 'white'
+        })
+    }
+
     render(props) {
         let color_palette = [];
 
@@ -337,7 +344,7 @@ class Canvas extends Component {
                             {this.state.diffBrush ? <FontAwesomeIcon icon={faPencilAlt} /> : <FontAwesomeIcon icon={faPaintBrush} />}
                         </button>
 
-                        <button className="toolbar-button" onClick={this.changeWhiteColor}>
+                        <button className="toolbar-button" onClick={this.equipEraser}>
                             <FontAwesomeIcon icon={faEraser} />
                         </button>
 

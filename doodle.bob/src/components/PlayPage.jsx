@@ -8,7 +8,7 @@ import Toolbar from "./Toolbar"
 import Commands from '../commands';
 import Categories from '../categories';
 import { Form, Button, Modal } from 'react-bootstrap';
-import '../css/PlayPage.scss'
+import '../css/PlayPage.scss';
 
 
 // Step 1, enter playpage, with modal for who is the artist open (if artist, choose word, if not, do not choose word)
@@ -41,6 +41,7 @@ class PlayPage extends Component {
             is_artist: false,
             show_modal: false,
             users: {},
+            game_over: false
         }
 
         this.closeModal = this.closeModal.bind(this);
@@ -48,6 +49,7 @@ class PlayPage extends Component {
         this.random = this.random.bind(this);
         this.beginRound = this.beginRound.bind(this);
         this.setCustomWord = this.setCustomWord.bind(this);
+        this.endScoreboard = this.endScoreboard.bind(this);
     }
 
     componentDidMount() {
@@ -55,7 +57,6 @@ class PlayPage extends Component {
         socket.off(Commands.BEGIN_ROUND).on(Commands.BEGIN_ROUND, (data) => {
 
             let sent_game_info = data.game_info;
-            console.log("YO", data.users);
             let is_artist = false
             if (data.game_info.current_artist_id === socket.id) is_artist = true
 
@@ -109,7 +110,13 @@ class PlayPage extends Component {
             console.log(data.users)
             this.setState({
                 users: data.users
-            })
+            });
+
+            if(this.state.game_info.current_round >= this.state.game_info.rounds && this.state.game_info.current_subround >= Object.keys(this.state.users).length) {
+                this.setState({
+                    game_over: true
+                });
+            }
         })
 
     }
@@ -126,7 +133,8 @@ class PlayPage extends Component {
 
     closeModal() {
         this.setState({
-            show_modal: false
+            show_modal: false,
+            game_over: false
         })
     }
 
@@ -189,6 +197,28 @@ class PlayPage extends Component {
             </div>)
     }
 
+    endScoreboard() {
+        console.log(this.state.users);
+        const user_list = Object.values(this.state.users);
+
+        user_list.sort((u1, u2) => { return u2.points - u1.points });
+
+        const tags = [];
+        for(let i=0; i<user_list.length; ++i) {
+            let user_obj = user_list[i];
+            tags.push(
+                <div className="user-score-end">
+                    <div className="rank">{i+1}</div>
+                    <img src={user_obj.profile_picture} alt={`${user_obj.username} avatar`} />
+                    <div className="username-end">{user_obj.username}</div>
+                    <div className="user-points-end">{user_obj.points}</div>
+                </div>
+            );
+        }
+
+        return <div className="scoreboard-end">{tags}</div>
+    }
+
     render() {
         let pick_words = this.displayRandomWords(this.state.game_info.word_categories);
         console.log(this.state.game_info.current_time)
@@ -210,6 +240,20 @@ class PlayPage extends Component {
                     </Modal.Header>
                 </Modal>
 
+                <Modal animation={false} show={this.state.game_over} centered>
+                    <Modal.Header>
+                        <Modal.Title className="m-auto">Game Over!</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        {this.endScoreboard()}
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <p className="m-auto">To play another game goto: <a href="https://doodle-bob.herokuapp.com/">Doodle.bob homepage</a></p>
+                    </Modal.Footer>
+                </Modal>
+
 
                 {!this.state.preRoundState && <div className="play-container">
                     <div className="left-col">
@@ -217,6 +261,7 @@ class PlayPage extends Component {
                         <Scoreboard
                             users={this.state.users}
                         />
+
                     </div>
                     <div className="center-col">
                         {/* <ScoreboardEnd /> */}

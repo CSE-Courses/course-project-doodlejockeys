@@ -96,6 +96,11 @@ class ChatRoom extends Component {
 			return { room_code: state.room_code }
 		});
 
+		const all_messages = document.querySelectorAll('.messages li');
+		const latest_message = all_messages[all_messages.length - 1];
+		latest_message.scrollIntoView();
+		
+
 	}
 
 	onMessageChange(event) {
@@ -149,7 +154,7 @@ class ChatRoom extends Component {
 					{this.state.messages.map((message, i) => (
 						<li
 							key={i}
-							className={`animate__animated animate__faster message ${message.sentByCurrentUser ? "animate__fadeInRight current-user" : "animate__fadeInLeft other-user"}`}
+							className={`animate__faster message ${message.sentByCurrentUser ? "animate__fadeInRight current-user" : "animate__fadeInLeft other-user"}`}
 						>
 							<span>{message.message}</span>
 							<div className="sender">{message.username}</div>

@@ -40,12 +40,17 @@ const OPEN_ROOMS = {};
  */
 const CONNECTED_USERS = {};
 // let ARTIST_POOL = [];
-let timer_id;
+// let timer_id;
+
+function stop_timer(timer_id) {
+	clearInterval(timer_id);
+}
 
 function timer_tick(io, room_code) {
 	// console.log(`Current value of timer: ${OPEN_ROOMS[room_code].game_info.current_time}`);
 
 	let current_room_game_info = OPEN_ROOMS[room_code].game_info;
+	let timer_id = OPEN_ROOMS[room_code].game_info.timer_id;
 	var current_artist_id = current_room_game_info.current_artist_id
 	var currentRoundIndex = current_room_game_info.current_round - 1
 	var currentSubroundIndex = current_room_game_info.current_subround - 1
@@ -251,7 +256,8 @@ io.on('connection', socket => {
 				artist_history: [],
 				artist_pool: [],
 				current_word: '',
-				game_started: false
+				game_started: false,
+				timer_id: -1
 			}
 
 		};
@@ -530,9 +536,37 @@ io.on('connection', socket => {
 		// });
 
 		console.log(`Starting the timer`);
-		timer_id = setInterval(() => {
-			timer_tick(io, room_code);
-		}, 1000);
+		OPEN_ROOMS[room_code].game_info.timer_id = setInterval((room_code) => {
+			let current_room_game_info = OPEN_ROOMS[room_code].game_info;
+			let timer_id = OPEN_ROOMS[room_code].game_info.timer_id;
+			var current_artist_id = current_room_game_info.current_artist_id
+			var currentRoundIndex = current_room_game_info.current_round - 1
+			var currentSubroundIndex = current_room_game_info.current_subround - 1
+
+			io.in(room_code).emit(Commands.RECEIVE_CLOCK_INFO, current_room_game_info.current_time);
+			//This is to pass to playpage
+			console.log(current_room_game_info.current_word)
+			io.in(room_code).emit(Commands.CLOCK_PLAYPAGE, current_room_game_info);
+			current_room_game_info.current_time -= 1;
+
+			console.log(`Timer value: ${current_room_game_info.current_time}`);
+
+			if (current_room_game_info.current_time < 0) {
+				console.log('clear interval');
+				stop_timer(timer_id);
+				current_room_game_info.current_time = current_room_game_info.time_per_round;
+				// TODO: Emit to indicate that round has ended
+				chooseArtist(room_code);
+				//io.in(room_code).emit(Commands.BEGIN_ROUND, OPEN_ROOMS[room_code]);
+				OPEN_ROOMS[room_code].users[current_artist_id].points_history[currentRoundIndex][currentSubroundIndex] = calculateArtistScore(room_code)
+				endOfRoundScore(room_code)
+				io.in(room_code).emit(Commands.END_ROUND, OPEN_ROOMS[room_code])
+				io.in(room_code).emit(Commands.SEND_SCOREBOARD_INFO, {
+					room_info: OPEN_ROOMS[room_code],
+					room_code: room_code
+				})
+			}
+		}, 1000, room_code);
 	});
 
 	socket.on(Commands.GOT_CORRECT_WORD, (data) => {
