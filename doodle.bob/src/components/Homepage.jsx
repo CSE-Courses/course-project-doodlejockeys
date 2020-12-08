@@ -22,7 +22,7 @@ class Homepage extends Component {
 			open_rooms: [],
 			game_info: {
 				rounds: 3,
-				time_per_round: 2
+				time_per_round: 30
 			}
 		};
 
@@ -39,10 +39,10 @@ class Homepage extends Component {
 			console.log('Updating rooms...', Object.keys(open_rooms));
 			let rooms = [];
 
-			for(let room of Object.keys(open_rooms)) {
+			for (let room of Object.keys(open_rooms)) {
 				let game_info = open_rooms[room].game_info;
 
-				if(!game_info.game_started) {
+				if (!game_info.game_started) {
 					rooms.push(room);
 				}
 			}
@@ -191,7 +191,7 @@ class Homepage extends Component {
 								</div>
 
 								<div className="literalCard">
-									
+
 									<h2>Game Code</h2>
 
 									<input className="game-code" type="text" value={this.state.room_code} disabled />
@@ -211,8 +211,8 @@ class Homepage extends Component {
 										</form>
 
 										<form className="time" onChange={this.updateTimePerRound}>
-											<input type="radio" id="2" name="tm" defaultChecked value="2" />
-											<label htmlFor="2">2 seconds</label>
+											<input type="radio" id="30" name="tm" defaultChecked value="30" />
+											<label htmlFor="30">30 seconds</label>
 
 											<input type="radio" id="60" name="tm" value="60" />
 											<label htmlFor="60">60 seconds</label>
@@ -223,7 +223,7 @@ class Homepage extends Component {
 									</div>
 
 									<p className="enterUsername">Make sure to share the code with your friends!</p>
-									
+
 									<Link to={`/${this.state.room_code}/Avatar`} onClick={this.startGame}><Button variant="success" className="continueToPlay">Continue to Play</Button></Link>
 								</div>
 							</div>
@@ -240,9 +240,9 @@ class Homepage extends Component {
 									<input type="text" placeholder="Enter Code" value={this.state.entered_code} onChange={this.onRoomCodeChange} />
 
 									<input type="text" placeholder="Choose Username" maxLength="10" value={this.state.username} onChange={this.onUsernameChange} />
-									
+
 									<div className="continue">
-									<Link to={`/${this.state.entered_code}/Avatar`} onClick={this.joinGame}><Button variant="success" className="continueToPlay">Continue to Play</Button></Link>
+										<Link to={`/${this.state.entered_code}/Avatar`} onClick={this.joinGame}><Button variant="success" className="continueToPlay">Continue to Play</Button></Link>
 									</div>
 								</div>
 							</div>

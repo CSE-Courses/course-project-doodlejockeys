@@ -80,7 +80,7 @@ function timer_tick(io, room_code) {
 	}
 }
 
-function calculateNonArtistScore(room_code, current_time) {
+function calculateNonArtistScore(room_code, current_time, id) {
 	var finalScore = 0
 	var BASE = 100
 	// SCALE_NUM_PLAYERS = 15
@@ -89,6 +89,9 @@ function calculateNonArtistScore(room_code, current_time) {
 	var hit_bonus = false
 	var numPlayers = Object.keys(OPEN_ROOMS[room_code].users).length
 	var totalTime = OPEN_ROOMS[room_code].game_info.time_per_round
+	var currentRoundIndex = OPEN_ROOMS[room_code].game_info.current_round - 1
+	var currentSubroundIndex = OPEN_ROOMS[room_code].game_info.current_subround - 1
+	var allUsersDone = true
 
 	for (var time of TIME_BONUS) {
 		if (!hit_bonus) {
@@ -98,6 +101,15 @@ function calculateNonArtistScore(room_code, current_time) {
 			}
 		}
 	}
+	for (var user of Object.keys(OPEN_ROOMS[room_code].users)) {
+		if (OPEN_ROOMS[room_code].users[user].points_history[currentRoundIndex][currentSubroundIndex] == 0) {
+			if (user != id && user != (OPEN_ROOMS[room_code].game_info.current_artist_id)) {
+				allUsersDone = false
+				break
+			}
+		}
+	}
+	if (allUsersDone) OPEN_ROOMS[room_code].game_info.current_time = 1
 	return finalScore
 
 }
@@ -584,7 +596,7 @@ io.on('connection', socket => {
 			if (user_id === socket.id && user_id !== current_artist_id) {
 				if (points_history[currentRoundIndex][currentSubroundIndex] === 0) {
 					console.log("only this one", points_history[currentRoundIndex][currentSubroundIndex])
-					var score_for_round = calculateNonArtistScore(room_code, current_time)
+					var score_for_round = calculateNonArtistScore(room_code, current_time, socket.id)
 					points_history[currentRoundIndex][currentSubroundIndex] = score_for_round
 				}
 			}
