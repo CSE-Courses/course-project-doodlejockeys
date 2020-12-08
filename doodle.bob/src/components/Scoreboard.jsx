@@ -14,10 +14,7 @@ class Scoreboard extends Component {
     }
 
     componentDidMount() {
-        console.log(this.props.users)
         socket.on(Commands.SEND_SCOREBOARD_INFO, (data) => {
-            console.log(data)
-            console.log(data.room_info.game_info);
             let users = data.room_info.users
             let room_code = data.room_code
 
@@ -27,7 +24,6 @@ class Scoreboard extends Component {
                 room_code: room_code
             })
             for (var user of Object.keys(users)) {
-                console.log(users[user].points, this.state.highestScore)
                 if (users[user].points > this.state.highestScore) {
                     this.setState({
                         highestScore: users[user].points
@@ -53,7 +49,6 @@ class Scoreboard extends Component {
                     <img src={this.state.users[user].profile_picture} alt="my profile pic" className="myProPic" />
                     <div className="user-info">
                         <p className="user-name">{this.state.users[user].username}</p>
-                        {console.log(this.state.highestScore, this.state.users[user].points)}
                         <p className="score" >{this.state.users[user].points}</p>
                     </div>
                 </div>

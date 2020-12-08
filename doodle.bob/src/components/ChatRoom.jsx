@@ -43,7 +43,6 @@ class ChatRoom extends Component {
 	}
 
 	componentDidMount() {
-		// console.log(this.props.current_time)
 		socket.on(Commands.UPDATE_USERS, (data) => {
 			this.setState({
 				user_info: data[socket.id]
@@ -53,14 +52,11 @@ class ChatRoom extends Component {
 		socket.emit(Commands.GET_USER_INFO, this.state.room_code);
 
 		socket.on(Commands.UPDATE_ROOMS_CLIENT, (data) => {
-			console.log(data.game_info)
 			this.setState({
 				current_word: this.props.current_word
 			})
-			console.log(this.state)
 		})
 
-		console.log(socket.id);
 
 	}
 
@@ -74,7 +70,6 @@ class ChatRoom extends Component {
 		if (user_id === current_user_id) {
 			username = 'You';
 		}
-		console.log(message.toLowerCase().trim(), this.props.current_word.toLowerCase().trim())
 		if (message.toLowerCase().trim() === this.props.current_word.toLowerCase().trim()) {
 			message = "Correct"
 			if (user_id === current_user_id) {

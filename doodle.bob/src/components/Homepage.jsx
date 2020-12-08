@@ -36,7 +36,6 @@ class Homepage extends Component {
 
 		socket.off(Commands.UPDATE_ROOMS).on(Commands.UPDATE_ROOMS, (open_rooms) => {
 
-			console.log('Updating rooms...', Object.keys(open_rooms));
 			let rooms = [];
 
 			for (let room of Object.keys(open_rooms)) {
@@ -69,7 +68,6 @@ class Homepage extends Component {
 				}
 			}
 		});
-		console.table(this.state.game_info);
 	}
 
 	updateTimePerRound(event) {
@@ -81,7 +79,6 @@ class Homepage extends Component {
 				}
 			}
 		});
-		console.table(this.state.game_info);
 	}
 
 	startGame(event) {

@@ -135,8 +135,6 @@ class Canvas extends Component {
             toolbar_height = document.querySelector('.tools-container').clientHeight;
             rounds_container_height = document.querySelector('.rounds-container').clientHeight;
 
-            console.log("resize", center_col_height - rounds_container_height - 2*toolbar_height, center_col_height, rounds_container_height, toolbar_height);
-
             canvas_container.canvas.style.height = `${center_col_height - rounds_container_height - 2*toolbar_height}px`
         });
 
@@ -208,8 +206,6 @@ class Canvas extends Component {
                 initial_x = data.x;
                 initial_y = data.y;
 
-
-                console.log(data);
             }
             else {
                 // ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));    
@@ -226,7 +222,6 @@ class Canvas extends Component {
         socket.on(Commands.SKETCH_RESET, (data) => {
             ALL_STROKES = [];
             p5.redraw(1);
-            console.log("Sketch Reset");
         })
 
         socket.on(Commands.UNDO_STROKE, (data) => {
@@ -295,7 +290,6 @@ class Canvas extends Component {
 
     componentDidUpdate() {
 
-        // console.log(this.props.is_artist, this.props.is_artist);
 
     }
 

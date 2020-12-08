@@ -60,7 +60,6 @@ class PlayPage extends Component {
             let is_artist = false
             if (data.game_info.current_artist_id === socket.id) is_artist = true
 
-            console.log(`Is artist: ${is_artist}`);
             let game_info = {
                 word_categories: sent_game_info.word_categories,
                 rounds: sent_game_info.rounds,
@@ -74,20 +73,6 @@ class PlayPage extends Component {
                 current_time: sent_game_info.current_time
             };
 
-            if (is_artist) {
-                console.log("artist")
-                // this.setState({
-                //     show_modal: true,
-                //     game_info: game_info
-                // });
-
-            } else {
-                console.log("not artist")
-                // this.setState({
-                //     show_modal: false,
-                //     game_info: game_info
-                // })
-            }
 
             this.setState({
                 show_modal: true,
@@ -103,11 +88,9 @@ class PlayPage extends Component {
             this.state.game_info.current_word = data.current_word
             this.setState((state) => { return { show_modal: state.show_modal } })
             this.closeModal()
-            // console.log("time changing", this.state.game_info.current_time)
         })
 
         socket.on(Commands.END_ROUND, (data) => {
-            console.log(data.users)
             this.setState({
                 users: data.users
             });
@@ -125,7 +108,6 @@ class PlayPage extends Component {
         this.setState({
             show_modal: false
         })
-        console.log(event.target.dataset.value)
         this.state.game_info.current_word = event.target.dataset.value;
         socket.emit(Commands.BEGIN_ROUND, this.state.game_info);
         this.closeModal()
@@ -161,7 +143,6 @@ class PlayPage extends Component {
 
     displayRandomWords(categories) {
 
-        console.log(categories, categories.length);
 
         let words = [];
         const MAX_WORDS = 3;
@@ -170,7 +151,6 @@ class PlayPage extends Component {
         for (let category of categories) {
             let random_category = categories[this.random(0, categories.length)];
 
-            console.log(random_category);
             let available_words = Categories[random_category];
             let word = available_words[this.random(0, available_words.length)];
 
@@ -189,7 +169,6 @@ class PlayPage extends Component {
             </div>
         )
 
-        console.log(words);
 
         return (
             <div className="choices">
@@ -198,7 +177,6 @@ class PlayPage extends Component {
     }
 
     endScoreboard() {
-        console.log(this.state.users);
         const user_list = Object.values(this.state.users);
 
         user_list.sort((u1, u2) => { return u2.points - u1.points });
@@ -221,7 +199,6 @@ class PlayPage extends Component {
 
     render() {
         let pick_words = this.displayRandomWords(this.state.game_info.word_categories);
-        console.log(this.state.game_info.current_time)
         return (
             <React.Fragment>
 

@@ -59,7 +59,6 @@ class Toolbar extends Component {
                 var timeBetweenHints = Math.floor(2 * (this.props.time_per_round / current_word_broken_up.length))
                 var timeLost = this.props.time_per_round - this.props.current_time
                 if (timeLost % timeBetweenHints == 0) {
-                    console.log("HELLLLLOOOOOO")
                     var chosenChar = current_word_broken_up[Math.floor(Math.random() * current_word_broken_up.length)];
                     current_word_hint[chosenChar] = true
                 }
@@ -72,59 +71,6 @@ class Toolbar extends Component {
             return this.formatHintString(CURRENT_HINT)
         }
     }
-
-    // findHowManyLettersNO() {
-    //     var hint = ""
-    //     if (this.props.current_time == this.props.time_per_round) {
-    //         this.setState({
-    //             lettersRevealed: []
-    //         })
-    //     }
-    //     else if (this.props.current_time > 0) {
-    //         var timeBetweenHints = 2 * (this.props.time_per_round / this.props.current_word.split("").length)
-    //         var chosenIndex = -1
-    //         if ((this.props.time_per_round - this.props.current_time) % timeBetweenHints == 0) {
-    //             var chosenIndex = Math.floor(Math.random() * this.props.current_word.split("").length);
-    //         }
-    //         var tempArr = this.state.lettersRevealed
-    //         for (var char of this.props.current_word.split("")) {
-    //             if (chosenIndex == -1) {
-    //                 if (char === ' ') {
-    //                     console.log(this.props.current_word)
-    //                     hint += "\xa0\xa0\xa0"
-    //                 }
-    //                 else {
-    //                     hint += '_ '
-    //                 }
-    //             }
-    //             else {
-    //                 var chosenLetter = this.props.current_word.split("")[chosenIndex]
-    //                 console.log(this.state.lettersRevealed, chosenLetter)
-    //                 if (this.state.lettersRevealed.includes(char)) {
-    //                     hint += char + '\xa0'
-    //                 }
-    //                 else if (char === chosenLetter) {
-    //                     hint += chosenLetter + '\xa0'
-    //                     tempArr.push(char)
-    //                 }
-    //                 else if (char === ' ') {
-    //                     console.log(this.props.current_word)
-    //                     hint += "\xa0\xa0\xa0"
-    //                 }
-    //                 else {
-    //                     hint += '_ '
-    //                 }
-    //             }
-    //         }
-    //         this.setState({
-    //             lettersRevealed: tempArr
-    //         })
-    //     }
-    //     else {
-    //         hint = this.props.current_word
-    //     }
-    //     return hint
-    // }
 
     handleClick() {
         this.setState(prevState => ({

@@ -77,7 +77,6 @@ class Avatar extends Component {
         });
 
         socket.on(Commands.UPDATE_ROOMS, open_rooms => {
-            console.log('Updating rooms...', Object.keys(open_rooms));
             let rooms = [];
 
             for (let room of Object.keys(open_rooms)) {
@@ -96,7 +95,6 @@ class Avatar extends Component {
 
     onPictureChange(event) {
         event.preventDefault();
-        console.log(event.target.id);
         let current = event.target.id;
 
         this.setState((state) => {
@@ -112,8 +110,6 @@ class Avatar extends Component {
                 user_id: socket.id,
                 profile_picture: String(this.state.current)
             });
-
-            console.log(this.state.room_code);
 
         } else {
             event.preventDefault();

@@ -42,7 +42,6 @@ class Clock extends Component {
 
     componentDidMount() {
         socket.on(Commands.SEND_CLOCK_INFO, (data) => {
-            console.log(data.room_info.game_info);
             let time_per_round = data.room_info.game_info.time_per_round;
             let rounds = data.room_info.game_info.rounds; //total rounds
             let current_round = data.room_info.game_info.current_round; // current round
@@ -57,7 +56,6 @@ class Clock extends Component {
             let users = data.room_info.users;
 
 
-            // console.log(data.room_info.game_info);
 
             this.setState({
                 timervalue: time_per_round,
@@ -88,7 +86,6 @@ class Clock extends Component {
 
         socket.off(Commands.RECEIVE_CLOCK_INFO).on(Commands.RECEIVE_CLOCK_INFO, (data) => {
             let seconds = data
-            // console.log("time getting called")
             this.setState({
                 seconds: seconds
             })
@@ -115,7 +112,6 @@ class Clock extends Component {
         //we want to pass the new round to the server before reloading the page
         var updated_round = this.state.round
 
-        console.log("comparison: ", CURRENT_SUBROUND, Object.keys(this.state.users).length, "round: ", updated_round);
 
         if (CURRENT_SUBROUND > Object.keys(this.state.users).length) {
             //we reset here
@@ -140,12 +136,10 @@ class Clock extends Component {
             })
         } else {
 
-            console.log("round after", updated_round, CURRENT_SUBROUND)
             //where we prep the room_info to send back to the server
             this.state.data.room_info.game_info.current_round = updated_round
             this.state.data.room_info.game_info.current_subround = CURRENT_SUBROUND
 
-            // console.log(this.state.data.room_info.game_info.current_round, this.state.data.room_info.game_info.current_subround)
 
             //sending back to server
             socket.emit(Commands.RECEIVE_CLOCK_INFO, {
