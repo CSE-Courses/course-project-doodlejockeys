@@ -167,11 +167,10 @@ class Clock extends Component {
             <div id="clock">
 
                 {/* {this.state.is_artist && <button onClick={this.clockToggle}>{this.state.status}</button>} */}
-                {!this.state.is_artist && <div>{this.state.seconds + "s"}</div>}
+                {!this.state.is_artist && this.state.seconds !== 0 && <div>{this.state.seconds + "s"}</div>}
                 {this.state.is_artist && this.state.seconds !== 0 && <div>{this.state.seconds + "s"}</div>}
-                {this.state.is_artist && (this.state.seconds <= 0) && !this.state.on_last_round && (<Button variant="success" onClick={this.startNextRound} className="startRound" >{this.state.status}</Button>)
-                }
-
+                {this.state.is_artist && (this.state.seconds <= 0) && !this.state.on_last_round && (<Button variant="success" onClick={this.startNextRound} className="startRound" >{this.state.status}</Button>)}
+                {!this.state.is_artist && (this.state.seconds <= 0) && !this.state.on_last_round && <div style={{ fontSize: "20px", lineHeight: "20px" }}>Tell the artist to move on!</div>}
                 {this.state.on_last_round && this.state.seconds <= 0 && (
                     <React.Fragment>
                         <div>Time is Up!</div>
