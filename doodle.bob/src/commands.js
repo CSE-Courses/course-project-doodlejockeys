@@ -32,6 +32,7 @@ const DONE_DRAWING = 'DONE_DRAWING';
 const SKETCH_RESET = 'SKETCH_RESET';
 const UNDO_STROKE  = 'UNDO_STROKE';
 const PUSH_STROKE = 'PUSH_STROKE';
+const GET_CONNECTED_USERS = 'GET_CONNECTED_USERS';
 
 module.exports = {
     START_GAME,
@@ -68,4 +69,5 @@ module.exports = {
     SKETCH_RESET,
     UNDO_STROKE,
     PUSH_STROKE,
+    GET_CONNECTED_USERS
 }

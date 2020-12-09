@@ -605,6 +605,21 @@ io.on('connection', socket => {
 
 	socket.on(Commands.UPDATE_ROOMS, data => {
 		io.emit(Commands.UPDATE_ROOMS, OPEN_ROOMS)
+	});
+
+	socket.on(Commands.GET_CONNECTED_USERS, data => {
+		let room_code = data.room_code;
+
+		let connected_users = [];
+
+		for(let user of Object.values(OPEN_ROOMS[room_code].users)) {
+			connected_users.push(user.username);
+		}
+
+		io.in(room_code).emit(Commands.GET_CONNECTED_USERS, {
+			room_code,
+			connected_users
+		});
 	})
 
 });
