@@ -18,9 +18,7 @@ import upload from "../tempAvatars/upload.png";
 
 class Avatar extends Component {
     constructor(props) {
-        super(props);
-        //this.onDrop = this.onDrop.bind(this);
-     
+        super(props);     
         this.state = {
             pictures: [],
             room_code: props.match.params.room_code,
@@ -35,6 +33,7 @@ class Avatar extends Component {
         };
         this.submitPicture = this.submitPicture.bind(this);
         this.onPictureChange = this.onPictureChange.bind(this);
+    
     }
     componentDidMount() {
         socket.emit(Commands.UPDATE_ROOMS, {
@@ -69,11 +68,6 @@ class Avatar extends Component {
         })
     }
 
-    
-    saveImage = (p5) => {
-        p5.saveCanvas('myCanvas', 'jpg');
-    }
-
     submitPicture(event, pictureFiles) {
         this.setState({
             current: this.state.pictures.concat(pictureFiles)
@@ -88,11 +82,13 @@ class Avatar extends Component {
             console.log(this.state.room_code);
 
         } 
-        // else {
-        //     event.preventDefault();
-        //     this.props.history.push(`/`);
-        // }
+        else {
+            event.preventDefault();
+            this.props.history.push(`/`);
+        }
     }
+
+
 
 
     render() {
@@ -129,7 +125,7 @@ class Avatar extends Component {
 
                     <div className="current-container">
                         <h2>Current picture</h2>
-        
+                        <img src={this.state.current} alt={`Cartoon`} className="current" />
                     </div>
 
                     <Link to={`/${this.state.room_code}/WordBank`} onClick={this.submitPicture}><Button variant="success">Submit Picture</Button></Link>

@@ -11,9 +11,7 @@ import {
     faTrashAlt,
     faUndoAlt,
     faPaintBrush,
-    faSave,
-    faSquare,
-    faRainbow
+    faSave
 } from
     "@fortawesome/free-solid-svg-icons";
 import Commands from '../commands';
@@ -337,15 +335,6 @@ class Canvas extends Component {
                         <button className="toolbar-button" onClick={this.changeBrush}>
                             {this.state.diffBrush ? <FontAwesomeIcon icon={faPencilAlt} /> : <FontAwesomeIcon icon={faPaintBrush} />}
                         </button>
-
-                        <button className="toolbar-button" onClick={this.changeBrush}>
-                            {this.state.diffBrush ? <FontAwesomeIcon icon={faSquare} /> : <FontAwesomeIcon icon={faSquare} />}
-                        </button>
-
-                        <button className="toolbar-button" onClick={this.changeBrush}>
-                            {this.state.diffBrush ? <FontAwesomeIcon icon={faRainbow} /> : <FontAwesomeIcon icon={faRainbow} />}
-                        </button>
-
 
                         <button id="save-canvas" className="toolbar-button">
                             <FontAwesomeIcon icon={faSave} />
