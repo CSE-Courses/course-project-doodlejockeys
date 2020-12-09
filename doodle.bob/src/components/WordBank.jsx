@@ -159,7 +159,7 @@ class WordBank extends Component {
                     </Modal.Header>
 
                     <Modal.Body>
-                        <p>Please select atleast 3 categories!</p>
+                        <p>Please select at least 3 categories!</p>
                     </Modal.Body>
                 </Modal>
 
