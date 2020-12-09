@@ -151,8 +151,11 @@ class WordBank extends Component {
         }
 
         return (
+           
             <div className="categories">
                 <p className="invite">Invite your Friends: {this.state.room_code}</p>
+
+
                 <Modal animation={false} show={this.state.show_error} onHide={this.closeModal} centered>
                     <Modal.Header>
                         <Modal.Title className="text-danger">Error!</Modal.Title>

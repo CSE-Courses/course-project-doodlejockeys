@@ -11,12 +11,13 @@ import {
     faTrashAlt,
     faUndoAlt,
     faPaintBrush,
-    faSave
+    faSave,
+    faSquare,
+    faRainbow
 } from
     "@fortawesome/free-solid-svg-icons";
 import Commands from '../commands';
 import socket from '../server/socket';
-
 
 class Stroke {
     // Default stroke settings
@@ -98,15 +99,15 @@ class Canvas extends Component {
     }
 
     undoButtonClicked(p5) {
-        
-        if(this.props.is_artist) {
+
+        if (this.props.is_artist) {
             ALL_STROKES.pop();
             p5.redraw(1);
 
             socket.emit(Commands.UNDO_STROKE, {
                 room_code: this.state.room_code,
             });
-        
+
         } else {
             // Do Nothing...
         }
@@ -125,7 +126,7 @@ class Canvas extends Component {
         let toolbar_height = document.querySelector('.tools-container').clientHeight;
         let rounds_container_height = 90;
 
-        let canvas_container = p5.createCanvas(center_col_width-50, center_col_height - rounds_container_height - 2*toolbar_height).parent(parent)
+        let canvas_container = p5.createCanvas(center_col_width - 50, center_col_height - rounds_container_height - 2 * toolbar_height).parent(parent)
         p5.background(255);
 
         // Resize listener
@@ -134,9 +135,9 @@ class Canvas extends Component {
             toolbar_height = document.querySelector('.tools-container').clientHeight;
             rounds_container_height = document.querySelector('.rounds-container').clientHeight;
 
-            console.log("resize", center_col_height - rounds_container_height - 2*toolbar_height, center_col_height, rounds_container_height, toolbar_height);
+            console.log("resize", center_col_height - rounds_container_height - 2 * toolbar_height, center_col_height, rounds_container_height, toolbar_height);
 
-            canvas_container.canvas.style.height = `${center_col_height - rounds_container_height - 2*toolbar_height}px`
+            canvas_container.canvas.style.height = `${center_col_height - rounds_container_height - 2 * toolbar_height}px`
         });
 
         // Toolbar buttons listeners.
@@ -152,7 +153,7 @@ class Canvas extends Component {
             this.savebuttonClicked(p5, canvas_container);
         })
         // Toolbar buttons listeners end.
-        
+
         // Canvas Listeners.
         canvas_container.canvas.addEventListener("mousedown", () => {
 
@@ -301,7 +302,7 @@ class Canvas extends Component {
     draw = (p5) => {
 
         p5.background(255);
-        for(let stroke of ALL_STROKES) {
+        for (let stroke of ALL_STROKES) {
             stroke.draw(p5);
         }
     }
@@ -309,12 +310,12 @@ class Canvas extends Component {
     render(props) {
         let color_palette = [];
 
-        for(let color of this.state.colors) {
+        for (let color of this.state.colors) {
             color_palette.push(
                 <button
                     className="toolbar-button"
                     data-color={color}
-                    style={{backgroundColor: color}}
+                    style={{ backgroundColor: color }}
                     onClick={this.changeColor}>
                     <br />
                 </button>
@@ -337,9 +338,14 @@ class Canvas extends Component {
                             {this.state.diffBrush ? <FontAwesomeIcon icon={faPencilAlt} /> : <FontAwesomeIcon icon={faPaintBrush} />}
                         </button>
 
-                        <button className="toolbar-button" onClick={this.changeWhiteColor}>
-                            <FontAwesomeIcon icon={faEraser} />
+                        <button className="toolbar-button" onClick={this.changeBrush}>
+                            {this.state.diffBrush ? <FontAwesomeIcon icon={faSquare} /> : <FontAwesomeIcon icon={faSquare} />}
                         </button>
+
+                        <button className="toolbar-button" onClick={this.changeBrush}>
+                            {this.state.diffBrush ? <FontAwesomeIcon icon={faRainbow} /> : <FontAwesomeIcon icon={faRainbow} />}
+                        </button>
+
 
                         <button id="save-canvas" className="toolbar-button">
                             <FontAwesomeIcon icon={faSave} />
@@ -347,7 +353,12 @@ class Canvas extends Component {
 
                         <button className="toolbar-button"
                             onClick={this.changeWidth}>
-                        {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm" /> : <FontAwesomeIcon icon={faCircle} size="md" />}
+                            {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm" /> : <FontAwesomeIcon icon={faCircle} size="md" />}
+                        </button>
+
+
+                        <button className="toolbar-button" onClick={this.changeWhiteColor}>
+                            <FontAwesomeIcon icon={faEraser} />
                         </button>
 
                         <button
@@ -364,7 +375,7 @@ class Canvas extends Component {
                             <FontAwesomeIcon icon={faTrashAlt} />
                         </button>
                     </div>
-                    
+
                     <div className="color-palette">
                         {color_palette}
                     </div>

@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import ReactDOM from "react-dom";
 import { Link } from "react-router-dom";
 import chicken from "../tempAvatars/chicken.png";
 import duck from "../tempAvatars/duck.png";
@@ -7,11 +8,21 @@ import socket from '../server/socket'
 import Commands from "../commands";
 import '../css/Avatar.scss';
 import { Button } from 'react-bootstrap';
+import Sketch from 'react-p5';
+//import "../styles.css";
+import UserCreate from "./UserCreate";
+import ImageUploader from 'react-images-upload';
+import plus from "../tempAvatars/plus.png";
+import upload from "../tempAvatars/upload.png";
+
 
 class Avatar extends Component {
     constructor(props) {
         super(props);
+        //this.onDrop = this.onDrop.bind(this);
+     
         this.state = {
+            pictures: [],
             room_code: props.match.params.room_code,
             user_info: '',
             profilePictures: {
@@ -25,9 +36,7 @@ class Avatar extends Component {
         this.submitPicture = this.submitPicture.bind(this);
         this.onPictureChange = this.onPictureChange.bind(this);
     }
-
     componentDidMount() {
-
         socket.emit(Commands.UPDATE_ROOMS, {
             room_code: this.state.room_code
         });
@@ -60,8 +69,15 @@ class Avatar extends Component {
         })
     }
 
-    submitPicture(event) {
+    
+    saveImage = (p5) => {
+        p5.saveCanvas('myCanvas', 'jpg');
+    }
 
+    submitPicture(event, pictureFiles) {
+        this.setState({
+            current: this.state.pictures.concat(pictureFiles)
+        })
         if (this.state.open_rooms.includes(this.state.room_code)) {
             socket.emit(Commands.SEND_PICTURE, {
                 room_code: this.state.room_code,
@@ -71,10 +87,11 @@ class Avatar extends Component {
 
             console.log(this.state.room_code);
 
-        } else {
-            event.preventDefault();
-            this.props.history.push(`/`);
-        }
+        } 
+        // else {
+        //     event.preventDefault();
+        //     this.props.history.push(`/`);
+        // }
     }
 
 
@@ -96,11 +113,23 @@ class Avatar extends Component {
 
                     <form className="options">
                         {options}
+                        <p className="paragraph"> or upload your own</p>
                     </form>
+
+                    <div className="imageup">
+                    <ImageUploader
+                    withIcon={false}
+                    withPreview={true}
+                    buttonText="Choose image"
+                    onChange={this.submitPicture}
+                    imgExtension={[ ".jpg", ".gif",  ".png",  ".gif"]}
+                    maxFileSize={5242880}
+                    />
+                    </div>
 
                     <div className="current-container">
                         <h2>Current picture</h2>
-                        <img src={this.state.current} alt={`Cartoon`} className="current" />
+        
                     </div>
 
                     <Link to={`/${this.state.room_code}/WordBank`} onClick={this.submitPicture}><Button variant="success">Submit Picture</Button></Link>
@@ -111,3 +140,5 @@ class Avatar extends Component {
 }
 
 export default Avatar;
+
+
