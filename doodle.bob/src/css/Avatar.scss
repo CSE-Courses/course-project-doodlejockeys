@@ -1,0 +1,75 @@
+$card-bg: #CBC7FC;
+$app-bg: #D6FFB7;
+
+::-webkit-scrollbar {
+	width: 10px;
+}
+  
+  /* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+  
+  /* Handle */
+::-webkit-scrollbar-thumb {
+	background: $card-bg;
+}
+  
+  /* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #948BF9;
+}
+
+.avatar-container {
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background: $card-bg;
+
+	.avatar {
+		width: 40%;
+		display: flex;
+		padding: 3rem;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		background: $app-bg;
+		border-radius: 7%;
+
+		.options {
+			display: flex;
+			overflow-x: scroll;
+			margin: 1rem;
+			.option {
+				width: 15%;
+				margin: auto;
+				padding: 0.5rem;
+				transition: width 0.2s ease-in;
+				cursor: pointer;
+			}
+
+			.option:hover {
+				width: 17%;
+			}
+		}
+
+		.current-container {
+			margin: 1rem;
+			text-align: center;
+			.current {
+				width: 100%;
+				display: block;
+				margin: auto;
+			}
+		}
+	}
+	.invite {
+		width: 100%;
+		text-align: right;
+		position: absolute;
+		right: 10px;
+		top: 0;
+	}
+}

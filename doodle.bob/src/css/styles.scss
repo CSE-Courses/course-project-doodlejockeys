@@ -1,0 +1,178 @@
+$card-bg: #CBC7FC;
+$dark: #948BF9;
+$app-bg: #D6FFB7;
+$block: rgb(46, 46, 46);
+
+:root {
+	/* --bg-color: #FFD600; */
+	--bg-color: rgb(255, 214, 2);
+	--dk-maroon:  rgb(151, 0, 50);
+	--lt-maroon: rgb(200, 94, 129);
+}
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* display: inline; */
+  width: 100%;
+}
+
+
+.myProPic {
+  width: 35%;
+  border-radius: 50%;
+}
+
+.toolbar {
+  padding: 0.5rem;
+  background-color:lightgray;
+  font-size: 20px;
+  text-align: center;
+}
+
+.toolbar-button {
+  height: 35px;
+  width: 35px;
+}
+
+.left-col {
+	display: flex;
+	flex-direction: column;
+  flex: 1;
+}
+
+#clock {
+	text-align: center;
+	font-weight: bold;
+  display: flex;
+  font-size: 1.5rem;
+  line-height: 4rem;
+  flex-direction: column-reverse;
+	color: #fff;
+}
+
+#clock div {
+	padding: 1rem;
+  background: $dark;
+  color: white;
+  border: 1px solid white;
+  height: 100px;
+}
+
+#scoreboard {
+	display: flex;
+	flex-direction: column;
+}
+
+.user-score {
+	display: flex;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+  color: $block;
+  padding: 0.5rem 1rem;
+  background: $card-bg;
+}
+
+.user-name {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.user-score:nth-child(even) {
+  background: $dark;
+  color: white;
+}
+
+.user-score .user-info {
+	padding: 0 1rem;
+	flex: 1;
+}
+
+.highlight {
+  border: 3px solid #0AD3FF;
+}
+
+.roundName {
+    text-align: center;
+}
+
+.center-col {
+	display: flex;
+	flex-direction: column;
+  flex: 5;
+}
+
+.right-col {
+	display: flex;
+	flex: 2;
+}
+/* WORD BANK CSS */
+
+/* ScoreboardEnd */
+.scoreboard-end {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  .user-score-end {
+    display: flex;
+    align-items: center;
+
+    .rank {
+      margin: 1rem;
+    }
+
+    img {
+      margin: 1rem;
+      width: 50px;
+      height: 50px;
+    }
+
+    .username-end {
+      margin-right: 1rem;
+      font-weight: bold;
+    }
+
+  }
+
+}
+
+.hidden {
+  display: none;
+}
+
+/* ScoreboardEnd -- end */
+
+/* Minigame -- start */
+
+.minigameReveal {
+  font-weight: bold;
+  position: relative;
+  z-index: 2;
+  background-color: rgb(151, 0, 50);
+}
+
+.minigameReveal:hover {
+  background-color: rgb(46, 46, 46);
+}
+
+.startRound {
+  height: 100px !important;
+  font-size: 1.3rem !important;
+  font-weight: bold !important;
+  border: 1px solid white;
+}
+
+.paragraph{
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.imageup{
+  align-items: center;
+  margin-top:-40px;
+}

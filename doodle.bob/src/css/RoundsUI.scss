@@ -1,0 +1,58 @@
+$card-bg: #CBC7FC;
+$app-bg: #D6FFB7;
+$block: rgb(46, 46, 46);
+
+.rounds-container{
+	display: flex;
+	background-color: rgb(41, 41, 41);
+	
+	.round {
+		flex: 1;	
+		padding: 0.5rem;
+		border: 1px solid white;
+		background-color: rgb(41, 41, 41);
+	  
+		.round-num {
+			text-align: center;
+			color: white;
+			font-family: sans-serif;
+			font-weight: bold;
+		}
+	  
+		.profile-pictures {
+			display: flex;
+			justify-content: center;
+
+		
+			img {
+				width: 35px;
+				height: 35px;
+				border-radius: 50%;
+				margin: 5px;
+			}
+
+			.empty {
+				 width: 35px;
+				height: 35px;
+				border-radius: 50%;
+				background-color: lightgrey;
+				margin: 5px;
+				text-align: center; 
+				font-size: 1.5rem;
+			}
+		}
+	}
+
+	.round-active {
+		background: $card-bg;
+		.round-num {
+			color: $block;
+		}
+		.profile-pictures {
+			.empty {
+				background-color: $block;
+				color: white;
+			}
+		}
+	}
+}

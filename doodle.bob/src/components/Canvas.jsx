@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
 import Sketch from 'react-p5';
-import "../styles.css";
+import "../css/styles.scss";
+import "../css/Canvas.scss";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faPencilAlt,
     faEraser,
-    faFillDrip,
     faCircle,
     faTrashAlt,
     faUndoAlt,
-    faPaintBrush
+    faPaintBrush,
+    faSave,
+    faSquare,
+    faRainbow
 } from
     "@fortawesome/free-solid-svg-icons";
+import Commands from '../commands';
+import socket from '../server/socket';
 
 class Stroke {
     // Default stroke settings
@@ -21,13 +26,12 @@ class Stroke {
         this.stroke = "black";
         this.strokeWidth = 2;
     }
+
     // Adds stroke
     add(p5, point, stroke, strokeWidth) {
         this.strokeWidth = strokeWidth;
         p5.strokeWeight(this.strokeWidth);
-        this
-            .points
-            .push(point);
+        this.points.push(point);
         this.stroke = stroke;
         p5.stroke(this.stroke);
         p5.line(this.init.x, this.init.y, point.x, point.y);
@@ -36,470 +40,535 @@ class Stroke {
     }
 
     draw(p5) {
-
         let temp_X = this.init.x;
         let temp_Y = this.init.y;
 
-        for(let i=this.points.length-1; i >= 0; i--) {
+        for (let i = this.points.length - 1; i >= 0; i--) {
+            p5.stroke(this.stroke)
+            p5.strokeWeight(this.strokeWidth)
             p5.line(temp_X, temp_Y, this.points[i].x, this.points[i].y);
             temp_X = this.points[i].x;
             temp_Y = this.points[i].y;
         }
-        
     }
 }
 //holds all strokes made
 let ALL_STROKES = [];
-let saveimgbtn;
+let initial_x = -1;
+let initial_y = -1;
+
+
 
 class Canvas extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            lastStrokeIdx: -1,
-            erasing: false,
             drawing: false,
-            strokes: "black",
+            stroke: "black",
             strokeWidth: 2,
-            diffWidth: true,
-            isToggleOn: true,
             diffBrush: true,
-            SAVED: false,
-            undo: false,
-		}
-		this.handleClick = this.handleClick.bind(this);
-		this.changeBrush = this.changeBrush.bind(this);
-		this.changeWidth = this.changeWidth.bind(this);
+            colors: [
+                "white",
+                "#c9c9c9",
+                "red",
+                "orange",
+                "yellow",
+                "#26A65B",
+                "dodgerblue",
+                "#d8a6ff",
+                "#ffa6da",
+                "black",
+                "gray",
+                "#850000",
+                "#ad6b00",
+                "#e3e312",
+                "#006442",
+                "blue",
+                "#7918c4",
+                "#c74691"
+            ],
+            room_code: props.room_code,
+            is_artist: this.props.is_artist,
+        }
+
+        this.changeBrush = this.changeBrush.bind(this);
+        this.changeWidth = this.changeWidth.bind(this);
+        this.savebuttonClicked = this.savebuttonClicked.bind(this);
+        this.equipEraser = this.equipEraser.bind(this);
     }
 
-    //sets saved button true when clicked.
-    savebuttonClicked = () => {
-        this.setState({
-            SAVED:true
-        })
+    undoButtonClicked(p5) {
+
+        if (this.props.is_artist) {
+            ALL_STROKES.pop();
+            p5.redraw(1);
+
+            socket.emit(Commands.UNDO_STROKE, {
+                room_code: this.state.room_code,
+            });
+
+        } else {
+            // Do Nothing...
+        }
     }
 
-    //sets state when undo button is clicked
-    undoButtonClicked = () =>{
-        this.setState({
-            undo: true
-        }); 
 
-        console.log(ALL_STROKES);
-
-        ALL_STROKES.pop();
-
-        this.setState((state, props) => ({
-			lastStrokeIdx: ALL_STROKES.length
-		}));
+    savebuttonClicked(p5, canvas) {
+        p5.saveCanvas(canvas, 'my_canvas', 'png');
     }
 
 
     setup = (p5, parent) => {
-        p5.createCanvas(700, 500).parent(parent)
+        p5.noLoop();
+        let center_col_width = document.querySelector('.center-col').clientWidth;
+        let center_col_height = document.querySelector('.center-col').clientHeight;
+        let toolbar_height = document.querySelector('.tools-container').clientHeight;
+        let rounds_container_height = 105;
+
+        let canvas_container = p5.createCanvas(center_col_width - 50, center_col_height - rounds_container_height - 2 * toolbar_height).parent(parent)
         p5.background(255);
 
-        var eraserbtn = p5.createButton("Reset");
-        eraserbtn.parent(parent);
-        eraserbtn.mousePressed(this.resetSketch);
+        // Resize listener
+        window.addEventListener("resize", () => {
+            center_col_height = document.querySelector('.center-col').clientHeight;
+            toolbar_height = document.querySelector('.tools-container').clientHeight;
+            rounds_container_height = document.querySelector('.rounds-container').clientHeight;
 
-        saveimgbtn = p5.createButton("Save Canvas");
-        saveimgbtn.parent(parent)
-        saveimgbtn.mousePressed(this.savebuttonClicked)
-        
-        var undoBtn = p5.createButton('Undo');
-        undoBtn.parent(parent);
-        undoBtn.mousePressed(this.undoButtonClicked);
+            canvas_container.canvas.style.height = `${center_col_height - rounds_container_height - 2*toolbar_height}px`
+        });
+
+        // Toolbar buttons listeners.
+        document.querySelector("#undo").addEventListener("click", () => {
+            this.undoButtonClicked(p5);
+        });
+
+        document.querySelector("#reset").addEventListener("click", () => {
+            this.resetSketch(p5);
+        });
+
+        document.querySelector("#save-canvas").addEventListener("click", () => {
+            this.savebuttonClicked(p5, canvas_container);
+        })
+        // Toolbar buttons listeners end.
+
+        // Canvas Listeners.
+        canvas_container.canvas.addEventListener("mousedown", () => {
+
+            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));
+
+            socket.emit(Commands.PUSH_STROKE, {
+                room_code: this.state.room_code,
+                x: p5.mouseX,
+                y: p5.mouseY,
+            })
+
+            this.setState({
+                drawing: true
+            });
+        });
+        canvas_container.canvas.addEventListener("mousemove", () => {
+            if (this.props.is_artist && this.state.drawing) {
+                ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.stroke, this.state.strokeWidth);
+
+                socket.emit(Commands.SEND_STROKES, {
+                    room_code: this.state.room_code,
+                    x: p5.mouseX,
+                    y: p5.mouseY,
+                    stroke_weight: this.state.strokeWidth,
+                    stroke_color: this.state.stroke,
+                });
+            }
+        });
+        canvas_container.canvas.addEventListener("mouseup", () => {
+            if (this.props.is_artist) {
+                this.setState({ drawing: false });
+
+                socket.emit(Commands.DONE_DRAWING, {
+                    room_code: this.state.room_code,
+                    x: -1,
+                    y: -1,
+                })
+            }
+        });
+        canvas_container.canvas.addEventListener("mouseout", () => {
+            this.setState({
+                drawing: false
+            })
+        });
+        // Canvas Listeners end.
+
+        // Recieve strokes and display
+        socket.on(Commands.SEND_STROKES, (data) => {
+            if (initial_x > 0 || initial_y > 0) {
+                ALL_STROKES[ALL_STROKES.length - 1].add(p5, p5.createVector(data.x, data.y), data.stroke_color, data.stroke_weight);
+
+                initial_x = data.x;
+                initial_y = data.y;
+
+            }
+            else {
+                // ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));    
+                initial_x = data.x;
+                initial_y = data.y;
+            }
+        })
+
+        socket.on(Commands.DONE_DRAWING, (data) => {
+            initial_x = data.x;
+            initial_y = data.y;
+        })
+
+        socket.on(Commands.SKETCH_RESET, (data) => {
+            ALL_STROKES = [];
+            p5.redraw(1);
+        })
+
+        socket.on(Commands.UNDO_STROKE, (data) => {
+            ALL_STROKES.pop();
+            p5.redraw(1);
+        })
+
+        socket.on(Commands.PUSH_STROKE, (data) => {
+            ALL_STROKES.push(new Stroke(p5.createVector(data.x, data.y)));
+        })
+
     }
 
     //maybe refactor into switch statements. These functions change the brush color to said color.
     changeWhiteColor = () => {
-        this.setState({ strokes: "white" })
+        this.setState({ stroke: "white" })
     }
 
     changeBlackColor = () => {
-        this.setState({ strokes: "black" })
+        this.setState({ stroke: "black" })
     }
 
     changeRedColor = () => {
-        this.setState({ strokes: "red" })
+        this.setState({ stroke: "red" })
     }
 
     changeOrangeColor = () => {
-        this.setState({ strokes: "orange" })
+        this.setState({ stroke: "orange" })
     }
 
     changeYellowColor = () => {
-        this.setState({ strokes: "yellow" })
+        this.setState({ stroke: "yellow" })
     }
 
     changeGreenColor = () => {
-        this.setState({ strokes: "#26A65B" })
+        this.setState({ stroke: "#26A65B" })
     }
 
     changeBlueColor = () => {
-        this.setState({ strokes: "blue" })
+        this.setState({ stroke: "blue" })
     }
 
     changeIndigoColor = () => {
-        this.setState({ strokes: "indigo" })
+        this.setState({ stroke: "indigo" })
     }
 
     changeVioletColor = () => {
-        this.setState({ strokes: "#c74691" })
+        this.setState({ stroke: "#c74691" })
     }
 
     changeLightGrayColor = () => {
-        this.setState({ strokes: "#c9c9c9" })
+        this.setState({ stroke: "#c9c9c9" })
     }
 
     changeDodgerBlueColor = () => {
-        this.setState({ strokes: "dodgerblue" })
+        this.setState({ stroke: "dodgerblue" })
     }
 
     changeLightPurpleColor = () => {
-        this.setState({ strokes: "#d8a6ff" })
+        this.setState({ stroke: "#d8a6ff" })
     }
 
     changePinkColor = () => {
-        this.setState({ strokes: "#ffa6da" })
+        this.setState({ stroke: "#ffa6da" })
     }
 
     changeGrayColor = () => {
-        this.setState({ strokes: "gray" })
+        this.setState({ stroke: "gray" })
     }
 
     changeDarkRedColor = () => {
-        this.setState({ strokes: "#850000" })
+        this.setState({ stroke: "#850000" })
     }
 
     changeDarkOrangeColor = () => {
-        this.setState({ strokes: "#ad6b00" })
+        this.setState({ stroke: "#ad6b00" })
     }
 
     changeDarkYellowColor = () => {
-        this.setState({ strokes: "#e3e312" })
+        this.setState({ stroke: "#e3e312" })
     }
 
     changeDarkGreenColor = () => {
-        this.setState({ strokes: "#006442" })
+        this.setState({ stroke: "#006442" })
     }
 
     changePurpleColor = () => {
-        this.setState({ strokes: "#7918c4" })
+        this.setState({ stroke: "#7918c4" })
     }
 
-    resetSketch = () => {
-        this.setState({
-            erasing: true
-        })
+    resetSketch = (p5) => {
+        if (this.props.is_artist) {
+            ALL_STROKES = [];
+            p5.redraw(1);
+
+            socket.emit(Commands.SKETCH_RESET, {
+                room_code: this.state.room_code,
+            });
+        }
     }
 
-    changeWidth = () => {
-
-        if (this.state.strokeWidth == 2) {
-            this.setState({
-                strokeWidth: 5
-            })
+    changeWidth() {
+        if (this.props.is_artist) {
+            if (this.state.strokeWidth === 2) {
+                this.setState({
+                    strokeWidth: 5
+                })
+            }
+            else if (this.state.strokeWidth === 5) {
+                this.setState({
+                    strokeWidth: 15
+                })
+            }
+            else if (this.state.strokeWidth === 15) {
+                this.setState({
+                    strokeWidth: 30
+                })
+            }
+            else {
+                this.setState({
+                    strokeWidth: 2
+                })
+            }
+            this.setState(prevState => ({ diffWidth: !prevState.diffWidth, }));
         }
-        else if (this.state.strokeWidth == 5) {
-            this.setState({
-                strokeWidth: 15
-            })
-        }
-        else if (this.state.strokeWidth == 15) {
-            this.setState({
-                strokeWidth: 30
-            })
-        }
-        else {
-            this.setState({
-                strokeWidth: 2
-            })
-        }
-        this.setState(prevState => ({ diffWidth: !prevState.diffWidth, }));
     }
 
     changeBrush() {
-        this.setState(prevState => ({
-            diffBrush: !prevState.diffBrush,
-        }));
+        if (this.props.is_artist) {
+            this.setState(prevState => ({
+                diffBrush: !prevState.diffBrush,
+            }));
+        }
     }
 
-    handleClick() {
-        this.setState(prevState => ({
-            isToggleOn: !prevState.isToggleOn,
-        }));
-    }
+    componentDidUpdate() {
 
-    componentDidUpdate(){
-        if(this.state.undo){
-            console.log("undo state is true.");
-        }
-        else{
-            console.log("Not Undoing ");
-        }
+
     }
 
     draw = (p5) => {
 
-        console.log("Redrawing");
-
-        if(this.state.undo == true){
-            p5.background(255);
-            // for(var i = 0;  i < this.state.lastStrokeIdx; i++){
-            //     console.log(ALL_STROKES[i]);
-            //     p5.line(x,y,)
-            // }
-
-            for(var i = 0;  i < ALL_STROKES.length; i++){
-                console.log(ALL_STROKES[i]);
-                ALL_STROKES[i].draw(p5);
-            }
-
-            this.setState({
-                // lastStrokeIdx: this.state.lastStrokeIdx-1,
-                undo:false
-            })
-        }
-        p5.noLoop();
-    }
-
-	mousePressed = (p5) => {
-        // if(this.state.undo == true){
-        //     ALL_STROKES.pop();
-            
-        // }
-
-        if(this.state.undo) {
-            p5.redraw();
-            return;
-        }
-
-        if(this.state.SAVED == true){ //saving drawing.
-            saveimgbtn.mousePressed(p5.saveCanvas('my_canvas', 'png'));
-            this.setState({
-                SAVED: false
-            })
-            saveimgbtn.mousePressed(this.savebuttonClicked)
-        }
- 
-		if(this.state.erasing){
-			p5.background(255);
-			this.setState({erasing: false, lastStrokeIdx: -1});
-			ALL_STROKES = [];
-		}
-		else{
-			this.setState({
-				lastStrokeIdx: this.state.lastStrokeIdx + 1,
-				drawing: true
-            });
-            ALL_STROKES.push(new Stroke(p5.createVector(p5.mouseX, p5.mouseY)));
-           // console.log(ALL_STROKES[this.state.lastStrokeIdx])
-           // console.log(ALL_STROKES[this.state.lastStrokeIdx].init.x)
-        }
-	}
-
-    mouseDragged = (p5) => {
-        if (this.state.drawing) {
-            ALL_STROKES[ALL_STROKES.length-1].add(p5, p5.createVector(p5.mouseX, p5.mouseY), this.state.strokes, this.state.strokeWidth);
+        p5.background(255);
+        for (let stroke of ALL_STROKES) {
+            stroke.draw(p5);
         }
     }
 
-    mouseReleased = () => {
-        this.setState({ drawing: false, erasing: false });
+    equipEraser() {
+        this.setState({
+            stroke: 'white'
+        })
     }
 
-    render(props) {
+    render() {
+
         return (
             <div id="canvas">
-                {sessionStorage.getItem("userID") == sessionStorage.getItem("currentArtist") && <Sketch
+                <Sketch
                     setup={this.setup}
                     draw={this.draw}
                     mousePressed={this.mousePressed}
                     mouseDragged={this.mouseDragged}
-                    mouseReleased={this.mouseReleased} />}
-                {sessionStorage.getItem("userID") != sessionStorage.getItem("currentArtist") &&
-                    <Sketch
-                        setup={this.setup} />
-                }
-                {/* <div> */}
-                {/*style={{disply:"inline-block"}} > */}
-                <div>
-                    <button className="toolbar-button" onClick={this.changeBrush}>
-                        {this.state.diffBrush ? <FontAwesomeIcon icon={faPencilAlt} /> : <FontAwesomeIcon icon={faPaintBrush} />}
-                    </button>
-                    <button className="toolbar-button" onClick={this.changeWhiteColor}>
-                        <FontAwesomeIcon icon={faEraser} />
-                    </button>
-                    <button className="toolbar-button">
-                        <FontAwesomeIcon icon={faFillDrip} />
-                    </button>
 
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "white"
-                        }}
-                        onClick={this.changeWhiteColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#c9c9c9"
-                        }}
-                        onClick={this.changeLightGrayColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "red"
-                        }}
-                        onClick={this.changeRedColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "orange"
-                        }}
-                        onClick={this.changeOrangeColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "yellow"
-                        }}
-                        onClick={this.changeYellowColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#26A65B" //eucalyptis green
-                        }}
-                        onClick={this.changeGreenColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "dodgerblue"
-                        }}
-                        onClick={this.changeDodgerBlueColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#d8a6ff"
-                        }}
-                        onClick={this.changeLightPurpleColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#ffa6da"
-                        }}
-                      
-                            onClick={this.changePinkColor}>
-                            <br/>
+                    mouseReleased={this.mouseReleased} />
+                <div className="tools-container">
+                    <div className="tools">
+                        <button className="toolbar-button" onClick={this.changeBrush}>
+                            {this.state.diffBrush ? <FontAwesomeIcon icon={faPencilAlt} /> : <FontAwesomeIcon icon={faPaintBrush} />}
                         </button>
-                        <br/>  {/*line break toolbar in half. */}
-						<button className="toolbar-button" 
-						 		 onClick={this.changeWidth}>
-                            {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm"/> : <FontAwesomeIcon icon={faCircle} size="md"/>}
+
+                        <button className="toolbar-button" onClick={this.equipEraser}>
+                            <FontAwesomeIcon icon={faEraser} />
                         </button>
+
+
+                        <button id="save-canvas" className="toolbar-button">
+                            <FontAwesomeIcon icon={faSave} />
+                        </button>
+
+                        <button className="toolbar-button"
+                            onClick={this.changeWidth}>
+                            {this.state.diffWidth ? <FontAwesomeIcon icon={faCircle} size="sm" /> : <FontAwesomeIcon icon={faCircle} size="md" />}
+                        </button>
+
                         <button
                             classname="toolbar-button"
-                            style={{ height: "35px", width: "35px"}}
-                            onClick={this.undoButtonClicked}
-							>
-                            <FontAwesomeIcon icon={faUndoAlt}/>
+                            id="undo"
+                            style={{ height: "35px", width: "35px" }}>
+                            <FontAwesomeIcon icon={faUndoAlt} />
                         </button>
+
                         <button
+                            id="reset"
                             classname="toolbar-button"
-                            style={{ height: "35px", width: "35px"}}
-                            onClick={this.resetSketch}>
+                            style={{ height: "35px", width: "35px" }}>
                             <FontAwesomeIcon icon={faTrashAlt} />
                         </button>
-                      	<button
+                    </div>
+
+                    <div className="color-palette">
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "white"
+                            }}
+                            onClick={this.changeWhiteColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#c9c9c9"
+                            }}
+                            onClick={this.changeLightGrayColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "red"
+                            }}
+                            onClick={this.changeRedColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "orange"
+                            }}
+                            onClick={this.changeOrangeColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "yellow"
+                            }}
+                            onClick={this.changeYellowColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#26A65B" //eucalyptis green
+                            }}
+                            onClick={this.changeGreenColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "dodgerblue"
+                            }}
+                            onClick={this.changeDodgerBlueColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#d8a6ff"
+                            }}
+                            onClick={this.changeLightPurpleColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#ffa6da"
+                            }}
+
+                            onClick={this.changePinkColor}>
+                            <br />
+                        </button>
+                        <button
                             className="toolbar-button"
                             style={{
 
-                            backgroundColor: "black"
-                        }}
-                        onClick={this.changeBlackColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "gray"
-                        }}
-                        onClick={this.changeGrayColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#850000"
-                        }}
-                        onClick={this.changeDarkRedColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#ad6b00"
-                        }}
-                        onClick={this.changeDarkOrangeColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#e3e312"
-                        }}
-                        onClick={this.changeDarkYellowColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#006442"
-                        }}
-                        onClick={this.changeDarkGreenColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "blue"
-                        }}
-                        onClick={this.changeBlueColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#7918c4"
-                        }}
-                        onClick={this.changePurpleColor}>
-                        <br />
-                    </button>
-                    <button
-                        className="toolbar-button"
-                        style={{
-                            backgroundColor: "#c74691" //violet
-                        }}
-                        onClick={this.changeVioletColor}>
-                        <br />
-                    </button>
+                                backgroundColor: "black"
+                            }}
+                            onClick={this.changeBlackColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "gray"
+                            }}
+                            onClick={this.changeGrayColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#850000"
+                            }}
+                            onClick={this.changeDarkRedColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#ad6b00"
+                            }}
+                            onClick={this.changeDarkOrangeColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#e3e312"
+                            }}
+                            onClick={this.changeDarkYellowColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#006442"
+                            }}
+                            onClick={this.changeDarkGreenColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "blue"
+                            }}
+                            onClick={this.changeBlueColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#7918c4"
+                            }}
+                            onClick={this.changePurpleColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#c74691" //violet
+                            }}
+                            onClick={this.changeVioletColor}>
+                            <br />
+                        </button>
+                    </div>
                 </div>
             </div>
         );

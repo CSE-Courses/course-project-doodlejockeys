@@ -1,0 +1,29 @@
+$card-bg: #CBC7FC;
+$dark: #7064F7;
+$app-bg: #D6FFB7;
+$block: rgb(46, 46, 46);
+
+#scoreboard {
+	display: flex;
+	flex-direction: column;
+}
+
+.user-score {
+	display: flex;
+	text-align: center;
+	justify-content: center;
+	align-items: center;
+	color: #fff;
+}
+
+.user-score:nth-child(odd) > .user-info {
+	background: var($card-bg);
+	padding: 0.5rem 1rem;
+	flex: 1;
+}
+
+.user-score:nth-child(even) > .user-info {
+	background: var($dark);
+	padding: 0.5rem 1rem;
+	flex: 1;
+}

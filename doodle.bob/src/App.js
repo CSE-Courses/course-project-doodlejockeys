@@ -1,31 +1,22 @@
-
-import React, { Component } from "react";
-import "./App.css";
-import HomePage from "./components/Homepage";
+import React from "react";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Homepage from "./components/Homepage";
+import Avatar from "./components/Avatar"
+import WordBank from "./components/WordBank"
 import PlayPage from "./components/PlayPage";
-import Avatar from "./components/Avatar";
-import WordBank from "./components/WordBank";
 
-//Import all needed Component for this tutorial
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Link,
-  Redirect
-} from "react-router-dom";
+function App() {
 
-class App extends Component {
-  render() {
-    return (
-      <Router>
-        <Route exact path="/" component={HomePage} />
-        {/* accessed thru the continue to play button in homepage component */}
-        <Route path="/Avatar" component={Avatar} />
-        <Route path="/PlayPage" component={PlayPage} />
-        <Route path="/WordBank" component={WordBank}  />
-      </Router>
-    );
-  }
+  return (
+    <Router>
+      <Switch>
+        <Route exact path="/" component={Homepage} />
+        <Route exact path="/:room_code/PlayPage" component={PlayPage} />
+        <Route exact path="/:room_code/Avatar" component={Avatar} />
+        <Route exact path="/:room_code/WordBank" component={WordBank} />
+      </Switch>
+    </Router>
+  );
 }
+
 export default App;

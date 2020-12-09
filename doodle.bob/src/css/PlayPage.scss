@@ -1,0 +1,42 @@
+.play-container {
+	display: flex;
+	height: 100vh;
+	width: 100vw;
+}
+
+.choices {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+
+	.choice {
+		margin: 1rem;
+		padding: 0.5rem 1rem;
+		border: 1px solid black;
+		width: 20vw;
+		cursor: pointer;
+		background: #eee;
+		transition: background-color 0.5s, color 0.5s;
+	}
+
+	.custom-word {
+		margin: 1rem;
+		width: 20vw;
+
+		button {
+			margin-top: 0.5rem;
+			width: 20vw;
+		}
+	}
+
+	.choice:hover {
+		background-color: black;
+		color: white;
+	}
+}
+
+.center {
+	text-align: center;
+}
