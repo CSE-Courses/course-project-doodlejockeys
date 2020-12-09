@@ -14,7 +14,8 @@ class WordBank extends Component {
             user_info: '',
             results: new Set(),
             show_error: false,
-            is_host: false
+            is_host: false,
+            connected_users: []
         }
         this.submitWordBank = this.submitWordBank.bind(this);
         this.updateCurrentCategories = this.updateCurrentCategories.bind(this);
@@ -54,7 +55,27 @@ class WordBank extends Component {
         socket.emit(Commands.JOIN_GAME, {
             room_code: this.state.room_code,
             user_id: socket.id
-        })
+        });
+
+        socket.off(Commands.GET_CONNECTED_USERS).on(Commands.GET_CONNECTED_USERS, data => {
+            let connected_users = data.connected_users;
+
+            console.log(connected_users);
+            let temp_arr = [];
+            
+            for(let i=0; i<connected_users.length; ++i) {
+                let user = connected_users[i];
+                temp_arr.push(
+                    <li key={i}>
+                        {user}
+                    </li>
+                );
+            }
+
+            this.setState({
+                connected_users: temp_arr
+            })
+        });
     }
 
     componentDidMount() {
@@ -73,6 +94,8 @@ class WordBank extends Component {
                 }
             }
         });
+
+        socket.emit(Commands.GET_CONNECTED_USERS, { room_code: this.state.room_code });
 
         socket.emit(Commands.GET_USER_INFO, this.state.room_code);
 
@@ -152,7 +175,11 @@ class WordBank extends Component {
 
         return (
             <div className="categories">
-                <p className="invite">Invite your Friends: {this.state.room_code}</p>
+                <div className="invite">
+                    <p>Invite your Friends: {this.state.room_code}</p>
+                    <p>Connected Users:</p>
+                    <ul className="users-online">{this.state.connected_users}</ul>
+                </div>
                 <Modal animation={false} show={this.state.show_error} onHide={this.closeModal} centered>
                     <Modal.Header>
                         <Modal.Title className="text-danger">Error!</Modal.Title>
