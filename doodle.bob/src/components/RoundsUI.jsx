@@ -46,7 +46,7 @@ class RoundsUI extends Component {
 
     displayProfilePictures(subRound_artist) {
         if(subRound_artist !== '') {
-            return <img src={this.state.users[subRound_artist].profile_picture} alt="Player Profile picture"/>
+            return <img src={this.state.users[subRound_artist].profile_picture} alt="Player avatar"/>
        
         } else {
             return <div className="empty">?</div>

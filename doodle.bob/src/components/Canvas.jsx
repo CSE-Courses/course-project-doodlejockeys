@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
     faPencilAlt,
     faEraser,
-    faFillDrip,
     faCircle,
     faTrashAlt,
     faUndoAlt,
@@ -94,7 +93,6 @@ class Canvas extends Component {
         this.changeBrush = this.changeBrush.bind(this);
         this.changeWidth = this.changeWidth.bind(this);
         this.savebuttonClicked = this.savebuttonClicked.bind(this);
-        this.changeColor = this.changeColor.bind(this);
         this.equipEraser = this.equipEraser.bind(this);
     }
 
@@ -235,12 +233,81 @@ class Canvas extends Component {
 
     }
 
-    changeColor(event) {
-        let color = event.target.dataset.color;
+    //maybe refactor into switch statements. These functions change the brush color to said color.
+    changeWhiteColor = () => {
+        this.setState({ stroke: "white" })
+    }
 
-        this.setState({
-            stroke: color
-        })
+    changeBlackColor = () => {
+        this.setState({ stroke: "black" })
+    }
+
+    changeRedColor = () => {
+        this.setState({ stroke: "red" })
+    }
+
+    changeOrangeColor = () => {
+        this.setState({ stroke: "orange" })
+    }
+
+    changeYellowColor = () => {
+        this.setState({ stroke: "yellow" })
+    }
+
+    changeGreenColor = () => {
+        this.setState({ stroke: "#26A65B" })
+    }
+
+    changeBlueColor = () => {
+        this.setState({ stroke: "blue" })
+    }
+
+    changeIndigoColor = () => {
+        this.setState({ stroke: "indigo" })
+    }
+
+    changeVioletColor = () => {
+        this.setState({ stroke: "#c74691" })
+    }
+
+    changeLightGrayColor = () => {
+        this.setState({ stroke: "#c9c9c9" })
+    }
+
+    changeDodgerBlueColor = () => {
+        this.setState({ stroke: "dodgerblue" })
+    }
+
+    changeLightPurpleColor = () => {
+        this.setState({ stroke: "#d8a6ff" })
+    }
+
+    changePinkColor = () => {
+        this.setState({ stroke: "#ffa6da" })
+    }
+
+    changeGrayColor = () => {
+        this.setState({ stroke: "gray" })
+    }
+
+    changeDarkRedColor = () => {
+        this.setState({ stroke: "#850000" })
+    }
+
+    changeDarkOrangeColor = () => {
+        this.setState({ stroke: "#ad6b00" })
+    }
+
+    changeDarkYellowColor = () => {
+        this.setState({ stroke: "#e3e312" })
+    }
+
+    changeDarkGreenColor = () => {
+        this.setState({ stroke: "#006442" })
+    }
+
+    changePurpleColor = () => {
+        this.setState({ stroke: "#7918c4" })
     }
 
     resetSketch = (p5) => {
@@ -256,17 +323,17 @@ class Canvas extends Component {
 
     changeWidth() {
         if (this.props.is_artist) {
-            if (this.state.strokeWidth == 2) {
+            if (this.state.strokeWidth === 2) {
                 this.setState({
                     strokeWidth: 5
                 })
             }
-            else if (this.state.strokeWidth == 5) {
+            else if (this.state.strokeWidth === 5) {
                 this.setState({
                     strokeWidth: 15
                 })
             }
-            else if (this.state.strokeWidth == 15) {
+            else if (this.state.strokeWidth === 15) {
                 this.setState({
                     strokeWidth: 30
                 })
@@ -307,24 +374,10 @@ class Canvas extends Component {
         })
     }
 
-    render(props) {
-        let color_palette = [];
-
-        for(let color of this.state.colors) {
-            color_palette.push(
-                <button
-                    className="toolbar-button"
-                    data-color={color}
-                    style={{backgroundColor: color}}
-                    onClick={this.changeColor}>
-                    <br />
-                </button>
-            )
-        }
+    render() {
 
         return (
             <div id="canvas">
-                {/* {sessionStorage.getItem("userID") == sessionStorage.getItem("currentArtist") &&  */}
                 <Sketch
                     setup={this.setup}
                     draw={this.draw}
@@ -367,7 +420,152 @@ class Canvas extends Component {
                     </div>
                     
                     <div className="color-palette">
-                        {color_palette}
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "white"
+                            }}
+                            onClick={this.changeWhiteColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#c9c9c9"
+                            }}
+                            onClick={this.changeLightGrayColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "red"
+                            }}
+                            onClick={this.changeRedColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "orange"
+                            }}
+                            onClick={this.changeOrangeColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "yellow"
+                            }}
+                            onClick={this.changeYellowColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#26A65B" //eucalyptis green
+                            }}
+                            onClick={this.changeGreenColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "dodgerblue"
+                            }}
+                            onClick={this.changeDodgerBlueColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#d8a6ff"
+                            }}
+                            onClick={this.changeLightPurpleColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#ffa6da"
+                            }}
+
+                            onClick={this.changePinkColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+
+                                backgroundColor: "black"
+                            }}
+                            onClick={this.changeBlackColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "gray"
+                            }}
+                            onClick={this.changeGrayColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#850000"
+                            }}
+                            onClick={this.changeDarkRedColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#ad6b00"
+                            }}
+                            onClick={this.changeDarkOrangeColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#e3e312"
+                            }}
+                            onClick={this.changeDarkYellowColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#006442"
+                            }}
+                            onClick={this.changeDarkGreenColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "blue"
+                            }}
+                            onClick={this.changeBlueColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#7918c4"
+                            }}
+                            onClick={this.changePurpleColor}>
+                            <br />
+                        </button>
+                        <button
+                            className="toolbar-button"
+                            style={{
+                                backgroundColor: "#c74691" //violet
+                            }}
+                            onClick={this.changeVioletColor}>
+                            <br />
+                        </button>
                     </div>
                 </div>
             </div>
