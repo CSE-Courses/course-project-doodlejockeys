@@ -47,7 +47,6 @@ function stop_timer(timer_id) {
 }
 
 function timer_tick(io, room_code) {
-	// console.log(`Current value of timer: ${OPEN_ROOMS[room_code].game_info.current_time}`);
 
 	let current_room_game_info = OPEN_ROOMS[room_code].game_info;
 	let timer_id = OPEN_ROOMS[room_code].game_info.timer_id;
@@ -123,7 +122,6 @@ function calculateArtistScore(room_code) {
 	var all_guessers = Object.keys(OPEN_ROOMS[room_code].users).length - 1
 	var guess_value = BASE / all_guessers
 	for (var user of Object.keys(OPEN_ROOMS[room_code].users)) {
-		console.log(user, OPEN_ROOMS[room_code].users[user])
 		if (OPEN_ROOMS[room_code].users[user].points_history[currentRoundIndex][currentSubroundIndex] != 0) {
 			finalScore += guess_value
 		}
@@ -283,9 +281,6 @@ io.on('connection', socket => {
 			points_history: [],
 		};
 
-		// console.log(OPEN_ROOMS[room_code].users);
-		// console.log(OPEN_ROOMS[room_code].game_info);
-
 		socket.join(room_code);
 		socket.emit(Commands.UPDATE_USERS, CONNECTED_USERS);
 		io.in(room_code).emit(Commands.JOINED_ROOM, {
@@ -398,7 +393,6 @@ io.on('connection', socket => {
 			}
 			OPEN_ROOMS[room_code].users[user].points_history = points_history
 		}
-		console.log(OPEN_ROOMS[room_code].users)
 		if (ARTIST_POOL.length == 0) {
 			resetArtistPool(data.room_code)
 		}
@@ -441,8 +435,6 @@ io.on('connection', socket => {
 		chooseArtist(data.room_code)
 		// Reset the timer before starting the next round.
 		game_info.current_time = game_info.time_per_round;
-		console.log(OPEN_ROOMS[room_code].users)
-		console.log(OPEN_ROOMS[room_code].game_info)
 		//where we want to emit back to all users, everything except timer count down gets emitted to all users
 		io.in(room_code).emit(Commands.SEND_CLOCK_INFO, {
 			room_info: OPEN_ROOMS[room_code],
@@ -485,7 +477,6 @@ io.on('connection', socket => {
 		let stroke_color = data.stroke_color;
 
 		socket.broadcast.to(room_code).emit(Commands.SEND_STROKES, { x, y, stroke_weight, stroke_color });
-		// console.log("Sending strokes");
 	})
 
 	// Setting end points for next stroke to be sent to non-artist players
@@ -495,7 +486,6 @@ io.on('connection', socket => {
 		let y = data.y;
 
 		socket.broadcast.to(room_code).emit(Commands.DONE_DRAWING, { x, y });
-		// console.log("Finished drawing");
 	})
 
 	// Reset Sketch
@@ -539,13 +529,8 @@ io.on('connection', socket => {
 
 	socket.on(Commands.BEGIN_ROUND, (data) => {
 		console.log(data.current_word)
-		// console.log(data.game_info);
 		let room_code = CONNECTED_USERS[data.current_artist_id].room_code;
 		OPEN_ROOMS[room_code].game_info.current_word = data.current_word
-		// io.in(room_code).emit(Commands.SEND_ARTIST_INFO, {
-		// 	room_info: OPEN_ROOMS[room_code],
-		// 	room_code: room_code
-		// });
 
 		console.log(`Starting the timer`);
 		OPEN_ROOMS[room_code].game_info.timer_id = setInterval((room_code) => {
