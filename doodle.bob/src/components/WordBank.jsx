@@ -174,6 +174,7 @@ class WordBank extends Component {
         }
 
         return (
+           
             <div className="categories">
                 <div className="invite">
                     <p>Invite your Friends: {this.state.room_code}</p>
